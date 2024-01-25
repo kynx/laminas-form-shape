@@ -36,10 +36,10 @@ final class AllowListParserTest extends TestCase
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'invalid'         => [new Boolean(), [PsalmType::Int], [PsalmType::Int]],
-            'strict list'     => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int, PsalmType::String], [new Literal(["'foo'", 123]), PsalmType::Null]],
-            'lax list'        => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::Int, PsalmType::String], [new Literal(["'foo'", "'123'", 123]), PsalmType::Null]],
-            'strict existing' => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int], [new Literal([123]), PsalmType::Null]],
-            'lax existing'    => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::String], [new Literal(["'foo'", "'123'"]), PsalmType::Null]],
+            'strict list'     => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int, PsalmType::String, PsalmType::Null], [new Literal(["'foo'", 123]), PsalmType::Null]],
+            'lax list'        => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::Int, PsalmType::String, PsalmType::Null], [new Literal(["'foo'", 123, "'123'"]), PsalmType::Null]],
+            'strict existing' => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int], [new Literal([123])]],
+            'lax existing'    => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::String], [new Literal(["'foo'", "'123'"])]],
         ];
         // phpcs:enable
     }

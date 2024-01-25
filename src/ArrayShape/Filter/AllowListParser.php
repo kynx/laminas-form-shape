@@ -15,6 +15,7 @@ use Laminas\Filter\FilterInterface;
 use function assert;
 use function count;
 use function in_array;
+use function is_int;
 use function is_scalar;
 use function is_string;
 
@@ -41,12 +42,10 @@ final readonly class AllowListParser implements FilterParserInterface
                 : $this->getLaxTypes($filter->getList(), $existing);
         }
 
-        return [
-            $filter->getStrict() === true
-                ? $this->getStrictLiteral($filter->getList(), $existing)
-                : $this->getLaxLiteral($filter->getList(), $existing),
-            PsalmType::Null,
-        ];
+        $types = $filter->getStrict() === true
+            ? $this->getStrictLiteral($filter->getList(), $existing)
+            : $this->getLaxLiteral($filter->getList(), $existing);
+        return $this->appendUnique(PsalmType::Null, $types, $existing);
     }
 
     /**
@@ -57,7 +56,7 @@ final readonly class AllowListParser implements FilterParserInterface
     {
         $types = [];
         foreach ($list as $allow) {
-            assert(is_scalar($allow));
+            assert(is_scalar($allow) || $allow === null);
             $types = $this->appendUnique(PsalmType::fromPhpValue($allow), $types, $existing);
         }
         $types[] = PsalmType::Null;
@@ -77,42 +76,61 @@ final readonly class AllowListParser implements FilterParserInterface
 
     /**
      * @param ParsedArray $existing
+     * @return ParsedArray
      */
-    private function getStrictLiteral(array $list, array $existing): Literal
+    private function getStrictLiteral(array $list, array $existing): array
     {
-        $values = [];
+        $types = $literals = [];
         foreach ($list as $allow) {
-            assert(is_scalar($allow));
+            assert(is_scalar($allow) || $allow === null);
             $type = PsalmType::fromPhpValue($allow);
             if (is_string($allow) && PsalmType::hasStringType($existing)) {
-                $values[] = "'$allow'";
+                $literals[] = "'$allow'";
+            } elseif (is_int($allow) && PsalmType::hasIntType($existing)) {
+                $literals[] = $allow;
             } elseif (PsalmType::hasType($type, $existing)) {
-                $values[] = $allow;
+                $types[] = $type;
             }
         }
 
-        return new Literal($values);
+        if ($literals !== []) {
+            $types[] = new Literal($literals);
+        }
+
+        return $types;
     }
 
     /**
      * @param ParsedArray $existing
+     * @return ParsedArray
      */
-    private function getLaxLiteral(array $list, array $existing): Literal
+    private function getLaxLiteral(array $list, array $existing): array
     {
-        $values = [];
+        $types = $literals = [];
         foreach ($list as $allow) {
-            assert(is_scalar($allow));
+            assert(is_scalar($allow) || $allow === null);
             $type = PsalmType::fromPhpValue($allow);
-            if (PsalmType::hasStringType($existing)) {
-                $values[] = "'$allow'";
+            if (is_int($allow) && PsalmType::hasIntType($existing)) {
+                $literals[] = $allow;
             }
-
-            if (! is_string($allow) && PsalmType::hasType($type, $existing)) {
-                $values[] = $allow;
+            if ((is_string($allow) || is_int($allow)) && PsalmType::hasStringType($existing)) {
+                $literals[] = "'$allow'";
+                continue;
+            }
+            if (PsalmType::hasType($type, $existing)) {
+                $types[] = $type;
             }
         }
 
-        return new Literal($values);
+        if ($types !== []) {
+            $types = $this->appendUnique(PsalmType::String, $types, $existing);
+        }
+
+        if ($literals !== []) {
+            $types[] = new Literal($literals);
+        }
+
+        return $types;
     }
 
     /**

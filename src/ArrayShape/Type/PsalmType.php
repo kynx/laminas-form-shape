@@ -42,6 +42,7 @@ enum PsalmType: string implements TypeStringInterface
     case LowercaseString = 'lowercase-string';
     case PositiveInt     = 'positive-int';
     case NegativeInt     = 'negative-int';
+    case ClassString     = 'class-string';
     case Mixed           = 'mixed';
     // phpcs:enable
 
@@ -120,7 +121,7 @@ enum PsalmType: string implements TypeStringInterface
      * @param ParsedUnion $type
      * @param ParsedArray $types
      */
-    public static function hasType(mixed $type, array $types): bool
+    public static function hasType(AbstractParsedType|PsalmType $type, array $types): bool
     {
         return match ($type) {
             PsalmType::Array  => self::hasArrayType($types),
@@ -266,6 +267,31 @@ enum PsalmType: string implements TypeStringInterface
         }
 
         return self::removeTypes($types, $remove);
+    }
+
+    /**
+     * @param ParsedArray $types
+     * @return ParsedArray
+     */
+    public static function replaceType(PsalmType $type, PsalmType $replacement, array $types): array
+    {
+        return match ($type) {
+            PsalmType::Array => self::replaceArrayTypes($types, [$replacement]),
+            PsalmType::Bool => self::replaceBoolTypes($types, [$replacement]),
+            PsalmType::Int => self::replaceIntTypes($types, [$replacement]),
+            PsalmType::String => self::replaceStringTypes($types, [$replacement]),
+            default => array_merge(self::removeType($type, $types), [$replacement]),
+        };
+    }
+
+    /**
+     * @param ParsedArray $types
+     * @param ParsedArray $filter
+     * @return ParsedArray
+     */
+    public static function filter(array $types, array $filter): array
+    {
+        return self::getTypes($filter, $types);
     }
 
     public function getTypeString(string $indent = '    '): string

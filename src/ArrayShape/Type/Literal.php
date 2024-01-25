@@ -12,7 +12,7 @@ use const SORT_STRING;
 final readonly class Literal extends AbstractParsedType
 {
     /**
-     * @param array<scalar> $values
+     * @param array<int|string> $values
      */
     public function __construct(private array $values)
     {
