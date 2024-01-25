@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.20.0@3f284e96c9d9be6fe6b15c79416e1d1903dcfef4">
+  <file src="test/ArrayShape/Filter/AllowListParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypeLiteralProvider</code>
+      <code>getTypeTypeProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Filter/BooleanParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Filter/DigitsParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Filter/InflectorParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Filter/ToFloatParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Filter/ToIntParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Filter/ToNullParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Type/ArrayTypeTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypeNameProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Type/InputTypeTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypeNameProvider</code>
+      <code>getTypeStringProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Type/PsalmTypeTest.php">
+    <PossiblyUnusedMethod>
+      <code>arrayTypeProvider</code>
+      <code>boolTypeProvider</code>
+      <code>intTypeProvider</code>
+      <code>phpTypeProvider</code>
+      <code>removeArrayTypesProvider</code>
+      <code>removeObjectTypesProvider</code>
+      <code>replaceArrayTypesProvider</code>
+      <code>replaceBoolTypesProvider</code>
+      <code>replaceIntTypesProvider</code>
+      <code>replaceStringTypesProvider</code>
+      <code>stringTypeProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+</files>

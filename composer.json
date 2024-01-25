@@ -38,12 +38,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Kynx\\Laminas\\FormDto\\": "src/"
+      "Kynx\\Laminas\\FormCli\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "KynxTest\\Laminas\\FormDto\\": "test/"
+      "KynxTest\\Laminas\\FormCli\\": "test/"
     }
   },
   "scripts": {
