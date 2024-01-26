@@ -16,6 +16,7 @@ use function assert;
 use function count;
 use function in_array;
 use function is_int;
+use function is_numeric;
 use function is_scalar;
 use function is_string;
 
@@ -94,7 +95,7 @@ final readonly class AllowListParser implements FilterParserInterface
             assert(is_scalar($allow) || $allow === null);
             $type = PsalmType::fromPhpValue($allow);
             if (is_string($allow) && PsalmType::hasStringType($existing)) {
-                $literals[] = "'$allow'";
+                $literals[] = "$allow";
             } elseif (is_int($allow) && PsalmType::hasIntType($existing)) {
                 $literals[] = $allow;
             } elseif (PsalmType::hasType($type, $existing)) {
@@ -117,7 +118,9 @@ final readonly class AllowListParser implements FilterParserInterface
      */
     private function getLaxLiteral(array $list, array $existing): array
     {
-        $types = $literals = [];
+        $types       = $literals = [];
+        $numLiterals = 0;
+        $numeric     = true;
         foreach ($list as $allow) {
             assert(is_scalar($allow) || $allow === null);
             $type = PsalmType::fromPhpValue($allow);
@@ -125,17 +128,24 @@ final readonly class AllowListParser implements FilterParserInterface
                 $literals[] = $allow;
             }
             if ((is_string($allow) || is_int($allow)) && PsalmType::hasStringType($existing)) {
-                $literals[] = "'$allow'";
+                $literals[] = "$allow";
+                $numLiterals++;
                 continue;
             }
             if (PsalmType::hasType($type, $existing)) {
                 $types[] = $type;
             }
+            $numeric = $numeric && is_numeric($allow);
         }
 
-        if ($types !== []) {
+        if (count($list) !== $numLiterals && PsalmType::hasStringType($existing)) {
             $types = $this->appendUnique(PsalmType::String, $types, $existing);
         }
+
+        if ($numeric) {
+            $types = PsalmType::replaceStringTypes($types, [PsalmType::NumericString]);
+        }
+
         $types = $this->appendUnique(PsalmType::Null, $types, $existing);
 
         if ($literals !== []) {

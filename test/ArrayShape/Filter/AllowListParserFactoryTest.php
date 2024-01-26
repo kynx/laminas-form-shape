@@ -24,7 +24,7 @@ final class AllowListParserFactoryTest extends TestCase
         $factory  = new AllowListParserFactory();
         $instance = $factory($container);
 
-        $expected = [PsalmType::Null, new Literal(["'a'"])];
+        $expected = [PsalmType::Null, new Literal(["a"])];
         $filter   = new AllowList(['list' => ['a'], 'strict' => true]);
         $actual   = $instance->getTypes($filter, [PsalmType::String]);
 
