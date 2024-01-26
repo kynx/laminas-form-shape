@@ -36,6 +36,12 @@
       <code>getTypesProvider</code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/ArrayShape/InputParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>addFallbackProvider</code>
+      <code>addNullProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/ArrayShape/Type/ArrayTypeTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeNameProvider</code>
@@ -45,6 +51,12 @@
     <PossiblyUnusedMethod>
       <code>getTypeNameProvider</code>
       <code>getTypeStringProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Type/LiteralTest.php">
+    <PossiblyUnusedMethod>
+      <code>hasTypesProvider</code>
+      <code>withTypesProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/ArrayShape/Type/PsalmTypeTest.php">
