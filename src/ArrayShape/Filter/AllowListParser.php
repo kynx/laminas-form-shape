@@ -26,8 +26,10 @@ final readonly class AllowListParser implements FilterParserInterface
 {
     public const DEFAULT_MAX_LITERALS = 10;
 
-    public function __construct(private bool $allowEmptyList = true, private int $maxLiterals = self::DEFAULT_MAX_LITERALS)
-    {
+    public function __construct(
+        private bool $allowEmptyList = true,
+        private int $maxLiterals = self::DEFAULT_MAX_LITERALS
+    ) {
     }
 
     public function getTypes(FilterInterface $filter, array $existing): array

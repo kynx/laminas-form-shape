@@ -51,14 +51,18 @@
     <PossiblyUnusedMethod>
       <code>arrayTypeProvider</code>
       <code>boolTypeProvider</code>
+      <code>filterProvider</code>
+      <code>hasTypeProvider</code>
       <code>intTypeProvider</code>
       <code>phpTypeProvider</code>
       <code>removeArrayTypesProvider</code>
       <code>removeObjectTypesProvider</code>
+      <code>removeTypeProvider</code>
       <code>replaceArrayTypesProvider</code>
       <code>replaceBoolTypesProvider</code>
       <code>replaceIntTypesProvider</code>
       <code>replaceStringTypesProvider</code>
+      <code>replaceTypeProvider</code>
       <code>stringTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
@@ -73,6 +77,11 @@
     </PossiblyUnusedMethod>
   </file>
   <file src="test/ArrayShape/Validator/ExplodeParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/FileValidatorParserTest.php">
     <PossiblyUnusedMethod>
       <code>getTypesProvider</code>
     </PossiblyUnusedMethod>

@@ -14,14 +14,16 @@ use Laminas\Validator\Barcode;
 use Laminas\Validator\Digits;
 use Laminas\Validator\Explode;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Traversable;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(ExplodeParser::class)]
 final class ExplodeParserTest extends TestCase
 {
     /**
@@ -57,6 +59,7 @@ final class ExplodeParserTest extends TestCase
             'traversable'         => [$validator, [PsalmType::Bool], [$traversable], [new Generic($traversable, [])]],
             'numeric traversable' => [$validator, [PsalmType::String], [$traversable], [new Generic($traversable, [PsalmType::NumericString])]],
             'string'              => [$validator, [PsalmType::String], [PsalmType::String], [PsalmType::String, PsalmType::NumericString]],
+            'generic class'       => [$validator, [PsalmType::String], [new Generic(new ClassString(stdClass::class), [])], []],
             'mixed'               => [$validator, [PsalmType::Bool], [PsalmType::Array, PsalmType::Int], [new Generic(PsalmType::Array, []), PsalmType::Int]],
         ];
         // phpcs:enable

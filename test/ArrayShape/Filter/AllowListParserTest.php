@@ -36,14 +36,14 @@ final class AllowListParserTest extends TestCase
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid'         => [new Boolean(), [PsalmType::Int], [PsalmType::Int]],
-            'empty list'      => [new AllowList(['list' => []]), [PsalmType::Bool], [PsalmType::Bool]],
-            'strict list'     => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int, PsalmType::String], [PsalmType::Null, new Literal(["'foo'", 123])]],
+            'invalid'            => [new Boolean(), [PsalmType::Int], [PsalmType::Int]],
+            'empty list'         => [new AllowList(['list' => []]), [PsalmType::Bool], [PsalmType::Bool]],
+            'strict list'        => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int, PsalmType::String], [PsalmType::Null, new Literal(["'foo'", 123])]],
             'strict not literal' => [new AllowList(['list' => [1.23], 'strict' => true]), [PsalmType::Float], [PsalmType::Float, PsalmType::Null]],
-            'lax list'        => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::Int, PsalmType::String], [PsalmType::Null, new Literal(["'foo'", 123, "'123'"])]],
-            'lax not literal' => [new AllowList(['list' => [1.23], 'strict' => false]), [PsalmType::Float], [PsalmType::Float, PsalmType::Null]],
-            'strict existing' => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int], [PsalmType::Null, new Literal([123])]],
-            'lax existing'    => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::String], [PsalmType::Null, new Literal(["'foo'", "'123'"])]],
+            'lax list'           => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::Int, PsalmType::String], [PsalmType::Null, new Literal(["'foo'", 123, "'123'"])]],
+            'lax not literal'    => [new AllowList(['list' => [1.23], 'strict' => false]), [PsalmType::Float], [PsalmType::Float, PsalmType::Null]],
+            'strict existing'    => [new AllowList(['list' => ['foo', 123], 'strict' => true]), [PsalmType::Int], [PsalmType::Null, new Literal([123])]],
+            'lax existing'       => [new AllowList(['list' => ['foo', 123], 'strict' => false]), [PsalmType::String], [PsalmType::Null, new Literal(["'foo'", "'123'"])]],
         ];
         // phpcs:enable
     }
@@ -74,9 +74,9 @@ final class AllowListParserTest extends TestCase
     public function testGetTypesDisallowsEmptyList(): void
     {
         $expected = [PsalmType::Null];
-        $parser = new AllowListParser(false);
-        $filter = new AllowList(['list' => []]);
-        $actual = $parser->getTypes($filter, [PsalmType::String]);
+        $parser   = new AllowListParser(false);
+        $filter   = new AllowList(['list' => []]);
+        $actual   = $parser->getTypes($filter, [PsalmType::String]);
         self::assertSame($expected, $actual);
     }
 }

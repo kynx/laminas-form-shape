@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormCli\ArrayShape\Validator;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
+use Kynx\Laminas\FormCli\ArrayShape\Type\Generic;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorParserInterface;
 use Laminas\Validator\File\Crc32;
@@ -58,7 +59,12 @@ final readonly class FileValidatorParser implements ValidatorParserInterface
             return $existing;
         }
 
-        $existing = PsalmType::replaceArrayTypes($existing, [PsalmType::NonEmptyArray]);
+        $existing = PsalmType::replaceArrayTypes($existing, [
+            new Generic(
+                PsalmType::NonEmptyArray,
+                [PsalmType::NonEmptyString]
+            ),
+        ]);
         $existing = PsalmType::replaceStringTypes($existing, [PsalmType::NonEmptyString]);
 
         return PsalmType::filter($existing, [

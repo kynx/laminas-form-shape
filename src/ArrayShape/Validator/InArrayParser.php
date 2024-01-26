@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormCli\ArrayShape\Validator;
 
-use Iterator;
 use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractParsedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
@@ -20,7 +19,6 @@ use function is_array;
 use function is_int;
 use function is_scalar;
 use function is_string;
-use function iterator_to_array;
 
 /**
  * @psalm-import-type ParsedArray from AbstractParsedType
@@ -42,9 +40,6 @@ final readonly class InArrayParser implements ValidatorParserInterface
         }
 
         $haystack = $validator->getHaystack();
-        if ($haystack instanceof Iterator) {
-            $haystack = iterator_to_array($haystack);
-        }
         assert(is_array($haystack));
 
         if ($haystack === [] && $this->allowEmptyHaystack) {

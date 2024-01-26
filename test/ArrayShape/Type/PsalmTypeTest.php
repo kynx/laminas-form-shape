@@ -9,6 +9,7 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractParsedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Generic;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -16,9 +17,9 @@ use stdClass;
 use function fopen;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(PsalmType::class)]
 final class PsalmTypeTest extends TestCase
 {
     #[DataProvider('phpTypeProvider')]
@@ -140,6 +141,29 @@ final class PsalmTypeTest extends TestCase
             'generic string' => [[new Generic(PsalmType::String, [])], true],
             'generic int'    => [[new Generic(PsalmType::Int, [])], false],
             'class'          => [[new ClassString(self::class)], false],
+        ];
+    }
+
+    /**
+     * @param ParsedArray $types
+     */
+    #[DataProvider('hasTypeProvider')]
+    public function testHasType(AbstractParsedType|PsalmType $type, array $types, bool $expected): void
+    {
+        $actual = PsalmType::hasType($type, $types);
+        self::assertSame($expected, $actual);
+    }
+
+    public static function hasTypeProvider(): array
+    {
+        return [
+            'empty'    => [PsalmType::Bool, [], false],
+            'array'    => [PsalmType::Array, [PsalmType::Array], true],
+            'bool'     => [PsalmType::Bool, [PsalmType::Bool], true],
+            'int'      => [PsalmType::Int, [PsalmType::Int], true],
+            'string'   => [PsalmType::String, [PsalmType::String], true],
+            'float'    => [PsalmType::Float, [PsalmType::Float], true],
+            'no float' => [PsalmType::Float, [PsalmType::String], false],
         ];
     }
 
@@ -275,6 +299,82 @@ final class PsalmTypeTest extends TestCase
             'object'        => [[PsalmType::String, PsalmType::Object], [PsalmType::String]],
             'class'         => [[new ClassString(self::class)], []],
             'class generic' => [[new Generic(new ClassString(self::class), [])], []],
+        ];
+    }
+
+    /**
+     * @param ParsedArray $types
+     * @param ParsedArray $expected
+     */
+    #[DataProvider('removeTypeProvider')]
+    public function testRemoveType(PsalmType $type, array $types, array $expected): void
+    {
+        $actual = PsalmType::removeType($type, $types);
+        self::assertSame($expected, $actual);
+    }
+
+    public static function removeTypeProvider(): array
+    {
+        return [
+            'empty'    => [PsalmType::String, [], []],
+            'array'    => [PsalmType::Array, [PsalmType::Array], []],
+            'bool'     => [PsalmType::Bool, [PsalmType::Bool], []],
+            'int'      => [PsalmType::Int, [PsalmType::Int], []],
+            'string'   => [PsalmType::String, [PsalmType::String], []],
+            'float'    => [PsalmType::Float, [PsalmType::Int, PsalmType::Float], [PsalmType::Int]],
+            'no float' => [PsalmType::Float, [PsalmType::Int], [PsalmType::Int]],
+        ];
+    }
+
+    /**
+     * @param ParsedArray $types
+     * @param ParsedArray $expected
+     */
+    #[DataProvider('replaceTypeProvider')]
+    public function testReplaceType(PsalmType $type, PsalmType $replacement, array $types, array $expected): void
+    {
+        $actual = PsalmType::replaceType($type, $replacement, $types);
+        self::assertSame($expected, $actual);
+    }
+
+    public static function replaceTypeProvider(): array
+    {
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        return [
+            'empty'    => [PsalmType::String, PsalmType::NonEmptyString, [], []],
+            'array'    => [PsalmType::Array, PsalmType::NonEmptyArray, [PsalmType::Array], [PsalmType::NonEmptyArray]],
+            'bool'     => [PsalmType::Bool, PsalmType::True, [PsalmType::Bool], [PsalmType::True]],
+            'int'      => [PsalmType::Int, PsalmType::PositiveInt, [PsalmType::Int], [PsalmType::PositiveInt]],
+            'string'   => [PsalmType::String, PsalmType::NonEmptyString, [PsalmType::String], [PsalmType::NonEmptyString]],
+            'float'    => [PsalmType::Float, PsalmType::Null, [PsalmType::Int, PsalmType::Float], [PsalmType::Int, PsalmType::Null]],
+            'no float' => [PsalmType::Float, PsalmType::Null, [PsalmType::Int], [PsalmType::Int]],
+        ];
+        // phpcs;enable
+    }
+
+    /**
+     * @param ParsedArray $types
+     * @param ParsedArray $filter
+     */
+    #[DataProvider('filterProvider')]
+    public function testFilter(array $types, array $filter, array $expected): void
+    {
+        $actual = PsalmType::filter($types, $filter);
+        self::assertSame($expected, $actual);
+    }
+
+    public static function filterProvider(): array
+    {
+        $classString = new ClassString(stdClass::class);
+        $generic     = new Generic(PsalmType::Array, []);
+
+        return [
+            'empty types'    => [[], [PsalmType::String], []],
+            'empty filter'   => [[PsalmType::String], [], []],
+            'exists'         => [[PsalmType::Bool, PsalmType::String], [PsalmType::Bool], [PsalmType::Bool]],
+            'does not exist' => [[PsalmType::Bool, PsalmType::String], [PsalmType::Int], []],
+            'class string'   => [[$classString, PsalmType::String], [$classString], [$classString]],
+            'generic'        => [[$generic, PsalmType::String], [PsalmType::Array], [$generic]],
         ];
     }
 

@@ -276,11 +276,13 @@ enum PsalmType: string implements TypeStringInterface
     public static function replaceType(PsalmType $type, PsalmType $replacement, array $types): array
     {
         return match ($type) {
-            PsalmType::Array => self::replaceArrayTypes($types, [$replacement]),
-            PsalmType::Bool => self::replaceBoolTypes($types, [$replacement]),
-            PsalmType::Int => self::replaceIntTypes($types, [$replacement]),
+            PsalmType::Array  => self::replaceArrayTypes($types, [$replacement]),
+            PsalmType::Bool   => self::replaceBoolTypes($types, [$replacement]),
+            PsalmType::Int    => self::replaceIntTypes($types, [$replacement]),
             PsalmType::String => self::replaceStringTypes($types, [$replacement]),
-            default => array_merge(self::removeType($type, $types), [$replacement]),
+            default           => self::hasType($type, $types)
+                ? array_merge(self::removeType($type, $types), [$replacement])
+                : $types,
         };
     }
 
@@ -309,9 +311,8 @@ enum PsalmType: string implements TypeStringInterface
         $found = [];
         foreach ($types as $type) {
             $found[] = match ($type::class) {
-                ClassString::class => null,
-                Generic::class     => in_array($type->type, $search) ? $type : null,
-                PsalmType::class   => in_array($type, $search) ? $type : null,
+                Generic::class                       => in_array($type->type, $search) ? $type : null,
+                ClassString::class, PsalmType::class => in_array($type, $search) ? $type : null,
             };
         }
 
