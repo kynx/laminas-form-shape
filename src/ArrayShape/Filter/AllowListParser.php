@@ -26,7 +26,7 @@ final readonly class AllowListParser implements FilterParserInterface
 {
     public const DEFAULT_MAX_LITERALS = 10;
 
-    public function __construct(private int $maxLiterals = self::DEFAULT_MAX_LITERALS)
+    public function __construct(private bool $allowEmptyList = true, private int $maxLiterals = self::DEFAULT_MAX_LITERALS)
     {
     }
 
@@ -36,15 +36,22 @@ final readonly class AllowListParser implements FilterParserInterface
             return $existing;
         }
 
-        if (count($filter->getList()) > $this->maxLiterals) {
+        $list = $filter->getList();
+        if ($list === []) {
+            return $this->allowEmptyList ? $existing : [PsalmType::Null];
+        }
+
+        $existing[] = PsalmType::Null;
+
+        if (count($list) > $this->maxLiterals) {
             return $filter->getStrict() === true
-                ? $this->getStrictTypes($filter->getList(), $existing)
-                : $this->getLaxTypes($filter->getList(), $existing);
+                ? $this->getStrictTypes($list, $existing)
+                : $this->getLaxTypes($list, $existing);
         }
 
         $types = $filter->getStrict() === true
-            ? $this->getStrictLiteral($filter->getList(), $existing)
-            : $this->getLaxLiteral($filter->getList(), $existing);
+            ? $this->getStrictLiteral($list, $existing)
+            : $this->getLaxLiteral($list, $existing);
         return $this->appendUnique(PsalmType::Null, $types, $existing);
     }
 
@@ -93,6 +100,8 @@ final readonly class AllowListParser implements FilterParserInterface
             }
         }
 
+        $types = $this->appendUnique(PsalmType::Null, $types, $existing);
+
         if ($literals !== []) {
             $types[] = new Literal($literals);
         }
@@ -125,6 +134,7 @@ final readonly class AllowListParser implements FilterParserInterface
         if ($types !== []) {
             $types = $this->appendUnique(PsalmType::String, $types, $existing);
         }
+        $types = $this->appendUnique(PsalmType::Null, $types, $existing);
 
         if ($literals !== []) {
             $types[] = new Literal($literals);

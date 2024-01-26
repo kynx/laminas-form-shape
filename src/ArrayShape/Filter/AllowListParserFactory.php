@@ -15,9 +15,10 @@ final readonly class AllowListParserFactory
         /** @var ConfigProviderArray $config */
         $config = $container->get('config');
         // phpcs:disable Generic.Files.LineLength.TooLong
+        $allowEmpty = (bool)($config['laminas-form-cli']['array-shape']['filter']['allow-list']['allow-empty-list'] ?? true);
         $maxLiterals = (int) ($config['laminas-form-cli']['array-shape']['filter']['allow-list']['max-literals'] ?? AllowListParser::DEFAULT_MAX_LITERALS);
         // phpcs:enable
 
-        return new AllowListParser($maxLiterals);
+        return new AllowListParser($allowEmpty, $maxLiterals);
     }
 }
