@@ -9,12 +9,11 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Laminas\Filter\AllowList;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Filter\BooleanParser
- */
+#[CoversClass(BooleanParser::class)]
 final class BooleanParserTest extends TestCase
 {
     #[DataProvider('getTypesProvider')]

@@ -11,13 +11,14 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\InArray;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(InArrayParser::class)]
 final class InArrayParserTest extends TestCase
 {
     /**

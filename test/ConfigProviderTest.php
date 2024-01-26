@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli;
 
 use Kynx\Laminas\FormCli\ConfigProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
@@ -21,9 +22,9 @@ use function str_ends_with;
 use const DIRECTORY_SEPARATOR;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ConfigProvider
  * @psalm-import-type ConfigProviderArray from ConfigProvider
  */
+#[CoversClass(ConfigProvider::class)]
 final class ConfigProviderTest extends TestCase
 {
     public function testInvokeReturnsSections(): void

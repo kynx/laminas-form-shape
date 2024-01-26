@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Digits;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(DigitsParser::class)]
 final class DigitsParserTest extends TestCase
 {
     /**

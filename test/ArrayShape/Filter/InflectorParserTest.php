@@ -9,12 +9,11 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
 use Laminas\Filter\Inflector;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Filter\InflectorParser
- */
+#[CoversClass(InflectorParser::class)]
 final class InflectorParserTest extends TestCase
 {
     #[DataProvider('getTypesProvider')]

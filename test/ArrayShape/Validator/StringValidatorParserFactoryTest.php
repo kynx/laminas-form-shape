@@ -8,12 +8,11 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorParserFactory;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\BusinessIdentifierCode;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorParserFactory
- */
+#[CoversClass(StringValidatorParserFactory::class)]
 final class StringValidatorParserFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultInstance(): void

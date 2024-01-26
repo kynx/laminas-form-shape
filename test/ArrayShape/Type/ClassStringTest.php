@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Type;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Type\ClassString
- */
+#[CoversClass(ClassString::class)]
 final class ClassStringTest extends TestCase
 {
     public function testGetTypeStringReturnsClassString(): void

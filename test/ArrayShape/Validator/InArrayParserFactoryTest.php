@@ -7,14 +7,13 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayParserFactory;
 use Laminas\Validator\InArray;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 use function range;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayParserFactory
- */
+#[CoversClass(InArrayParserFactory::class)]
 final class InArrayParserFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultEmptyHaystackInstance(): void

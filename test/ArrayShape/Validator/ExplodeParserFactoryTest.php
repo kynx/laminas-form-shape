@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 
-use Kynx\Laminas\FormCli\ArrayShape\FilterParserInterface;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsParser;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeParserFactory;
@@ -38,15 +37,15 @@ final class ExplodeParserFactoryTest extends TestCase
 
     public function testInvokeGetsValidatorFromContainer(): void
     {
-        $config    = $this->getConfig(['item-types' => [PsalmType::String]], [ValidatorParserInterface::class]);
+        $config          = $this->getConfig(['item-types' => [PsalmType::String]], [ValidatorParserInterface::class]);
         $validatorParser = $this->createStub(ValidatorParserInterface::class);
-        $container = $this->createStub(ContainerInterface::class);
+        $container       = $this->createStub(ContainerInterface::class);
         $container->method('has')
             ->willReturn(true);
         $container->method('get')
             ->willReturnMap([
                 ['config', $config],
-                [ValidatorParserInterface::class, $validatorParser]
+                [ValidatorParserInterface::class, $validatorParser],
             ]);
 
         $factory  = new ExplodeParserFactory();

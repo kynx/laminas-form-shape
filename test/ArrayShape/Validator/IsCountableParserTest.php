@@ -12,13 +12,14 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\IsCountableParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\IsCountable;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\IsCountableParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(IsCountableParser::class)]
 final class IsCountableParserTest extends TestCase
 {
     /**

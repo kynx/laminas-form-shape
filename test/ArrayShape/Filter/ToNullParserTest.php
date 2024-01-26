@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
 use Laminas\Filter\ToNull;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Filter\ToNullParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(ToNullParser::class)]
 final class ToNullParserTest extends TestCase
 {
     /**

@@ -7,12 +7,11 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexParserFactory;
 use Laminas\Validator\Regex;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\RegexParserFactory
- */
+#[CoversClass(RegexParserFactory::class)]
 final class RegexParserFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void

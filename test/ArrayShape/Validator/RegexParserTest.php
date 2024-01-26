@@ -11,15 +11,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexPattern;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Regex;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\RegexParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(RegexParser::class)]
 final class RegexParserTest extends TestCase
 {
     private const INT           = '/^\d+$/';

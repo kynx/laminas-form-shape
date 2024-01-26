@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\Sitemap\PriorityParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Sitemap\Priority;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\Sitemap\PriorityParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(PriorityParser::class)]
 final class PriorityParserTest extends TestCase
 {
     /**

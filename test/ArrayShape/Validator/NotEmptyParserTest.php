@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\NotEmptyParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\NotEmptyParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(NotEmptyParser::class)]
 final class NotEmptyParserTest extends TestCase
 {
     /**

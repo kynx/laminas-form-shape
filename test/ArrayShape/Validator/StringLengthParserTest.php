@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\StringLengthParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\StringLength;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\StringLengthParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(StringLengthParser::class)]
 final class StringLengthParserTest extends TestCase
 {
     /**

@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\IsbnParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Isbn;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\IsbnParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(IsbnParser::class)]
 final class IsbnParserTest extends TestCase
 {
     /**

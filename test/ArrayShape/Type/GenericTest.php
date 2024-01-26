@@ -6,11 +6,10 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\Type;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\Generic;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Type\Generic
- */
+#[CoversClass(Generic::class)]
 final class GenericTest extends TestCase
 {
     public function testGetTypeStringReturnsType(): void

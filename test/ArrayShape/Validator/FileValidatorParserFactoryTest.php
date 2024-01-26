@@ -8,12 +8,11 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\FileValidatorParserFactory;
 use Laminas\Validator\File\Crc32;
 use Laminas\Validator\File\ExcludeMimeType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\FileValidatorParserFactory
- */
+#[CoversClass(FileValidatorParserFactory::class)]
 final class FileValidatorParserFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultInstance(): void

@@ -10,13 +10,14 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\Digits;
 use Laminas\Filter\FilterInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Filter\DigitsParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(DigitsParser::class)]
 final class DigitsParserTest extends TestCase
 {
     /**

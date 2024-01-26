@@ -11,14 +11,15 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\IsInstanceOfParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\IsInstanceOf;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\IsInstanceOfParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(IsInstanceOfParser::class)]
 final class IsInstanceOfParserTest extends TestCase
 {
     /**

@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Type;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Type\Literal
- */
+#[CoversClass(Literal::class)]
 final class LiteralTest extends TestCase
 {
     public function testGetTypeStringSortsValues(): void

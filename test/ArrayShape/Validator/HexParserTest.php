@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\HexParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Hex;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\HexParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(HexParser::class)]
 final class HexParserTest extends TestCase
 {
     /**

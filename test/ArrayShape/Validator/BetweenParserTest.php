@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\BetweenParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Between;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\BetweenParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(BetweenParser::class)]
 final class BetweenParserTest extends TestCase
 {
     /**

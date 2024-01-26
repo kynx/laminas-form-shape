@@ -6,11 +6,10 @@ namespace KynxTest\Laminas\FormCli\ArrayShape;
 
 use Kynx\Laminas\FormCli\ArrayShape\ArrayShapeException;
 use Laminas\InputFilter\Input;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\ArrayShapeException
- */
+#[CoversClass(ArrayShapeException::class)]
 final class ArrayShapeExceptionTest extends TestCase
 {
     public function testCannotParseInputTypeSetsMessage(): void

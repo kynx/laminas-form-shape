@@ -7,12 +7,11 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\Type;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ArrayType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Type\ArrayType
- */
+#[CoversClass(ArrayType::class)]
 final class ArrayTypeTest extends TestCase
 {
     #[DataProvider('getTypeNameProvider')]

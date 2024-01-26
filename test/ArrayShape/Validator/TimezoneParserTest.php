@@ -10,15 +10,16 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\TimezoneParser;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Timezone;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_values;
 
 /**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\TimezoneParser
  * @psalm-import-type ParsedArray from AbstractParsedType
  */
+#[CoversClass(TimezoneParser::class)]
 final class TimezoneParserTest extends TestCase
 {
     /**
@@ -36,7 +37,7 @@ final class TimezoneParserTest extends TestCase
     {
         return [
             'invalid'     => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'empaty'      => [new Timezone(), [], []],
+            'empty'       => [new Timezone(), [], []],
             'no existing' => [new Timezone(), [PsalmType::Int], []],
             'timezone'    => [new Timezone(), [PsalmType::String, PsalmType::Null], [PsalmType::NonEmptyString]],
         ];

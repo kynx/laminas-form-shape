@@ -21,6 +21,7 @@ use Laminas\Validator\UndisclosedPassword;
 use Laminas\Validator\Uri;
 use Laminas\Validator\Uuid;
 use Laminas\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
@@ -28,9 +29,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 
 use function array_values;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorParser
- */
+#[CoversClass(StringValidatorParser::class)]
 final class StringValidatorParserTest extends TestCase
 {
     #[DataProvider('getTypesProvider')]

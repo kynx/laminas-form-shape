@@ -9,12 +9,11 @@ use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
 use Laminas\Filter\ToFloat;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormCli\ArrayShape\Filter\ToFloatParser
- */
+#[CoversClass(ToFloatParser::class)]
 final class ToFloatParserTest extends TestCase
 {
     #[DataProvider('getTypesProvider')]
