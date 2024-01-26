@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractParsedType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsParser;
 use Laminas\Validator\Barcode;
@@ -30,7 +31,7 @@ final class DigitsParserTest extends TestCase
     {
         $parser = new DigitsParser();
         $actual = $parser->getTypes($validator, $existing);
-        self::assertSame($expected, array_values($actual));
+        self::assertEquals($expected, array_values($actual));
     }
 
     public static function getTypesProvider(): array
@@ -40,6 +41,7 @@ final class DigitsParserTest extends TestCase
             'string'  => [new Digits(), [PsalmType::String, PsalmType::Null], [PsalmType::NumericString]],
             'int'     => [new Digits(), [PsalmType::Int, PsalmType::Null], [PsalmType::Int]],
             'float'   => [new Digits(), [PsalmType::Float, PsalmType::Null], [PsalmType::Float]],
+            'literal' => [new Digits(), [new Literal([123])], [new Literal([123])]],
         ];
     }
 }

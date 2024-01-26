@@ -8,6 +8,7 @@ use ArrayIterator;
 use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractParsedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Generic;
+use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -360,13 +361,14 @@ final class PsalmTypeTest extends TestCase
     public function testFilter(array $types, array $filter, array $expected): void
     {
         $actual = PsalmType::filter($types, $filter);
-        self::assertSame($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public static function filterProvider(): array
     {
         $classString = new ClassString(stdClass::class);
         $generic     = new Generic(PsalmType::Array, []);
+        $literal     = new Literal([123]);
 
         return [
             'empty types'    => [[], [PsalmType::String], []],
@@ -375,6 +377,7 @@ final class PsalmTypeTest extends TestCase
             'does not exist' => [[PsalmType::Bool, PsalmType::String], [PsalmType::Int], []],
             'class string'   => [[$classString, PsalmType::String], [$classString], [$classString]],
             'generic'        => [[$generic, PsalmType::String], [PsalmType::Array], [$generic]],
+            'literal'        => [[$literal, PsalmType::String], [PsalmType::Int], [$literal]],
         ];
     }
 

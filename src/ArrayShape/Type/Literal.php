@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormCli\ArrayShape\Type;
 
+use function array_filter;
+use function array_map;
+use function array_values;
 use function implode;
+use function in_array;
+use function is_int;
+use function is_string;
 use function sort;
 
 use const SORT_STRING;
 
+/**
+ * @psalm-import-type ParsedArray from AbstractParsedType
+ */
 final readonly class Literal extends AbstractParsedType
 {
     /**
@@ -20,10 +29,55 @@ final readonly class Literal extends AbstractParsedType
 
     public function getTypeString(string $indent = '    '): string
     {
-        $values = $this->values;
+        $values = array_map(
+            static fn (string|int $value): string|int => is_string($value) ? "'$value'" : $value,
+            $this->values
+        );
 
         sort($values, SORT_STRING);
 
         return implode('|', $values);
+    }
+
+    /**
+     * @param ParsedArray $types
+     */
+    public function hasTypes(array $types): bool
+    {
+        $valueTypes = $this->getTypes();
+
+        return PsalmType::filter($valueTypes, $types) !== [];
+    }
+
+    /**
+     * @param ParsedArray $types
+     */
+    public function withTypes(array $types): self
+    {
+        $hasString = PsalmType::hasStringType($types);
+        $hasInt    = PsalmType::hasIntType($types);
+        $filtered  = array_filter(
+            $this->values,
+            static fn (string|int $value): bool => (is_string($value) && $hasString) || (is_int($value) && $hasInt)
+        );
+
+        return new self(array_values($filtered));
+    }
+
+    /**
+     * @return list<PsalmType>
+     */
+    private function getTypes(): array
+    {
+        $types = [];
+        foreach ($this->values as $value) {
+            if (is_string($value) && ! in_array(PsalmType::String, $types, true)) {
+                $types[] = PsalmType::String;
+            } elseif (! in_array(PsalmType::Int, $types, true)) {
+                $types[] = PsalmType::Int;
+            }
+        }
+
+        return $types;
     }
 }

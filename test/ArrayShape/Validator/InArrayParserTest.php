@@ -40,14 +40,14 @@ final class InArrayParserTest extends TestCase
             'empty'           => [new InArray(['haystack' => []]), [PsalmType::Bool], [PsalmType::Bool]],
             'strict null'     => [new InArray(['haystack' => [null], 'strict' => true]), [PsalmType::String, PsalmType::Null], [PsalmType::Null]],
             'lax null'        => [new InArray(['haystack' => [null], 'strict' => false]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, PsalmType::String]],
-            'strict string'   => [new InArray(['haystack' => ['foo'], 'strict' => true]), [PsalmType::String], [new Literal(["'foo'"])]],
-            'lax string'      => [new InArray(['haystack' => ['foo'], 'strict' => false]), [PsalmType::String], [new Literal(["'foo'"])]],
+            'strict string'   => [new InArray(['haystack' => ['foo'], 'strict' => true]), [PsalmType::String], [new Literal(["foo"])]],
+            'lax string'      => [new InArray(['haystack' => ['foo'], 'strict' => false]), [PsalmType::String], [new Literal(["foo"])]],
             'strict int'      => [new InArray(['haystack' => [123], 'strict' => true]), [PsalmType::String, PsalmType::Int], [new Literal([123])]],
-            'lax int'         => [new InArray(['haystack' => [123], 'strict' => false]), [PsalmType::String, PsalmType::Int], [new Literal([123, "'123'"])]],
+            'lax int'         => [new InArray(['haystack' => [123], 'strict' => false]), [PsalmType::String, PsalmType::Int], [new Literal([123, "123"])]],
             'strict float'    => [new InArray(['haystack' => [1.23], 'strict' => true]), [PsalmType::Float], [PsalmType::Float]],
             'lax float'       => [new InArray(['haystack' => [1.23], 'strict' => false]), [PsalmType::Float], [PsalmType::Float]],
-            'strict multiple' => [new InArray(['haystack' => ['foo', null], 'strict' => true]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, new Literal(["'foo'"])]],
-            'lax multiple'    => [new InArray(['haystack' => ['foo', null], 'strict' => false]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, PsalmType::String, new Literal(["'foo'"])]],
+            'strict multiple' => [new InArray(['haystack' => ['foo', null], 'strict' => true]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, new Literal(["foo"])]],
+            'lax multiple'    => [new InArray(['haystack' => ['foo', null], 'strict' => false]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, PsalmType::String, new Literal(["foo"])]],
         ];
         // phpcs:enable
     }

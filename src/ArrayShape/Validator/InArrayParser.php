@@ -93,7 +93,7 @@ final readonly class InArrayParser implements ValidatorParserInterface
             assert(is_scalar($value) || $value === null);
             $type = PsalmType::fromPhpValue($value);
             if (is_string($value) && PsalmType::hasStringType($existing)) {
-                $literals[] = "'$value'";
+                $literals[] = "$value";
             } elseif (is_int($value) && PsalmType::hasIntType($existing)) {
                 $literals[] = $value;
             } elseif (PsalmType::hasType($type, $existing)) {
@@ -121,7 +121,7 @@ final readonly class InArrayParser implements ValidatorParserInterface
                 $literals[] = $value;
             }
             if ((is_string($value) || is_int($value)) && PsalmType::hasStringType($existing)) {
-                $literals[] = "'$value'";
+                $literals[] = "$value";
                 continue;
             }
             if (PsalmType::hasType($type, $existing)) {
