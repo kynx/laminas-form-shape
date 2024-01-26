@@ -62,4 +62,86 @@
       <code>stringTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/ArrayShape/Validator/BetweenParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/DigitsParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/ExplodeParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/HexParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/InArrayParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesLiteralProvider</code>
+      <code>getTypesTypeProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/IsCountableParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/IsInstanceOfParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/IsbnParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/NotEmptyParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/RegexParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/Sitemap/PriorityParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/StepParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/StringLengthParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/StringValidatorParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/TimezoneParserTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypeProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ConfigProviderTest.php">
+    <PossiblyUnusedMethod>
+      <code>filterParserProvider</code>
+      <code>validatorParserProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
 </files>
