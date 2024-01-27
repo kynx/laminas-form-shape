@@ -12,13 +12,13 @@ use Psr\Container\ContainerInterface;
 use function assert;
 
 /**
- * @psalm-import-type ConfigProviderArray from ConfigProvider
+ * @psalm-import-type FormCliConfigurationArray from ConfigProvider
  */
 final readonly class ExplodeVisitorFactory
 {
     public function __invoke(ContainerInterface $container): ExplodeVisitor
     {
-        /** @var ConfigProviderArray $config */
+        /** @var FormCliConfigurationArray $config */
         $config = $container->get('config') ?? [];
         /** @var array{item-types?: list<PsalmType>} $visitorConfig */
         $visitorConfig = (array) ($config['laminas-form-cli']['array-shape']['validator']['explode'] ?? []);

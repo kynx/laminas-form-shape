@@ -9,13 +9,13 @@ use Laminas\Validator\ValidatorInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * @psalm-import-type ConfigProviderArray from ConfigProvider
+ * @psalm-import-type FormCliConfigurationArray from ConfigProvider
  */
 final readonly class FileValidatorVisitorFactory
 {
     public function __invoke(ContainerInterface $container): FileValidatorVisitor
     {
-        /** @var ConfigProviderArray $config */
+        /** @var FormCliConfigurationArray $config */
         $config = $container->get('config') ?? [];
         /** @var array{validators?: list<class-string<ValidatorInterface>>} $validatorConfig */
         $validatorConfig = (array) ($config['laminas-form-cli']['array-shape']['validator']['file'] ?? []);

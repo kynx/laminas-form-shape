@@ -48,7 +48,7 @@ use Laminas\ServiceManager\ConfigInterface;
  *      filter?: array<string, mixed>,
  *      validator: array<string, mixed>,
  * }
- * @psalm-type ConfigProviderArray = array{
+ * @psalm-type FormCliConfigurationArray = array{
  *     laminas-cli: array,
  *     laminas-form-cli: array{
  *         array-shape: ArrayShapeArray,
@@ -59,7 +59,7 @@ use Laminas\ServiceManager\ConfigInterface;
 final readonly class ConfigProvider
 {
     /**
-     * @return ConfigProviderArray
+     * @return FormCliConfigurationArray
      */
     public function __invoke(): array
     {

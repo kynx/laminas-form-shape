@@ -8,13 +8,13 @@ use Kynx\Laminas\FormCli\ConfigProvider;
 use Psr\Container\ContainerInterface;
 
 /**
- * @psalm-import-type ConfigProviderArray from ConfigProvider
+ * @psalm-import-type FormCliConfigurationArray from ConfigProvider
  */
 final readonly class InArrayVisitorFactory
 {
     public function __invoke(ContainerInterface $container): InArrayVisitor
     {
-        /** @var ConfigProviderArray $config */
+        /** @var FormCliConfigurationArray $config */
         $config        = $container->get('config');
         $visitorConfig = (array) ($config['laminas-form-cli']['array-shape']['validator']['in-array'] ?? []);
 

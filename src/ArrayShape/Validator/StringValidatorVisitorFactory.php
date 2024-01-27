@@ -9,13 +9,13 @@ use Laminas\Validator\ValidatorInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * @psalm-import-type ConfigProviderArray from ConfigProvider
+ * @psalm-import-type FormCliConfigurationArray from ConfigProvider
  */
 final readonly class StringValidatorVisitorFactory
 {
     public function __invoke(ContainerInterface $container): StringValidatorVisitor
     {
-        /** @var ConfigProviderArray $config */
+        /** @var FormCliConfigurationArray $config */
         $config = $container->get('config') ?? [];
         /** @var list<class-string<ValidatorInterface>> $validators */
         $validators = $config['laminas-form-cli']['array-shape']['validator']['string']['validators']
