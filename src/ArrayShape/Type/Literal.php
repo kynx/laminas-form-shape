@@ -16,9 +16,9 @@ use function sort;
 use const SORT_STRING;
 
 /**
- * @psalm-import-type ParsedArray from AbstractParsedType
+ * @psalm-import-type VisitedArray from AbstractVisitedType
  */
-final readonly class Literal extends AbstractParsedType
+final readonly class Literal extends AbstractVisitedType
 {
     /**
      * @param array<int|string> $values
@@ -40,7 +40,7 @@ final readonly class Literal extends AbstractParsedType
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public function hasTypes(array $types): bool
     {
@@ -50,7 +50,7 @@ final readonly class Literal extends AbstractParsedType
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public function withTypes(array $types): self
     {

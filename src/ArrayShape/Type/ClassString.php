@@ -6,7 +6,7 @@ namespace Kynx\Laminas\FormCli\ArrayShape\Type;
 
 use function ltrim;
 
-final readonly class ClassString extends AbstractParsedType
+final readonly class ClassString extends AbstractVisitedType
 {
     /**
      * @param class-string $classString

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Type;
 
 use ArrayIterator;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractParsedType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Generic;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
@@ -18,7 +18,7 @@ use stdClass;
 use function fopen;
 
 /**
- * @psalm-import-type ParsedArray from AbstractParsedType
+ * @psalm-import-type VisitedArray from AbstractVisitedType
  */
 #[CoversClass(PsalmType::class)]
 final class PsalmTypeTest extends TestCase
@@ -47,7 +47,7 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     #[DataProvider('arrayTypeProvider')]
     public function testHasArrayType(array $types, bool $expected): void
@@ -70,7 +70,7 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     #[DataProvider('boolTypeProvider')]
     public function testHasBoolType(array $types, bool $expected): void
@@ -102,7 +102,7 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     #[DataProvider('intTypeProvider')]
     public function testHasIntType(array $types, bool $expected): void
@@ -124,7 +124,7 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     #[DataProvider('stringTypeProvider')]
     public function testHasStringType(array $types, bool $expected): void
@@ -146,10 +146,10 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     #[DataProvider('hasTypeProvider')]
-    public function testHasType(AbstractParsedType|PsalmType $type, array $types, bool $expected): void
+    public function testHasType(AbstractVisitedType|PsalmType $type, array $types, bool $expected): void
     {
         $actual = PsalmType::hasType($type, $types);
         self::assertSame($expected, $actual);
@@ -169,8 +169,8 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $expected
      */
     #[DataProvider('removeArrayTypesProvider')]
     public function testRemoveArrayTypes(array $types, array $expected): void
@@ -191,9 +191,9 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @param VisitedArray $expected
      */
     #[DataProvider('replaceArrayTypesProvider')]
     public function testReplaceArrayTypes(array $types, array $replacements, array $expected): void
@@ -215,9 +215,9 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @param VisitedArray $expected
      */
     #[DataProvider('replaceBoolTypesProvider')]
     public function testReplaceBoolTypes(array $types, array $replacements, array $expected): void
@@ -236,9 +236,9 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @param VisitedArray $expected
      */
     #[DataProvider('replaceIntTypesProvider')]
     public function testReplaceIntTypes(array $types, array $replacements, array $expected): void
@@ -259,9 +259,9 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @param VisitedArray $expected
      */
     #[DataProvider('replaceStringTypesProvider')]
     public function testReplaceStringTypes(array $types, array $replacements, array $expected): void
@@ -282,8 +282,8 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $expected
      */
     #[DataProvider('removeObjectTypesProvider')]
     public function testRemoveObjectTypes(array $types, array $expected): void
@@ -304,8 +304,8 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $expected
      */
     #[DataProvider('removeTypeProvider')]
     public function testRemoveType(PsalmType $type, array $types, array $expected): void
@@ -328,8 +328,8 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $expected
+     * @param VisitedArray $types
+     * @param VisitedArray $expected
      */
     #[DataProvider('replaceTypeProvider')]
     public function testReplaceType(PsalmType $type, PsalmType $replacement, array $types, array $expected): void
@@ -354,8 +354,8 @@ final class PsalmTypeTest extends TestCase
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $filter
+     * @param VisitedArray $types
+     * @param VisitedArray $filter
      */
     #[DataProvider('filterProvider')]
     public function testFilter(array $types, array $filter, array $expected): void

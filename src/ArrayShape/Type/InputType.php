@@ -12,12 +12,12 @@ use function str_contains;
 use const SORT_STRING;
 
 /**
- * @psalm-import-type ParsedArray from AbstractParsedType
+ * @psalm-import-type VisitedArray from AbstractVisitedType
  */
 final readonly class InputType implements TypeNameInterface, TypeStringInterface
 {
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public function __construct(private string $name, private array $types, private bool $optional = false)
     {

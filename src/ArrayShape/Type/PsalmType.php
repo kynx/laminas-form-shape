@@ -19,8 +19,8 @@ use function is_string;
 /**
  * @see \Psalm\Internal\Type\TypeTokenizer for a full list
  *
- * @psalm-import-type ParsedUnion from AbstractParsedType
- * @psalm-import-type ParsedArray from AbstractParsedType
+ * @psalm-import-type VisitedUnion from AbstractVisitedType
+ * @psalm-import-type VisitedArray from AbstractVisitedType
  */
 enum PsalmType: string implements TypeStringInterface
 {
@@ -86,7 +86,7 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public static function hasArrayType(array $types): bool
     {
@@ -94,7 +94,7 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public static function hasBoolType(array $types): bool
     {
@@ -102,7 +102,7 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public static function hasIntType(array $types): bool
     {
@@ -110,7 +110,7 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     public static function hasStringType(array $types): bool
     {
@@ -118,10 +118,10 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedUnion $type
-     * @param ParsedArray $types
+     * @param VisitedUnion $type
+     * @param VisitedArray $types
      */
-    public static function hasType(AbstractParsedType|PsalmType $type, array $types): bool
+    public static function hasType(AbstractVisitedType|PsalmType $type, array $types): bool
     {
         return match ($type) {
             PsalmType::Array  => self::hasArrayType($types),
@@ -133,8 +133,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function removeArrayTypes(array $types): array
     {
@@ -142,9 +142,9 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @return VisitedArray
      */
     public static function replaceArrayTypes(array $types, array $replacements): array
     {
@@ -157,8 +157,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function removeBoolTypes(array $types): array
     {
@@ -166,9 +166,9 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @return VisitedArray
      */
     public static function replaceBoolTypes(array $types, array $replacements): array
     {
@@ -181,8 +181,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function removeIntTypes(array $types): array
     {
@@ -190,9 +190,9 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @return VisitedArray
      */
     public static function replaceIntTypes(array $types, array $replacements): array
     {
@@ -205,8 +205,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function removeStringTypes(array $types): array
     {
@@ -214,8 +214,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function removeType(PsalmType $type, array $types): array
     {
@@ -227,15 +227,15 @@ enum PsalmType: string implements TypeStringInterface
             PsalmType::String => self::removeStringTypes($types),
             default           => array_filter(
                 $types,
-                static fn (AbstractParsedType|PsalmType $test): bool => $test !== $type
+                static fn (AbstractVisitedType|PsalmType $test): bool => $test !== $type
             ),
         };
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $replacements
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @param VisitedArray $replacements
+     * @return VisitedArray
      */
     public static function replaceStringTypes(array $types, array $replacements): array
     {
@@ -248,8 +248,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function removeObjectTypes(array $types): array
     {
@@ -270,8 +270,8 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     public static function replaceType(PsalmType $type, PsalmType $replacement, array $types): array
     {
@@ -287,9 +287,9 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $filter
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @param VisitedArray $filter
+     * @return VisitedArray
      */
     public static function filter(array $types, array $filter): array
     {
@@ -302,9 +302,9 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $search
-     * @param ParsedArray $types
-     * @return ParsedArray
+     * @param VisitedArray $search
+     * @param VisitedArray $types
+     * @return VisitedArray
      */
     private static function getTypes(array $search, array $types): array
     {
@@ -321,15 +321,15 @@ enum PsalmType: string implements TypeStringInterface
     }
 
     /**
-     * @param ParsedArray $types
-     * @param ParsedArray $remove
-     * @return ParsedArray
+     * @param VisitedArray $types
+     * @param VisitedArray $remove
+     * @return VisitedArray
      */
     private static function removeTypes(array $types, array $remove): array
     {
         return array_filter(
             $types,
-            static fn (AbstractParsedType|PsalmType $type): bool => ! in_array($type, $remove)
+            static fn (AbstractVisitedType|PsalmType $type): bool => ! in_array($type, $remove)
         );
     }
 }

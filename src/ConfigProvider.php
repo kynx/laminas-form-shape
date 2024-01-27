@@ -4,47 +4,47 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormCli;
 
-use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListParser;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListParserFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\BooleanParser;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\DigitsParser as DigitsFilterParser;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\InflectorParser;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\ToFloatParser;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\ToIntParser;
-use Kynx\Laminas\FormCli\ArrayShape\Filter\ToNullParser;
-use Kynx\Laminas\FormCli\ArrayShape\FilterParserInterface;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\BooleanVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\DigitsVisitor as DigitsFilterVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\InflectorVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\ToFloatVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\ToIntVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Filter\ToNullVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\BetweenParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsParser as DigitsValidatorParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeParserFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\FileValidatorParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\FileValidatorParserFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\HexParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayParserFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\IsbnParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\IsCountableParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\IsInstanceOfParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\NotEmptyParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexParserFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\Sitemap\PriorityParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\StepParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\StringLengthParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorParser;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorParserFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\TimezoneParser;
-use Kynx\Laminas\FormCli\ArrayShape\ValidatorParserInterface;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\BetweenVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor as DigitsValidatorVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\FileValidatorVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\FileValidatorVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\HexVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\InArrayVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\IsbnVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\IsCountableVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\IsInstanceOfVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\NotEmptyVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\Sitemap\PriorityVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\StepVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\StringLengthVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\TimezoneVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\ServiceManager\ConfigInterface;
 
 /**
  * @psalm-import-type ServiceManagerConfigurationType from ConfigInterface
- * @psalm-type FilterParserList = list<class-string<FilterParserInterface>>
- * @psalm-type ValidatorParserList = list<class-string<ValidatorParserInterface>>
+ * @psalm-type FilterVisitorList = list<class-string<FilterVisitorInterface>>
+ * @psalm-type ValidatorVisitorList = list<class-string<ValidatorVisitorInterface>>
  * @psalm-type ArrayShapeArray = array{
- *      filter-parsers: FilterParserList,
- *      validator-parsers: ValidatorParserList,
+ *      filter-visitors: FilterVisitorList,
+ *      validator-visitors: ValidatorVisitorList,
  *      filter?: array<string, mixed>,
  *      validator: array<string, mixed>,
  * }
@@ -82,34 +82,34 @@ final readonly class ConfigProvider
     {
         return [
             'array-shape' => [
-                'filter-parsers'    => [
-                    AllowListParser::class,
-                    BooleanParser::class,
-                    DigitsFilterParser::class,
-                    InflectorParser::class,
-                    ToFloatParser::class,
-                    ToIntParser::class,
-                    ToNullParser::class,
+                'filter-visitors'    => [
+                    AllowListVisitor::class,
+                    BooleanVisitor::class,
+                    DigitsFilterVisitor::class,
+                    InflectorVisitor::class,
+                    ToFloatVisitor::class,
+                    ToIntVisitor::class,
+                    ToNullVisitor::class,
                 ],
-                'validator-parsers' => [
-                    BetweenParser::class,
-                    DigitsValidatorParser::class,
-                    ExplodeParser::class,
-                    FileValidatorParser::class,
-                    HexParser::class,
-                    InArrayParser::class,
-                    IsbnParser::class,
-                    IsCountableParser::class,
-                    IsInstanceOfParser::class,
-                    NotEmptyParser::class,
-                    PriorityParser::class,
-                    RegexParser::class,
-                    StepParser::class,
-                    StringLengthParser::class,
-                    StringValidatorParser::class,
-                    TimezoneParser::class,
+                'validator-visitors' => [
+                    BetweenVisitor::class,
+                    DigitsValidatorVisitor::class,
+                    ExplodeVisitor::class,
+                    FileValidatorVisitor::class,
+                    HexVisitor::class,
+                    InArrayVisitor::class,
+                    IsbnVisitor::class,
+                    IsCountableVisitor::class,
+                    IsInstanceOfVisitor::class,
+                    NotEmptyVisitor::class,
+                    PriorityVisitor::class,
+                    RegexVisitor::class,
+                    StepVisitor::class,
+                    StringLengthVisitor::class,
+                    StringValidatorVisitor::class,
+                    TimezoneVisitor::class,
                 ],
-                'validator'         => [
+                'validator'          => [
                     'in-array' => [
                         'allow-empty-haystack' => true,
                         'max-literals'         => 10,
@@ -166,12 +166,12 @@ final readonly class ConfigProvider
     {
         return [
             'factories' => [
-                AllowListParser::class       => AllowListParserFactory::class,
-                ExplodeParser::class         => ExplodeParserFactory::class,
-                FileValidatorParser::class   => FileValidatorParserFactory::class,
-                InArrayParser::class         => InArrayParserFactory::class,
-                RegexParser::class           => RegexParserFactory::class,
-                StringValidatorParser::class => StringValidatorParserFactory::class,
+                AllowListVisitor::class       => AllowListVisitorFactory::class,
+                ExplodeVisitor::class         => ExplodeVisitorFactory::class,
+                FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
+                InArrayVisitor::class         => InArrayVisitorFactory::class,
+                RegexVisitor::class           => RegexVisitorFactory::class,
+                StringValidatorVisitor::class => StringValidatorVisitorFactory::class,
             ],
         ];
     }

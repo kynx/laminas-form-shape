@@ -10,7 +10,7 @@ use function sort;
 
 use const SORT_STRING;
 
-final readonly class Generic extends AbstractParsedType
+final readonly class Generic extends AbstractVisitedType
 {
     public function __construct(public PsalmType|ClassString $type, public array $union)
     {

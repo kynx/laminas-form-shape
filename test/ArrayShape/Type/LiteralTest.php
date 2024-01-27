@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormCli\ArrayShape\Type;
 
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractParsedType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @psalm-import-type ParsedArray from AbstractParsedType
+ * @psalm-import-type VisitedArray from AbstractVisitedType
  */
 #[CoversClass(Literal::class)]
 final class LiteralTest extends TestCase
@@ -27,7 +27,7 @@ final class LiteralTest extends TestCase
 
     /**
      * @param list<int|string> $values
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      */
     #[DataProvider('hasTypesProvider')]
     public function testHasTypes(array $values, array $types, bool $expected): void
@@ -52,7 +52,7 @@ final class LiteralTest extends TestCase
 
     /**
      * @param list<int|string> $values
-     * @param ParsedArray $types
+     * @param VisitedArray $types
      * @param list<int|string> $expected
      */
     #[DataProvider('withTypesProvider')]

@@ -38,34 +38,34 @@ final class ConfigProviderTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    #[DataProvider('filterParserProvider')]
-    public function testInvokeReturnsAllFilterParsers(string $filterParser): void
+    #[DataProvider('filterVisitorsProvider')]
+    public function testInvokeReturnsAllFilterVisitors(string $filterVisitor): void
     {
         $config = $this->getConfig();
         /** @psalm-suppress RedundantConditionGivenDocblockType We're testing that docblock is correct */
-        self::assertIsArray($config['laminas-form-cli']['array-shape']['filter-parsers']);
-        $filterProviders = $config['laminas-form-cli']['array-shape']['filter-parsers'];
-        self::assertContains($filterParser, $filterProviders);
+        self::assertIsArray($config['laminas-form-cli']['array-shape']['filter-visitors']);
+        $filterVisitors = $config['laminas-form-cli']['array-shape']['filter-visitors'];
+        self::assertContains($filterVisitor, $filterVisitors);
     }
 
-    public static function filterParserProvider(): array
+    public static function filterVisitorsProvider(): array
     {
-        return self::getClasses('src/ArrayShape/Filter', 'Parser');
+        return self::getClasses('src/ArrayShape/Filter', 'Visitor');
     }
 
-    #[DataProvider('validatorParserProvider')]
-    public function testInvokeReturnsAllValidatorParsers(string $filterParser): void
+    #[DataProvider('validatorVisitorsProvider')]
+    public function testInvokeReturnsAllValidatorVisitors(string $validatorVisitor): void
     {
         $config = $this->getConfig();
         /** @psalm-suppress RedundantConditionGivenDocblockType We're testing that docblock is correct */
-        self::assertIsArray($config['laminas-form-cli']['array-shape']['validator-parsers']);
-        $filterProviders = $config['laminas-form-cli']['array-shape']['validator-parsers'];
-        self::assertContains($filterParser, $filterProviders);
+        self::assertIsArray($config['laminas-form-cli']['array-shape']['validator-visitors']);
+        $validatorVisitors = $config['laminas-form-cli']['array-shape']['validator-visitors'];
+        self::assertContains($validatorVisitor, $validatorVisitors);
     }
 
-    public static function validatorParserProvider(): array
+    public static function validatorVisitorsProvider(): array
     {
-        return self::getClasses('src/ArrayShape/Validator', 'Parser');
+        return self::getClasses('src/ArrayShape/Validator', 'Visitor');
     }
 
     /**
