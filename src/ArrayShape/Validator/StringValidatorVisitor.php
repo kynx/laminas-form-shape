@@ -48,7 +48,7 @@ final readonly class StringValidatorVisitor implements ValidatorVisitorInterface
     {
     }
 
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! in_array($validator::class, $this->stringValidators, true)) {
             return $existing;

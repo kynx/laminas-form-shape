@@ -24,15 +24,15 @@ final class InArrayVisitorTest extends TestCase
     /**
      * @param VisitedArray $existing
      */
-    #[DataProvider('getTypesLiteralProvider')]
-    public function testGetTypesReturnsLiteral(ValidatorInterface $validator, array $existing, array $expected): void
+    #[DataProvider('visitLiteralProvider')]
+    public function testVisitReturnsLiteral(ValidatorInterface $validator, array $existing, array $expected): void
     {
         $visitor = new InArrayVisitor();
-        $actual  = $visitor->getTypes($validator, $existing);
+        $actual  = $visitor->visit($validator, $existing);
         self::assertEquals($expected, $actual);
     }
 
-    public static function getTypesLiteralProvider(): array
+    public static function visitLiteralProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
@@ -55,15 +55,15 @@ final class InArrayVisitorTest extends TestCase
     /**
      * @param VisitedArray $existing
      */
-    #[DataProvider('getTypesTypeProvider')]
-    public function testGetTypesReturnsType(ValidatorInterface $validator, array $existing, array $expected): void
+    #[DataProvider('visitTypeProvider')]
+    public function testVisitReturnsType(ValidatorInterface $validator, array $existing, array $expected): void
     {
         $visitor = new InArrayVisitor(false, 0);
-        $actual  = $visitor->getTypes($validator, $existing);
+        $actual  = $visitor->visit($validator, $existing);
         self::assertEquals($expected, $actual);
     }
 
-    public static function getTypesTypeProvider(): array
+    public static function visitTypeProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [

@@ -11,7 +11,7 @@ use Laminas\Filter\FilterInterface;
 
 final readonly class BooleanVisitor implements FilterVisitorInterface
 {
-    public function getTypes(FilterInterface $filter, array $existing): array
+    public function visit(FilterInterface $filter, array $existing): array
     {
         if (! $filter instanceof Boolean) {
             return $existing;

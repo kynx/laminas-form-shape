@@ -13,6 +13,14 @@ use Kynx\Laminas\FormCli\ArrayShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToNullVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputFilterVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputFilterVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitorFactory;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitorManager;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitorManagerFactory;
+use Kynx\Laminas\FormCli\ArrayShape\InputFilterVisitorInterface;
+use Kynx\Laminas\FormCli\ArrayShape\InputVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\BetweenVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor as DigitsValidatorVisitor;
@@ -36,15 +44,20 @@ use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\StringValidatorVisitorFactory;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\TimezoneVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
+use Laminas\InputFilter\Input;
+use Laminas\InputFilter\InputInterface;
 use Laminas\ServiceManager\ConfigInterface;
 
 /**
  * @psalm-import-type ServiceManagerConfigurationType from ConfigInterface
  * @psalm-type FilterVisitorList = list<class-string<FilterVisitorInterface>>
  * @psalm-type ValidatorVisitorList = list<class-string<ValidatorVisitorInterface>>
+ * @psalm-type InputVisitorArray = array<class-string<InputInterface>, class-string<InputVisitorInterface>>
  * @psalm-type ArrayShapeArray = array{
+ *      indent: string,
  *      filter-visitors: FilterVisitorList,
  *      validator-visitors: ValidatorVisitorList,
+ *      input-visitors: InputVisitorArray,
  *      filter?: array<string, mixed>,
  *      validator: array<string, mixed>,
  * }
@@ -82,6 +95,7 @@ final readonly class ConfigProvider
     {
         return [
             'array-shape' => [
+                'indent'             => '    ',
                 'filter-visitors'    => [
                     AllowListVisitor::class,
                     BooleanVisitor::class,
@@ -109,6 +123,15 @@ final readonly class ConfigProvider
                     StringValidatorVisitor::class,
                     TimezoneVisitor::class,
                 ],
+                'input-visitors'     => [
+                    Input::class => InputVisitor::class,
+                ],
+                'filter'             => [
+                    'allow-list' => [
+                        'allow-empty-haystack' => true,
+                        'max-literals'         => 10,
+                    ],
+                ],
                 'validator'          => [
                     'in-array' => [
                         'allow-empty-haystack' => true,
@@ -119,20 +142,20 @@ final readonly class ConfigProvider
                             [
                                 /* @link \Laminas\Form\Element\Color */
                                 'pattern' => '/^#[0-9a-fA-F]{6}$/',
-                                'types'   => [PsalmType::String],
-                                'replace' => [],
+                                'types'   => [],
+                                'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
                             ],
                             [
                                 /* @link \Laminas\Form\Element\Email */
                                 'pattern' => '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/',
-                                'types'   => [PsalmType::String],
-                                'replace' => [],
+                                'types'   => [],
+                                'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
                             ],
                             [
                                 /* @link \Laminas\Form\Element\Month */
                                 'pattern' => '/^[0-9]{4}\-(0[1-9]|1[012])$/',
-                                'types'   => [PsalmType::String],
-                                'replace' => [],
+                                'types'   => [],
+                                'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
                             ],
                             [
                                 /* @link \Laminas\Form\Element\Number */
@@ -149,8 +172,8 @@ final readonly class ConfigProvider
                             [
                                 /* @link \Laminas\Form\Element\Week */
                                 'pattern' => '/^[0-9]{4}\-W[0-9]{2}$/',
-                                'types'   => [PsalmType::String],
-                                'replace' => [],
+                                'types'   => [],
+                                'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
                             ],
                         ],
                     ],
@@ -165,11 +188,17 @@ final readonly class ConfigProvider
     private function getDependencyConfig(): array
     {
         return [
+            'aliases'   => [
+                InputFilterVisitorInterface::class => InputFilterVisitor::class,
+            ],
             'factories' => [
                 AllowListVisitor::class       => AllowListVisitorFactory::class,
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
                 InArrayVisitor::class         => InArrayVisitorFactory::class,
+                InputFilterVisitor::class     => InputFilterVisitorFactory::class,
+                InputVisitor::class           => InputVisitorFactory::class,
+                InputVisitorManager::class    => InputVisitorManagerFactory::class,
                 RegexVisitor::class           => RegexVisitorFactory::class,
                 StringValidatorVisitor::class => StringValidatorVisitorFactory::class,
             ],

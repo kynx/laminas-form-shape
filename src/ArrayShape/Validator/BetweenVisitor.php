@@ -13,7 +13,7 @@ use function is_numeric;
 
 final readonly class BetweenVisitor implements ValidatorVisitorInterface
 {
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! $validator instanceof Between) {
             return $existing;

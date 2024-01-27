@@ -9,5 +9,5 @@ use Laminas\InputFilter\InputInterface;
 
 interface InputVisitorInterface
 {
-    public function getInputType(InputInterface $input): InputType;
+    public function visit(InputInterface $input): InputType;
 }

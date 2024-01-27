@@ -31,7 +31,7 @@ final class ExplodeVisitorFactoryTest extends TestCase
         $instance = $factory($container);
 
         $validator = new Explode(['validator' => new Digits()]);
-        $types     = $instance->getTypes($validator, [PsalmType::String]);
+        $types     = $instance->visit($validator, [PsalmType::String]);
         self::assertSame([PsalmType::String, PsalmType::NumericString], $types);
     }
 
@@ -51,10 +51,10 @@ final class ExplodeVisitorFactoryTest extends TestCase
         $factory  = new ExplodeVisitorFactory();
         $instance = $factory($container);
 
-        $validatorVisitor->method('getTypes')
+        $validatorVisitor->method('visit')
             ->willReturn([PsalmType::Bool]);
         $validator = self::createStub(ValidatorInterface::class);
-        $types     = $instance->getTypes(new Explode(['validator' => $validator]), [PsalmType::Int]);
+        $types     = $instance->visit(new Explode(['validator' => $validator]), [PsalmType::Int]);
         self::assertSame([PsalmType::Bool], $types);
     }
 

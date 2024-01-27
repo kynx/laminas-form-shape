@@ -34,7 +34,7 @@ final readonly class ExplodeVisitor implements ValidatorVisitorInterface
     {
     }
 
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! $validator instanceof Explode) {
             return $existing;
@@ -111,7 +111,7 @@ final readonly class ExplodeVisitor implements ValidatorVisitorInterface
         }
 
         foreach ($this->validatorVisitors as $visitor) {
-            $types = $visitor->getTypes($validator, $types);
+            $types = $visitor->visit($validator, $types);
         }
 
         $types = array_unique($types);

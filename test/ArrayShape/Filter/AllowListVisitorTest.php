@@ -28,7 +28,7 @@ final class AllowListVisitorTest extends TestCase
     public function testGetTypesReturnsLiteral(FilterInterface $filter, array $existing, array $expected): void
     {
         $visitor = new AllowListVisitor();
-        $actual  = $visitor->getTypes($filter, $existing);
+        $actual  = $visitor->visit($filter, $existing);
         self::assertEquals($expected, $actual);
     }
 
@@ -57,7 +57,7 @@ final class AllowListVisitorTest extends TestCase
     public function testGetTypesReturnsTypes(FilterInterface $filter, array $existing, array $expected): void
     {
         $visitor = new AllowListVisitor(true, 1);
-        $actual  = $visitor->getTypes($filter, $existing);
+        $actual  = $visitor->visit($filter, $existing);
         self::assertSame($expected, $actual);
     }
 
@@ -78,7 +78,7 @@ final class AllowListVisitorTest extends TestCase
         $expected = [PsalmType::Null];
         $visitor  = new AllowListVisitor(false);
         $filter   = new AllowList(['list' => []]);
-        $actual   = $visitor->getTypes($filter, [PsalmType::String]);
+        $actual   = $visitor->visit($filter, [PsalmType::String]);
         self::assertSame($expected, $actual);
     }
 }

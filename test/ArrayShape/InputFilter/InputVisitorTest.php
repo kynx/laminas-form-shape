@@ -39,7 +39,7 @@ final class InputVisitorTest extends TestCase
         $input->getFilterChain()->attach(new ToInt());
         $visitor = new InputVisitor([new ToIntVisitor()], []);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -51,7 +51,7 @@ final class InputVisitorTest extends TestCase
         $input->getFilterChain()->attach($filter);
         $visitor = new InputVisitor([new ToIntVisitor()], []);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -62,7 +62,7 @@ final class InputVisitorTest extends TestCase
         $input->getValidatorChain()->attach(new Digits());
         $visitor = new InputVisitor([], [new DigitsVisitor()]);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -74,7 +74,7 @@ final class InputVisitorTest extends TestCase
         $input->getFilterChain()->attach(new AllowList(['list' => ['bar']]));
         $visitor = new InputVisitor([new AllowListVisitor(false, 0)], [new NotEmptyVisitor()]);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -95,7 +95,7 @@ final class InputVisitorTest extends TestCase
         $input->setRequired($required);
         $visitor = new InputVisitor([], []);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -121,7 +121,7 @@ final class InputVisitorTest extends TestCase
         $input->getValidatorChain()->attach(new Digits());
         $visitor = new InputVisitor([new BooleanVisitor()], [new DigitsVisitor()]);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -144,7 +144,7 @@ final class InputVisitorTest extends TestCase
         $input->getFilterChain()->attach(new ToFloat());
         $visitor = new InputVisitor([new ToFloatVisitor()], []);
 
-        $actual = $visitor->getInputType($input);
+        $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
     }
 
@@ -156,7 +156,7 @@ final class InputVisitorTest extends TestCase
         $visitor = new InputVisitor([new BooleanVisitor()], [new DigitsVisitor()]);
 
         self::expectException(ArrayShapeException::class);
-        self::expectExceptionMessage("Cannot parse type for 'foo'");
-        $visitor->getInputType($input);
+        self::expectExceptionMessage("Cannot get type for 'foo'");
+        $visitor->visit($input);
     }
 }

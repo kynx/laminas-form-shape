@@ -43,7 +43,7 @@ final class RegexVisitorFactoryTest extends TestCase
         $instance = $factory($container);
 
         $validator = new Regex('(^-?\d*(\.\d+)?$)');
-        $actual    = $instance->getTypes($validator, [PsalmType::String]);
+        $actual    = $instance->visit($validator, [PsalmType::String]);
         self::assertSame([PsalmType::NumericString], $actual);
     }
 }

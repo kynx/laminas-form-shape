@@ -25,15 +25,15 @@ final class ToNullVisitorTest extends TestCase
     /**
      * @param VisitedArray $existing
      */
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(FilterInterface $filter, array $existing, array $expected): void
+    #[DataProvider('visitProvider')]
+    public function testVisit(FilterInterface $filter, array $existing, array $expected): void
     {
         $visitor = new ToNullVisitor();
-        $actual  = $visitor->getTypes($filter, $existing);
+        $actual  = $visitor->visit($filter, $existing);
         self::assertSame($expected, array_values($actual));
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [

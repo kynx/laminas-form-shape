@@ -26,7 +26,7 @@ final class StringValidatorVisitorFactoryTest extends TestCase
 
         $expected  = [PsalmType::NonEmptyString];
         $validator = new Barcode();
-        $actual    = $instance->getTypes($validator, [PsalmType::String]);
+        $actual    = $instance->visit($validator, [PsalmType::String]);
         self::assertSame($expected, $actual);
     }
 
@@ -42,12 +42,12 @@ final class StringValidatorVisitorFactoryTest extends TestCase
 
         $expected  = [PsalmType::NonEmptyString];
         $validator = new Barcode();
-        $actual    = $instance->getTypes($validator, [PsalmType::String]);
+        $actual    = $instance->visit($validator, [PsalmType::String]);
         self::assertSame($expected, $actual);
 
         $expected  = [PsalmType::Bool];
         $validator = new BusinessIdentifierCode();
-        $actual    = $instance->getTypes($validator, $expected);
+        $actual    = $instance->visit($validator, $expected);
         self::assertSame($expected, $actual);
     }
 

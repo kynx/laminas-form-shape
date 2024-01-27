@@ -27,7 +27,7 @@ final class InArrayVisitorFactoryTest extends TestCase
 
         $types     = [PsalmType::String, PsalmType::Null];
         $validator = new InArray(['haystack' => []]);
-        $actual    = $instance->getTypes($validator, $types);
+        $actual    = $instance->visit($validator, $types);
 
         self::assertSame($types, $actual);
     }
@@ -44,7 +44,7 @@ final class InArrayVisitorFactoryTest extends TestCase
         $expected  = [PsalmType::String];
         $types     = [PsalmType::String, PsalmType::Null];
         $validator = new InArray(['haystack' => range(0, 10), 'strict' => false]);
-        $actual    = $instance->getTypes($validator, $types);
+        $actual    = $instance->visit($validator, $types);
 
         self::assertSame($expected, $actual);
     }
@@ -61,7 +61,7 @@ final class InArrayVisitorFactoryTest extends TestCase
 
         $types     = [PsalmType::String, PsalmType::Null];
         $validator = new InArray(['haystack' => []]);
-        $actual    = $instance->getTypes($validator, $types);
+        $actual    = $instance->visit($validator, $types);
 
         self::assertSame([], $actual);
     }
@@ -79,7 +79,7 @@ final class InArrayVisitorFactoryTest extends TestCase
         $expected  = [PsalmType::String];
         $types     = [PsalmType::String, PsalmType::Null];
         $validator = new InArray(['haystack' => ['a']]);
-        $actual    = $instance->getTypes($validator, $types);
+        $actual    = $instance->visit($validator, $types);
 
         self::assertSame($expected, $actual);
     }

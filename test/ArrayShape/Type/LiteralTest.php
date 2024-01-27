@@ -19,8 +19,8 @@ final class LiteralTest extends TestCase
 {
     public function testGetTypeStringSortsValues(): void
     {
-        $expected = "'zebedee'|123";
-        $literal  = new Literal(["zebedee", 123]);
+        $expected = "'abc'|'zebedee'|123";
+        $literal  = new Literal([123, "zebedee", 'abc']);
         $actual   = $literal->getTypeString();
         self::assertSame($expected, $actual);
     }

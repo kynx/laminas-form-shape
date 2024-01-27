@@ -22,7 +22,7 @@ use function str_ends_with;
 use const DIRECTORY_SEPARATOR;
 
 /**
- * @psalm-import-type ConfigProviderArray from ConfigProvider
+ * @psalm-import-type FormCliConfigurationArray from ConfigProvider
  */
 #[CoversClass(ConfigProvider::class)]
 final class ConfigProviderTest extends TestCase
@@ -69,7 +69,7 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @return ConfigProviderArray
+     * @return FormCliConfigurationArray
      */
     private function getConfig(): array
     {

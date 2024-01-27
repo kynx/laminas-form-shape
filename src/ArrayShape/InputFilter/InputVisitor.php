@@ -39,7 +39,7 @@ final readonly class InputVisitor implements InputVisitorInterface
     {
     }
 
-    public function getInputType(InputInterface $input): InputType
+    public function visit(InputInterface $input): InputType
     {
         $types = [PsalmType::String];
 
@@ -95,7 +95,7 @@ final readonly class InputVisitor implements InputVisitorInterface
     {
         $types = $existing;
         foreach ($this->filterVisitors as $visitor) {
-            $types = $visitor->getTypes($filter, $types);
+            $types = $visitor->visit($filter, $types);
         }
 
         return $types;
@@ -109,7 +109,7 @@ final readonly class InputVisitor implements InputVisitorInterface
     {
         $types = $existing;
         foreach ($this->validatorVisitors as $visitor) {
-            $types = $visitor->getTypes($validator, $types);
+            $types = $visitor->visit($validator, $types);
         }
 
         return $types;

@@ -26,10 +26,10 @@ final class TimezoneVisitorTest extends TestCase
      * @param VisitedArray $existing
      */
     #[DataProvider('getTypeProvider')]
-    public function testGetTypes(ValidatorInterface $validator, array $existing, array $expected): void
+    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
     {
         $visitor = new TimezoneVisitor();
-        $actual  = $visitor->getTypes($validator, $existing);
+        $actual  = $visitor->visit($validator, $existing);
         self::assertSame($expected, array_values($actual));
     }
 

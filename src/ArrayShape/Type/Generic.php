@@ -19,7 +19,7 @@ final readonly class Generic extends AbstractVisitedType
     public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         if ($this->union === []) {
-            return $this->type->getTypeString(0, $indentString);
+            return $this->type->getTypeString();
         }
         $union = array_map(
             static fn (TypeStringInterface $type): string => $type->getTypeString(),

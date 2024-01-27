@@ -34,16 +34,37 @@ final class ArrayTypeTest extends TestCase
     {
         $expected = <<<END_OF_EXPECTED
         array{
-            foo: float|int,
-            bar?: string,
+            foo:     float|int,
+            barbar?: string,
         }
         END_OF_EXPECTED;
 
-        $compositeType = new ArrayType('baz', [
+        $type   = new ArrayType('baz', [
             new InputType('foo', [PsalmType::Int, PsalmType::Float]),
-            new InputType('bar', [PsalmType::String], true),
+            new InputType('barbar', [PsalmType::String], true),
         ]);
-        $actual        = $compositeType->getTypeString();
+        $actual = $type->getTypeString();
+        self::assertSame($expected, $actual);
+    }
+
+    public function testGetTypeStringRecursesArrayTypes(): void
+    {
+        $expected = <<<END_OF_EXPECTED
+        array{
+            foo: string,
+            bar: array{
+                baz: int,
+            },
+        }
+        END_OF_EXPECTED;
+
+        $type   = new ArrayType('', [
+            new InputType('foo', [PsalmType::String]),
+            new ArrayType('bar', [
+                new InputType('baz', [PsalmType::Int]),
+            ]),
+        ]);
+        $actual = $type->getTypeString();
         self::assertSame($expected, $actual);
     }
 }

@@ -11,7 +11,7 @@ use Laminas\Filter\Inflector;
 
 final readonly class InflectorVisitor implements FilterVisitorInterface
 {
-    public function getTypes(FilterInterface $filter, array $existing): array
+    public function visit(FilterInterface $filter, array $existing): array
     {
         if (! $filter instanceof Inflector) {
             return $existing;

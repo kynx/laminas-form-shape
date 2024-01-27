@@ -26,7 +26,7 @@ final class AllowListVisitorFactoryTest extends TestCase
 
         $expected = [PsalmType::Null, new Literal(["a"])];
         $filter   = new AllowList(['list' => ['a'], 'strict' => true]);
-        $actual   = $instance->getTypes($filter, [PsalmType::String]);
+        $actual   = $instance->visit($filter, [PsalmType::String]);
 
         self::assertEquals($expected, $actual);
     }
@@ -43,7 +43,7 @@ final class AllowListVisitorFactoryTest extends TestCase
 
         $expected = [PsalmType::Null];
         $filter   = new AllowList(['list' => []]);
-        $actual   = $instance->getTypes($filter, [PsalmType::String]);
+        $actual   = $instance->visit($filter, [PsalmType::String]);
 
         self::assertSame($expected, $actual);
     }
@@ -60,7 +60,7 @@ final class AllowListVisitorFactoryTest extends TestCase
 
         $expected = [PsalmType::String, PsalmType::Null];
         $filter   = new AllowList(['list' => ['a']]);
-        $actual   = $instance->getTypes($filter, [PsalmType::String]);
+        $actual   = $instance->visit($filter, [PsalmType::String]);
 
         self::assertSame($expected, $actual);
     }

@@ -24,7 +24,7 @@ final readonly class RegexVisitor implements ValidatorVisitorInterface
         $this->patterns = $patterns;
     }
 
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! $validator instanceof Regex) {
             return $existing;

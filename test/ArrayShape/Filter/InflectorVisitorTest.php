@@ -16,15 +16,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(InflectorVisitor::class)]
 final class InflectorVisitorTest extends TestCase
 {
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(FilterInterface $filter, array $expected): void
+    #[DataProvider('visitProvider')]
+    public function testVisit(FilterInterface $filter, array $expected): void
     {
         $visitor = new InflectorVisitor();
-        $actual  = $visitor->getTypes($filter, [PsalmType::String, PsalmType::Null]);
+        $actual  = $visitor->visit($filter, [PsalmType::String, PsalmType::Null]);
         self::assertSame($expected, $actual);
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         return [
             'invalid'   => [new Boolean(), [PsalmType::String, PsalmType::Null]],

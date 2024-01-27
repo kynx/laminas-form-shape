@@ -16,15 +16,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(BooleanVisitor::class)]
 final class BooleanVisitorTest extends TestCase
 {
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(FilterInterface $filter, array $expected): void
+    #[DataProvider('visitProvider')]
+    public function testVisit(FilterInterface $filter, array $expected): void
     {
         $visitor = new BooleanVisitor();
-        $actual  = $visitor->getTypes($filter, [PsalmType::String, PsalmType::Null]);
+        $actual  = $visitor->visit($filter, [PsalmType::String, PsalmType::Null]);
         self::assertSame($expected, $actual);
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [

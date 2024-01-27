@@ -26,7 +26,7 @@ final class FileValidatorVisitorFactoryTest extends TestCase
 
         $expected  = [PsalmType::NonEmptyString];
         $validator = new Crc32();
-        $actual    = $instance->getTypes($validator, [PsalmType::String]);
+        $actual    = $instance->visit($validator, [PsalmType::String]);
 
         self::assertEquals($expected, $actual);
     }
@@ -43,7 +43,7 @@ final class FileValidatorVisitorFactoryTest extends TestCase
 
         $expected  = [PsalmType::Bool];
         $validator = new Crc32();
-        $actual    = $instance->getTypes($validator, [PsalmType::Bool]);
+        $actual    = $instance->visit($validator, [PsalmType::Bool]);
 
         self::assertEquals($expected, $actual);
     }

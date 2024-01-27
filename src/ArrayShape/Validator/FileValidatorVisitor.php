@@ -53,7 +53,7 @@ final readonly class FileValidatorVisitor implements ValidatorVisitorInterface
     {
     }
 
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! in_array($validator::class, $this->fileValidators, true)) {
             return $existing;

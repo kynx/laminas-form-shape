@@ -12,8 +12,13 @@ use function sprintf;
 
 final class ArrayShapeException extends RuntimeException implements ExceptionInterface
 {
-    public static function cannotParseInputType(InputInterface $input): self
+    public static function noVisitorForInput(InputInterface $input): self
     {
-        return new self(sprintf("Cannot parse type for '%s'", $input->getName()));
+        return new self(sprintf("No input visitor configured for '%s'", $input::class));
+    }
+
+    public static function cannotGetInputType(InputInterface $input): self
+    {
+        return new self(sprintf("Cannot get type for '%s'", $input->getName()));
     }
 }

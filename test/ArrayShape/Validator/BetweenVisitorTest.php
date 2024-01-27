@@ -25,15 +25,15 @@ final class BetweenVisitorTest extends TestCase
     /**
      * @param VisitedArray $existing
      */
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(ValidatorInterface $validator, array $existing, array $expected): void
+    #[DataProvider('visitProvider')]
+    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
     {
         $visitor = new BetweenVisitor();
-        $actual  = $visitor->getTypes($validator, $existing);
+        $actual  = $visitor->visit($validator, $existing);
         self::assertEquals($expected, array_values($actual));
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [

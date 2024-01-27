@@ -30,19 +30,19 @@ final class ExplodeVisitorTest extends TestCase
      * @param list<PsalmType> $itemTypes
      * @param VisitedArray $existing
      */
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(
+    #[DataProvider('visitProvider')]
+    public function testVisit(
         ValidatorInterface $validator,
         array $itemTypes,
         array $existing,
         array $expected
     ): void {
         $visitor = new ExplodeVisitor([new DigitsVisitor()], $itemTypes);
-        $actual  = $visitor->getTypes($validator, $existing);
+        $actual  = $visitor->visit($validator, $existing);
         self::assertEquals($expected, $actual);
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         $digits      = new Digits();
         $validator   = new Explode(['validator' => $digits]);

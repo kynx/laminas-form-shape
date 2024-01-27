@@ -11,7 +11,7 @@ use Laminas\Validator\ValidatorInterface;
 
 final readonly class PriorityVisitor implements ValidatorVisitorInterface
 {
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! $validator instanceof Priority) {
             return $existing;

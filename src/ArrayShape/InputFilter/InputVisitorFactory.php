@@ -13,13 +13,13 @@ use Psr\Container\ContainerInterface;
 use function assert;
 
 /**
- * @psalm-import-type ConfigProviderArray from ConfigProvider
+ * @psalm-import-type FormCliConfigurationArray from ConfigProvider
  */
 final readonly class InputVisitorFactory
 {
     public function __invoke(ContainerInterface $container): InputVisitor
     {
-        /** @var ConfigProviderArray $config */
+        /** @var FormCliConfigurationArray $config */
         $config = $container->get('config') ?? [];
 
         $filterVisitors = [];

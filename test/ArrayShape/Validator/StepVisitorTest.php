@@ -25,15 +25,15 @@ final class StepVisitorTest extends TestCase
     /**
      * @param VisitedArray $existing
      */
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(ValidatorInterface $validator, array $existing, array $expected): void
+    #[DataProvider('visitProvider')]
+    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
     {
         $visitor = new StepVisitor();
-        $actual  = $visitor->getTypes($validator, $existing);
+        $actual  = $visitor->visit($validator, $existing);
         self::assertSame($expected, array_values($actual));
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [

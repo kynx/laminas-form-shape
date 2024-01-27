@@ -32,15 +32,15 @@ use function array_values;
 #[CoversClass(StringValidatorVisitor::class)]
 final class StringValidatorVisitorTest extends TestCase
 {
-    #[DataProvider('getTypesProvider')]
-    public function testGetTypes(ValidatorInterface $validator, array $expected): void
+    #[DataProvider('visitProvider')]
+    public function testVisit(ValidatorInterface $validator, array $expected): void
     {
         $visitor = new StringValidatorVisitor();
-        $actual  = $visitor->getTypes($validator, [PsalmType::String, PsalmType::Null]);
+        $actual  = $visitor->visit($validator, [PsalmType::String, PsalmType::Null]);
         self::assertSame($expected, array_values($actual));
     }
 
-    public static function getTypesProvider(): array
+    public static function visitProvider(): array
     {
         $httpClient     = self::createStub(ClientInterface::class);
         $requestFactory = self::createStub(RequestFactoryInterface::class);
@@ -65,18 +65,18 @@ final class StringValidatorVisitorTest extends TestCase
         // phpcs:enable
     }
 
-    public function testGetTypesFiltersExisting(): void
+    public function testVisitFiltersExisting(): void
     {
         $visitor = new StringValidatorVisitor();
-        $actual  = $visitor->getTypes(new Barcode(), [PsalmType::Bool]);
+        $actual  = $visitor->visit(new Barcode(), [PsalmType::Bool]);
         self::assertSame([], $actual);
     }
 
-    public function testGetTypesUsesConstructorValidators(): void
+    public function testVisitUsesConstructorValidators(): void
     {
         $expected = [PsalmType::Bool];
         $visitor  = new StringValidatorVisitor([Uuid::class]);
-        $actual   = $visitor->getTypes(new Barcode(), $expected);
+        $actual   = $visitor->visit(new Barcode(), $expected);
         self::assertSame($expected, $actual);
     }
 }

@@ -11,7 +11,7 @@ use Laminas\Filter\ToInt;
 
 final readonly class ToIntVisitor implements FilterVisitorInterface
 {
-    public function getTypes(FilterInterface $filter, array $existing): array
+    public function visit(FilterInterface $filter, array $existing): array
     {
         if (! $filter instanceof ToInt) {
             return $existing;

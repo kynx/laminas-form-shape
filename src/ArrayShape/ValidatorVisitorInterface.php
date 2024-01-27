@@ -16,5 +16,5 @@ interface ValidatorVisitorInterface
      * @param VisitedArray $existing
      * @return VisitedArray
      */
-    public function getTypes(ValidatorInterface $validator, array $existing): array;
+    public function visit(ValidatorInterface $validator, array $existing): array;
 }

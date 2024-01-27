@@ -14,7 +14,7 @@ final readonly class HexVisitor implements ValidatorVisitorInterface
     /**
      * @inheritDoc
      */
-    public function getTypes(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, array $existing): array
     {
         if (! $validator instanceof Hex) {
             return $existing;

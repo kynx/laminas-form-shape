@@ -22,7 +22,7 @@ final class InputVisitorFactoryTest extends TestCase
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $config    = $this->getConfig([AllowListVisitor::class], [DigitsVisitor::class]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
@@ -34,7 +34,7 @@ final class InputVisitorFactoryTest extends TestCase
         $input->getFilterChain()->attach(new AllowList(['list' => [1.23], 'strict' => false]));
         $input->getValidatorChain()->attach(new Digits());
 
-        $actual = $instance->getInputType($input);
+        $actual = $instance->visit($input);
         self::assertEquals($expected, $actual);
     }
 
