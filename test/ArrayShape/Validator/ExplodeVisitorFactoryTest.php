@@ -21,7 +21,7 @@ final class ExplodeVisitorFactoryTest extends TestCase
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $config    = $this->getConfig(['item-types' => [PsalmType::String]], [DigitsVisitor::class]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
                 ['config', $config],
@@ -38,8 +38,8 @@ final class ExplodeVisitorFactoryTest extends TestCase
     public function testInvokeGetsValidatorFromContainer(): void
     {
         $config           = $this->getConfig(['item-types' => [PsalmType::String]], [ValidatorVisitorInterface::class]);
-        $validatorVisitor = $this->createStub(ValidatorVisitorInterface::class);
-        $container        = $this->createStub(ContainerInterface::class);
+        $validatorVisitor = self::createStub(ValidatorVisitorInterface::class);
+        $container        = self::createStub(ContainerInterface::class);
         $container->method('has')
             ->willReturn(true);
         $container->method('get')
@@ -53,7 +53,7 @@ final class ExplodeVisitorFactoryTest extends TestCase
 
         $validatorVisitor->method('getTypes')
             ->willReturn([PsalmType::Bool]);
-        $validator = $this->createStub(ValidatorInterface::class);
+        $validator = self::createStub(ValidatorInterface::class);
         $types     = $instance->getTypes(new Explode(['validator' => $validator]), [PsalmType::Int]);
         self::assertSame([PsalmType::Bool], $types);
     }

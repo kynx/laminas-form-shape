@@ -17,7 +17,7 @@ final class AllowListVisitorFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultInstance(): void
     {
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', []]]);
 
@@ -34,7 +34,7 @@ final class AllowListVisitorFactoryTest extends TestCase
     public function testInvokeConfiguresAllowEmptyList(): void
     {
         $config    = $this->getConfig(['allow-empty-list' => false]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
@@ -51,7 +51,7 @@ final class AllowListVisitorFactoryTest extends TestCase
     public function testInvokeConfiguresMaxLiteral(): void
     {
         $config    = $this->getConfig(['max-literals' => 0]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 

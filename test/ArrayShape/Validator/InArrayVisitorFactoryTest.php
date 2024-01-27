@@ -18,7 +18,7 @@ final class InArrayVisitorFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultEmptyHaystackInstance(): void
     {
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', []]]);
 
@@ -34,7 +34,7 @@ final class InArrayVisitorFactoryTest extends TestCase
 
     public function testInvokeReturnsDefaultMaxLiterals(): void
     {
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', []]]);
 
@@ -52,7 +52,7 @@ final class InArrayVisitorFactoryTest extends TestCase
     public function testInvokeConfiguresEmptyHaystack(): void
     {
         $config    = $this->getConfig(['allow-empty-haystack' => false]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
@@ -69,7 +69,7 @@ final class InArrayVisitorFactoryTest extends TestCase
     public function testInvokeConfiguresMaxLiterals(): void
     {
         $config    = $this->getConfig(['max-literals' => 0]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 

@@ -33,7 +33,7 @@ final class RegexVisitorFactoryTest extends TestCase
                 ],
             ],
         ];
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
                 ['config', $config],

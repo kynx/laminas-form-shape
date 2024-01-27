@@ -17,7 +17,7 @@ final class FileValidatorVisitorFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultInstance(): void
     {
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', []]]);
 
@@ -34,7 +34,7 @@ final class FileValidatorVisitorFactoryTest extends TestCase
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $config    = $this->getConfig([ExcludeMimeType::class]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 

@@ -17,7 +17,7 @@ final class StringValidatorVisitorFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultInstance(): void
     {
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', []]]);
 
@@ -33,7 +33,7 @@ final class StringValidatorVisitorFactoryTest extends TestCase
     public function testInvokeReturnsConfiguredInstance(): void
     {
         $config    = $this->getConfig([Barcode::class]);
-        $container = $this->createStub(ContainerInterface::class);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
