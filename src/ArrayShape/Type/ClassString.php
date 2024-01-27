@@ -15,7 +15,7 @@ final readonly class ClassString extends AbstractParsedType
     {
     }
 
-    public function getTypeString(string $indent = '    '): string
+    public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         return '\\' . ltrim($this->classString, '\\');
     }

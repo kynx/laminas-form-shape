@@ -27,7 +27,7 @@ final readonly class Literal extends AbstractParsedType
     {
     }
 
-    public function getTypeString(string $indent = '    '): string
+    public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         $values = array_map(
             static fn (string|int $value): string|int => is_string($value) ? "'$value'" : $value,

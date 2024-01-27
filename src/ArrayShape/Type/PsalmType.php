@@ -296,7 +296,7 @@ enum PsalmType: string implements TypeStringInterface
         return self::getTypes($filter, $types);
     }
 
-    public function getTypeString(string $indent = '    '): string
+    public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         return $this->value;
     }

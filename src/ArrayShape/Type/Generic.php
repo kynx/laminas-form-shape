@@ -16,10 +16,10 @@ final readonly class Generic extends AbstractParsedType
     {
     }
 
-    public function getTypeString(string $indent = '    '): string
+    public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         if ($this->union === []) {
-            return $this->type->getTypeString();
+            return $this->type->getTypeString(0, $indentString);
         }
         $union = array_map(
             static fn (TypeStringInterface $type): string => $type->getTypeString(),

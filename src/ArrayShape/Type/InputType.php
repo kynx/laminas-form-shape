@@ -31,7 +31,7 @@ final readonly class InputType implements TypeNameInterface, TypeStringInterface
         return $this->escapeName();
     }
 
-    public function getTypeString(string $indent = '    '): string
+    public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         $types = array_map(
             static fn (TypeStringInterface $type): string => $type->getTypeString(),

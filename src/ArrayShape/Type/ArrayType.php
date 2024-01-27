@@ -27,18 +27,30 @@ final readonly class ArrayType implements TypeNameInterface, TypeStringInterface
         return $this->escapeName();
     }
 
-    public function getTypeString(string $indent = '    '): string
+    public function getTypeString(int $indent = 0, string $indentString = '    '): string
     {
         $inputs = array_map(
-            fn (TypeNameInterface&TypeStringInterface $input): string => $this->formatInput($input, $indent),
+            fn (TypeNameInterface&TypeStringInterface $input): string => $this->formatInput(
+                $input,
+                $indent + 1,
+                $indentString
+            ),
             $this->types
         );
-        return sprintf("array{\n%s%s}", $indent, implode($indent, $inputs));
+        return sprintf("array{\n%s}", implode('', $inputs));
     }
 
-    private function formatInput(TypeNameInterface&TypeStringInterface $input, string $indent): string
-    {
-        return $input->getTypeName() . ': ' . $input->getTypeString(str_repeat($indent, 2)) . ",\n";
+    private function formatInput(
+        TypeNameInterface&TypeStringInterface $input,
+        int $indent,
+        string $indentString
+    ): string {
+        return sprintf(
+            "%s%s: %s,\n",
+            str_repeat($indentString, $indent),
+            $input->getTypeName(),
+            $input->getTypeString($indent, $indentString)
+        );
     }
 
     private function escapeName(): string
