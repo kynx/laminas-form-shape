@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormCli;
 
+use Generator;
 use Kynx\Laminas\FormCli\ConfigProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
 use RegexIterator;
+use Throwable;
 
 use function array_keys;
 use function array_pop;
@@ -34,14 +38,14 @@ final class ConfigProviderTest extends TestCase
             'laminas-form-cli',
             'dependencies',
         ];
-        $actual   = array_keys($this->getConfig());
+        $actual   = array_keys(self::getConfig());
         self::assertSame($expected, $actual);
     }
 
     #[DataProvider('filterVisitorsProvider')]
     public function testInvokeReturnsAllFilterVisitors(string $filterVisitor): void
     {
-        $config = $this->getConfig();
+        $config = self::getConfig();
         /** @psalm-suppress RedundantConditionGivenDocblockType We're testing that docblock is correct */
         self::assertIsArray($config['laminas-form-cli']['array-shape']['filter-visitors']);
         $filterVisitors = $config['laminas-form-cli']['array-shape']['filter-visitors'];
@@ -56,7 +60,7 @@ final class ConfigProviderTest extends TestCase
     #[DataProvider('validatorVisitorsProvider')]
     public function testInvokeReturnsAllValidatorVisitors(string $validatorVisitor): void
     {
-        $config = $this->getConfig();
+        $config = self::getConfig();
         /** @psalm-suppress RedundantConditionGivenDocblockType We're testing that docblock is correct */
         self::assertIsArray($config['laminas-form-cli']['array-shape']['validator-visitors']);
         $validatorVisitors = $config['laminas-form-cli']['array-shape']['validator-visitors'];
@@ -68,12 +72,63 @@ final class ConfigProviderTest extends TestCase
         return self::getClasses('src/ArrayShape/Validator', 'Visitor');
     }
 
+    #[CoversNothing]
+    #[DataProvider('aliasProvider')]
+    public function testAllAliasesResolve(ContainerInterface $container, string $alias): void
+    {
+        self::assertContainerHasDependency($container, $alias);
+    }
+
+    public static function aliasProvider(): Generator
+    {
+        $container = self::getContainer();
+        $config    = self::getConfig();
+        /** @var array<class-string, class-string> $aliases */
+        $aliases = $config['dependencies']['aliases'] ?? [];
+        foreach (array_keys($aliases) as $alias) {
+            yield $alias => [$container, $alias];
+        }
+    }
+
+    #[CoversNothing]
+    #[DataProvider('factoryProvider')]
+    public function testAllFactoriesResolve(ContainerInterface $container, string $dependency): void
+    {
+        self::assertContainerHasDependency($container, $dependency);
+    }
+
+    public static function factoryProvider(): Generator
+    {
+        $container = self::getContainer();
+        $config    = self::getConfig();
+        /** @var array<class-string, class-string> $factories */
+        $factories = $config['dependencies']['factories'] ?? [];
+        foreach (array_keys($factories) as $dependency) {
+            yield $dependency => [$container, $dependency];
+        }
+    }
+
+    private static function assertContainerHasDependency(ContainerInterface $container, string $dependency): void
+    {
+        self::assertTrue($container->has($dependency));
+        try {
+            $container->get($dependency);
+        } catch (Throwable $e) {
+            self::fail($e->getMessage());
+        }
+    }
+
     /**
      * @return FormCliConfigurationArray
      */
-    private function getConfig(): array
+    private static function getConfig(): array
     {
         return (new ConfigProvider())();
+    }
+
+    private static function getContainer(): ContainerInterface
+    {
+        return include __DIR__ . '/container.php';
     }
 
     private static function getClasses(string $dir, string $suffix): array

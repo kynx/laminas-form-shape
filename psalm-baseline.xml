@@ -161,6 +161,8 @@
   </file>
   <file src="test/ConfigProviderTest.php">
     <PossiblyUnusedMethod>
+      <code>aliasProvider</code>
+      <code>factoryProvider</code>
       <code>filterVisitorsProvider</code>
       <code>validatorVisitorsProvider</code>
     </PossiblyUnusedMethod>

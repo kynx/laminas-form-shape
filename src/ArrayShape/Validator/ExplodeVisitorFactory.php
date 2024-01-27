@@ -26,6 +26,10 @@ final readonly class ExplodeVisitorFactory
 
         $validatorVisitors = [];
         foreach ($config['laminas-form-cli']['array-shape']['validator-visitors'] ?? [] as $visitorName) {
+            if ($visitorName === ExplodeVisitor::class) {
+                continue;
+            }
+
             $validatorVisitors[] = $this->getVisitor($container, $visitorName);
         }
 

@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeVisitorFactory;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Validator\Digits;
@@ -56,6 +57,29 @@ final class ExplodeVisitorFactoryTest extends TestCase
         $validator = self::createStub(ValidatorInterface::class);
         $types     = $instance->visit(new Explode(['validator' => $validator]), [PsalmType::Int]);
         self::assertSame([PsalmType::Bool], $types);
+    }
+
+    public function testInvokeExcludesExplodeVisitor(): void
+    {
+        $config         = $this->getConfig(['item-types' => [PsalmType::String]], [ExplodeVisitor::class]);
+        $explodeVisitor = self::createMock(ValidatorVisitorInterface::class);
+        $container      = self::createStub(ContainerInterface::class);
+        $container->method('has')
+            ->willReturn(true);
+        $container->method('get')
+            ->willReturnMap([
+                ['config', $config],
+                [ExplodeVisitor::class, $explodeVisitor],
+            ]);
+
+        $factory  = new ExplodeVisitorFactory();
+        $instance = $factory($container);
+
+        $explodeVisitor->expects(self::never())
+            ->method('visit');
+        $validator = self::createStub(ValidatorInterface::class);
+        $types     = $instance->visit(new Explode(['validator' => $validator]), [PsalmType::Int]);
+        self::assertSame([PsalmType::Int], $types);
     }
 
     private function getConfig(array $visitorConfig, array $validatorVisitors): array
