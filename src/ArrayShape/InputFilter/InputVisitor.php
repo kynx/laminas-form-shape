@@ -81,7 +81,7 @@ final readonly class InputVisitor implements InputVisitorInterface
         }
 
         if ($types === []) {
-            throw ArrayShapeException::cannotParseInputType($input);
+            throw ArrayShapeException::cannotGetInputType($input);
         }
 
         return new InputType($input->getName(), $unique, $hasFallback || ! $input->isRequired());
