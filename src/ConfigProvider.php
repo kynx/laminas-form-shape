@@ -23,6 +23,9 @@ use Kynx\Laminas\FormCli\ArrayShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\InputVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\BetweenVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\CsrfVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\DateStepVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\DateVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor as DigitsValidatorVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\ExplodeVisitorFactory;
@@ -107,6 +110,9 @@ final readonly class ConfigProvider
                 ],
                 'validator-visitors' => [
                     BetweenVisitor::class,
+                    CsrfVisitor::class,
+                    DateStepVisitor::class,
+                    DateVisitor::class,
                     DigitsValidatorVisitor::class,
                     ExplodeVisitor::class,
                     FileValidatorVisitor::class,

@@ -89,6 +89,21 @@
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/ArrayShape/Validator/CsrfVisitorTest.php">
+    <PossiblyUnusedMethod>
+      <code>visitProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/DateStepVisitorTest.php">
+    <PossiblyUnusedMethod>
+      <code>visitProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Validator/DateVisitorTest.php">
+    <PossiblyUnusedMethod>
+      <code>visitProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/ArrayShape/Validator/DigitsVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
