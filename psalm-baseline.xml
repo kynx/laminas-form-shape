@@ -43,20 +43,20 @@
       <code>addNullProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Type/ArrayTypeTest.php">
+  <file src="test/ArrayShape/Shape/ArrayShapeTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeNameProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/ArrayShape/Shape/InputShapeTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypeNameProvider</code>
+      <code>getTypeStringProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/ArrayShape/Type/ClassStringTest.php">
     <PossiblyUnusedMethod>
       <code>matchesProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/ArrayShape/Type/InputTypeTest.php">
-    <PossiblyUnusedMethod>
-      <code>getTypeNameProvider</code>
-      <code>getTypeStringProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/ArrayShape/Type/LiteralTest.php">

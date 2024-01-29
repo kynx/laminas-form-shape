@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormCli\ArrayShape\InputFilter;
 
 use Kynx\Laminas\FormCli\ArrayShape\InputFilterVisitorInterface;
-use Kynx\Laminas\FormCli\ArrayShape\Type\ArrayType;
+use Kynx\Laminas\FormCli\ArrayShape\Shape\ArrayShape;
 use Laminas\InputFilter\InputFilterInterface;
 use Laminas\InputFilter\InputInterface;
 
@@ -17,7 +17,7 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
     {
     }
 
-    public function visit(InputFilterInterface $inputFilter, string $name = '', int $indent = 0): ArrayType
+    public function visit(InputFilterInterface $inputFilter, string $name = '', int $indent = 0): ArrayShape
     {
         $types = [];
         foreach (array_keys($inputFilter->getRawValues()) as $childName) {
@@ -31,6 +31,6 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
             $types[] = $this->visit($child, (string) $childName, $indent + 1);
         }
 
-        return new ArrayType($name, $types);
+        return new ArrayShape($name, $types);
     }
 }

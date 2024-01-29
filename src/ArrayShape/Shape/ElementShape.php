@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Laminas\FormCli\ArrayShape\Type;
+namespace Kynx\Laminas\FormCli\ArrayShape\Shape;
+
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeNameInterface;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeStringInterface;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 
 use function array_map;
 use function implode;
@@ -14,7 +18,7 @@ use const SORT_STRING;
 /**
  * @psalm-import-type VisitedArray from TypeUtil
  */
-final readonly class InputType implements TypeNameInterface, TypeStringInterface
+final readonly class ElementShape implements TypeNameInterface, TypeStringInterface
 {
     /**
      * @param VisitedArray $types

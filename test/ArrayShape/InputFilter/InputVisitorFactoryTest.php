@@ -6,7 +6,7 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\InputFilter;
 
 use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitorFactory;
-use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
+use Kynx\Laminas\FormCli\ArrayShape\Shape\ElementShape;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor;
 use Laminas\Filter\AllowList;
@@ -29,7 +29,7 @@ final class InputVisitorFactoryTest extends TestCase
         $factory  = new InputVisitorFactory();
         $instance = $factory($container);
 
-        $expected = new InputType('foo', [PsalmType::NumericString]);
+        $expected = new ElementShape('foo', [PsalmType::NumericString]);
         $input    = new Input('foo');
         $input->getFilterChain()->attach(new AllowList(['list' => [1.23], 'strict' => false]));
         $input->getValidatorChain()->attach(new Digits());

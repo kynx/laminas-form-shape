@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Laminas\FormCli\ArrayShape\Type;
+namespace Kynx\Laminas\FormCli\ArrayShape\Shape;
+
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeNameInterface;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeStringInterface;
 
 use function array_map;
 use function array_reduce;
@@ -14,7 +17,7 @@ use function str_pad;
 use function str_repeat;
 use function strlen;
 
-final readonly class ArrayType implements TypeNameInterface, TypeStringInterface
+final readonly class ArrayShape implements TypeNameInterface, TypeStringInterface
 {
     /**
      * @param list<TypeNameInterface&TypeStringInterface> $types

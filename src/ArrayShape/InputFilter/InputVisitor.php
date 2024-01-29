@@ -7,7 +7,7 @@ namespace Kynx\Laminas\FormCli\ArrayShape\InputFilter;
 use Kynx\Laminas\FormCli\ArrayShape\ArrayShapeException;
 use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\InputVisitorInterface;
-use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
+use Kynx\Laminas\FormCli\ArrayShape\Shape\ElementShape;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
@@ -39,7 +39,7 @@ final readonly class InputVisitor implements InputVisitorInterface
     {
     }
 
-    public function visit(InputInterface $input): InputType
+    public function visit(InputInterface $input): ElementShape
     {
         $types = [PsalmType::String];
 
@@ -90,7 +90,7 @@ final readonly class InputVisitor implements InputVisitorInterface
             throw ArrayShapeException::cannotGetInputType($input);
         }
 
-        return new InputType($input->getName(), $unique, $hasFallback || ! $input->isRequired());
+        return new ElementShape($input->getName(), $unique, $hasFallback || ! $input->isRequired());
     }
 
     /**

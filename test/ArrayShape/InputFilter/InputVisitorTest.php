@@ -10,7 +10,7 @@ use Kynx\Laminas\FormCli\ArrayShape\Filter\BooleanVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitor;
-use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
+use Kynx\Laminas\FormCli\ArrayShape\Shape\ElementShape;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
@@ -34,7 +34,7 @@ final class InputVisitorTest extends TestCase
 {
     public function testGetInputTypeParsesFilter(): void
     {
-        $expected = new InputType('foo', [PsalmType::String, PsalmType::Int]);
+        $expected = new ElementShape('foo', [PsalmType::String, PsalmType::Int]);
         $input    = new Input('foo');
         $input->getFilterChain()->attach(new ToInt());
         $visitor = new InputVisitor([new ToIntVisitor()], []);
@@ -45,7 +45,7 @@ final class InputVisitorTest extends TestCase
 
     public function testGetInputTypeSkipsCallableFilters(): void
     {
-        $expected = new InputType('foo', [PsalmType::String]);
+        $expected = new ElementShape('foo', [PsalmType::String]);
         $filter   = static fn (): never => self::fail("Should not be called");
         $input    = new Input('foo');
         $input->getFilterChain()->attach($filter);
@@ -57,7 +57,7 @@ final class InputVisitorTest extends TestCase
 
     public function testGetInputTypeParsesValidator(): void
     {
-        $expected = new InputType('foo', [PsalmType::NumericString]);
+        $expected = new ElementShape('foo', [PsalmType::NumericString]);
         $input    = new Input('foo');
         $input->getValidatorChain()->attach(new Digits());
         $visitor = new InputVisitor([], [new DigitsVisitor()]);
@@ -76,7 +76,7 @@ final class InputVisitorTest extends TestCase
         bool $required,
         array $expected
     ): void {
-        $expected = new InputType('foo', $expected, ! $required);
+        $expected = new ElementShape('foo', $expected, ! $required);
         $input    = new Input('foo');
         $input->setContinueIfEmpty($continueIfEmpty);
         $input->setAllowEmpty($allowEmpty);
@@ -114,7 +114,7 @@ final class InputVisitorTest extends TestCase
         bool $required,
         array $expected
     ): void {
-        $expected = new InputType('foo', $expected, ! $required);
+        $expected = new ElementShape('foo', $expected, ! $required);
         $input    = new Input('foo');
         $input->setContinueIfEmpty($continueIfEmpty);
         $input->setAllowEmpty($allowEmpty);
@@ -140,7 +140,7 @@ final class InputVisitorTest extends TestCase
     #[DataProvider('addFallbackProvider')]
     public function testGetInputTypeAddsFallback(mixed $fallback, array $expected): void
     {
-        $expected = new InputType('foo', $expected, true);
+        $expected = new ElementShape('foo', $expected, true);
         $input    = new Input('foo');
         $input->setFallbackValue($fallback);
         $input->getFilterChain()->attach(new Boolean());
@@ -164,7 +164,7 @@ final class InputVisitorTest extends TestCase
 
     public function testGetInputTypeReturnsUniqueTypes(): void
     {
-        $expected = new InputType('foo', [PsalmType::String, PsalmType::Float], true);
+        $expected = new ElementShape('foo', [PsalmType::String, PsalmType::Float], true);
         $input    = new Input('foo');
         $input->setFallbackValue(1.23);
         $input->getFilterChain()->attach(new ToFloat());

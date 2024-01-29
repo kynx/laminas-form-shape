@@ -7,8 +7,8 @@ namespace KynxTest\Laminas\FormCli\ArrayShape\InputFilter;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormCli\ArrayShape\Type\ArrayType;
-use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
+use Kynx\Laminas\FormCli\ArrayShape\Shape\ArrayShape;
+use Kynx\Laminas\FormCli\ArrayShape\Shape\ElementShape;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
@@ -31,9 +31,9 @@ final class InputFilterVisitorTest extends TestCase
 
     public function testGetArrayTypeReturnsInputTypes(): void
     {
-        $expected = new ArrayType('', [
-            new InputType('foo', [PsalmType::String], false),
-            new InputType('bar', [PsalmType::String], false),
+        $expected = new ArrayShape('', [
+            new ElementShape('foo', [PsalmType::String], false),
+            new ElementShape('bar', [PsalmType::String], false),
         ]);
 
         $inputFilter = new InputFilter();
@@ -46,10 +46,10 @@ final class InputFilterVisitorTest extends TestCase
 
     public function testGetArrayTypeRecursesInputFilter(): void
     {
-        $expected = new ArrayType('', [
-            new ArrayType('foo', [
-                new InputType('bar', [PsalmType::String], false),
-                new InputType('baz', [PsalmType::String], false),
+        $expected = new ArrayShape('', [
+            new ArrayShape('foo', [
+                new ElementShape('bar', [PsalmType::String], false),
+                new ElementShape('baz', [PsalmType::String], false),
             ]),
         ]);
 
