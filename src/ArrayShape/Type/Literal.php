@@ -42,7 +42,7 @@ final readonly class Literal extends AbstractVisitedType
     /**
      * @param VisitedArray $types
      */
-    public function hasTypes(array $types): bool
+    public function matches(array $types): bool
     {
         $valueTypes = $this->getTypes();
 

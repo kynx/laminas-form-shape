@@ -33,7 +33,7 @@ final class LiteralTest extends TestCase
     public function testHasTypes(array $values, array $types, bool $expected): void
     {
         $literal = new Literal($values);
-        $actual  = $literal->hasTypes($types);
+        $actual  = $literal->matches($types);
         self::assertSame($expected, $actual);
     }
 

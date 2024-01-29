@@ -311,9 +311,10 @@ enum PsalmType: string implements TypeStringInterface
         $found = [];
         foreach ($types as $type) {
             $found[] = match ($type::class) {
-                ClassString::class, PsalmType::class => in_array($type, $search) ? $type : null,
-                Generic::class                       => in_array($type->type, $search) ? $type : null,
-                Literal::class                       => $type->hasTypes($search) ? $type->withTypes($search) : null
+                ClassString::class => $type->matches($search) ? $type : null,
+                Generic::class     => in_array($type->type, $search) ? $type : null,
+                Literal::class     => $type->matches($search) ? $type->withTypes($search) : null,
+                PsalmType::class   => in_array($type, $search) ? $type : null,
             };
         }
 
