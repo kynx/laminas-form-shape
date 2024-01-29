@@ -37,7 +37,14 @@ final readonly class RegexVisitor implements ValidatorVisitorInterface
         }
 
         $types    = $pattern->types;
-        $replaced = PsalmType::filter($existing, [PsalmType::Float, PsalmType::Int, PsalmType::String]);
+        $replaced = PsalmType::filter($existing, [
+            PsalmType::Float,
+            PsalmType::Int,
+            PsalmType::NegativeInt,
+            PsalmType::PositiveInt,
+            PsalmType::String,
+            PsalmType::NonEmptyString,
+        ]);
         foreach ($pattern->replace as $replacement) {
             [$search, $replace] = $replacement;
             $replaced           = PsalmType::replaceType($search, $replace, $replaced);

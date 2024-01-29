@@ -35,7 +35,7 @@ final class RegexVisitorTest extends TestCase
     {
         $patterns = [
             new RegexPattern(self::INT, [PsalmType::Int], [[PsalmType::String, PsalmType::NumericString]]),
-            new RegexPattern(self::NO_UNDERSCORE, [PsalmType::String], []),
+            new RegexPattern(self::NO_UNDERSCORE, [PsalmType::String, PsalmType::NonEmptyString], []),
         ];
         $visitor  = new RegexVisitor(...$patterns);
         $actual   = $visitor->visit($validator, $existing);
@@ -50,6 +50,8 @@ final class RegexVisitorTest extends TestCase
             'no regex' => [new Regex(self::DATE), [PsalmType::Bool], [PsalmType::Bool]],
             'replace'  => [new Regex(self::INT), [PsalmType::Int, PsalmType::String], [PsalmType::Int, PsalmType::NumericString]],
             'filter'   => [new Regex(self::NO_UNDERSCORE), [PsalmType::String, PsalmType::Null], [PsalmType::String]],
+            'existing invalid' => [new Regex(self::NO_UNDERSCORE), [PsalmType::Float], []],
+            'existing non-empty' => [new Regex(self::NO_UNDERSCORE), [PsalmType::NonEmptyString], [PsalmType::NonEmptyString]]
         ];
         // phpcs:enable
     }
