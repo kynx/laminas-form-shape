@@ -39,6 +39,7 @@
   <file src="test/ArrayShape/InputFilter/InputVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>addFallbackProvider</code>
+      <code>addNotEmptyProvider</code>
       <code>addNullProvider</code>
     </PossiblyUnusedMethod>
   </file>

@@ -66,16 +66,42 @@ final class InputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testGetInputTypeAddsNotEmptyValidator(): void
-    {
-        $expected = new InputType('foo', [PsalmType::NonEmptyString], false);
+    /**
+     * @param VisitedArray $expected
+     */
+    #[DataProvider('addNotEmptyProvider')]
+    public function testGetInputTypeAddsNotEmptyValidator(
+        bool $continueIfEmpty,
+        bool $allowEmpty,
+        bool $required,
+        array $expected
+    ): void {
+        $expected = new InputType('foo', $expected, ! $required);
         $input    = new Input('foo');
-        $input->setContinueIfEmpty(false);
+        $input->setContinueIfEmpty($continueIfEmpty);
+        $input->setAllowEmpty($allowEmpty);
+        $input->setRequired($required);
         $input->getFilterChain()->attach(new AllowList(['list' => ['bar']]));
         $visitor = new InputVisitor([new AllowListVisitor(false, 0)], [new NotEmptyVisitor()]);
 
         $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);
+    }
+
+    public static function addNotEmptyProvider(): array
+    {
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        return [
+            "continue, allow, required"                 => [true, true, true, [PsalmType::String, PsalmType::Null]],
+            "continue, allow, not required"             => [true, true, false, [PsalmType::String, PsalmType::Null]],
+            "continue, don't allow, required"           => [true, false, true, [PsalmType::String, PsalmType::Null]],
+            "continue, don't allow, not required"       => [true, false, false, [PsalmType::String, PsalmType::Null]],
+            "don't continue, allow, required"           => [false, true, true, [PsalmType::NonEmptyString, PsalmType::Null]],
+            "don't continue, allow, not required"       => [false, true, false, [PsalmType::String, PsalmType::Null]],
+            "don't continue, don't allow, required"     => [false, false, true, [PsalmType::NonEmptyString]],
+            "don't continue, don't allow, not required" => [false, false, false, [PsalmType::String, PsalmType::Null]],
+        ];
+        // phpcs:enable
     }
 
     /**

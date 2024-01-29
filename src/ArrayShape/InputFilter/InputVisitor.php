@@ -54,7 +54,14 @@ final readonly class InputVisitor implements InputVisitorInterface
             static fn (array $queueItem): ValidatorInterface => $queueItem['instance'],
             $input->getValidatorChain()->getValidators()
         );
-        if (! $input->allowEmpty()) {
+
+        $continueIfEmpty = $input instanceof EmptyContextInterface && $input->continueIfEmpty();
+        /**
+         * There's some weirdness here: on the default `Text` element, upstream `''` validates, but `' '` fails. So
+         * while I _think_ this should be `! $continueIfEmpty && ($input->isRequired() || ! $input->allowEmpty())`, it
+         * can't be. And I shudder to think of the mayhem it would cause if I raised it as a bug ;)
+         */
+        if (! $continueIfEmpty && $input->isRequired()) {
             array_unshift($validators, new NotEmpty());
         }
 
@@ -62,7 +69,6 @@ final readonly class InputVisitor implements InputVisitorInterface
             $types = $this->getValidatorTypes($validator, $types);
         }
 
-        $continueIfEmpty = $input instanceof EmptyContextInterface && $input->continueIfEmpty();
         if (! $continueIfEmpty && ($input->allowEmpty() || ! $input->isRequired())) {
             $types[] = PsalmType::Null;
         }
