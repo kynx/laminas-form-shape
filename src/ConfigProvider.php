@@ -158,6 +158,12 @@ final readonly class ConfigProvider
                                 'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
                             ],
                             [
+                                /* @link \Laminas\Form\Element\MonthSelect */
+                                'pattern' => '/^[0-9]{4}\-(0?[1-9]|1[012])$/',
+                                'types'   => [],
+                                'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
+                            ],
+                            [
                                 /* @link \Laminas\Form\Element\Number */
                                 'pattern' => '(^-?\d*(\.\d+)?$)',
                                 'types'   => [PsalmType::Int, PsalmType::Float],
@@ -166,7 +172,7 @@ final readonly class ConfigProvider
                             [
                                 /* @link \Laminas\Form\Element\Tel */
                                 'pattern' => "/^[^\r\n]*$/",
-                                'types'   => [PsalmType::String],
+                                'types'   => [PsalmType::String, PsalmType::NonEmptyString],
                                 'replace' => [],
                             ],
                             [

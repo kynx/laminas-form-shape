@@ -46,12 +46,12 @@ final class RegexVisitorTest extends TestCase
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid'  => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'no regex' => [new Regex(self::DATE), [PsalmType::Bool], [PsalmType::Bool]],
-            'replace'  => [new Regex(self::INT), [PsalmType::Int, PsalmType::String], [PsalmType::Int, PsalmType::NumericString]],
-            'filter'   => [new Regex(self::NO_UNDERSCORE), [PsalmType::String, PsalmType::Null], [PsalmType::String]],
-            'existing invalid' => [new Regex(self::NO_UNDERSCORE), [PsalmType::Float], []],
-            'existing non-empty' => [new Regex(self::NO_UNDERSCORE), [PsalmType::NonEmptyString], [PsalmType::NonEmptyString]]
+            'invalid'            => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
+            'no regex'           => [new Regex(self::DATE), [PsalmType::Bool], [PsalmType::Bool]],
+            'replace'            => [new Regex(self::INT), [PsalmType::Int, PsalmType::String], [PsalmType::Int, PsalmType::NumericString]],
+            'filter'             => [new Regex(self::NO_UNDERSCORE), [PsalmType::String, PsalmType::Null], [PsalmType::String]],
+            'existing invalid'   => [new Regex(self::NO_UNDERSCORE), [PsalmType::Float], []],
+            'existing non-empty' => [new Regex(self::NO_UNDERSCORE), [PsalmType::NonEmptyString], [PsalmType::NonEmptyString]],
         ];
         // phpcs:enable
     }

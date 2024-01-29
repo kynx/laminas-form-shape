@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli;
 
 use Generator;
+use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexVisitor;
 use Kynx\Laminas\FormCli\ConfigProvider;
+use Laminas\Validator\Regex;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -27,6 +31,7 @@ use const DIRECTORY_SEPARATOR;
 
 /**
  * @psalm-import-type FormCliConfigurationArray from ConfigProvider
+ * @psalm-import-type VisitedArray from AbstractVisitedType
  */
 #[CoversClass(ConfigProvider::class)]
 final class ConfigProviderTest extends TestCase
@@ -106,6 +111,43 @@ final class ConfigProviderTest extends TestCase
         foreach (array_keys($factories) as $dependency) {
             yield $dependency => [$container, $dependency];
         }
+    }
+
+    /**
+     * @param non-empty-string $pattern
+     * @param VisitedArray $existing
+     */
+    #[CoversNothing]
+    #[DataProvider('regexPatternProvider')]
+    public function testRegexPatternsValidate(
+        RegexVisitor $visitor,
+        string $pattern,
+        array $existing,
+        array $expected
+    ): void {
+        $actual = $visitor->visit(new Regex($pattern), $existing);
+        self::assertEquals($expected, $actual);
+    }
+
+    public static function regexPatternProvider(): array
+    {
+        $container = self::getContainer();
+        $visitor   = $container->get(RegexVisitor::class);
+
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        return [
+            'color'                   => [$visitor, '/^#[0-9a-fA-F]{6}$/', [PsalmType::String], [PsalmType::NonEmptyString]],
+            'email'                   => [$visitor, '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/', [PsalmType::String], [PsalmType::NonEmptyString]],
+            'month'                   => [$visitor, '/^[0-9]{4}\-(0[1-9]|1[012])$/', [PsalmType::String], [PsalmType::NonEmptyString]],
+            'month-select'            => [$visitor, '/^[0-9]{4}\-(0?[1-9]|1[012])$/', [PsalmType::String], [PsalmType::NonEmptyString]],
+            'number int'              => [$visitor, '(^-?\d*(\.\d+)?$)', [PsalmType::Int], [PsalmType::Int]],
+            'number string'           => [$visitor, '(^-?\d*(\.\d+)?$)', [PsalmType::String], [PsalmType::NumericString]],
+            'number non-empty-string' => [$visitor, '(^-?\d*(\.\d+)?$)', [PsalmType::NonEmptyString], [PsalmType::NumericString]],
+            'tel'                     => [$visitor, "/^[^\r\n]*$/", [PsalmType::String], [PsalmType::String]],
+            'tel non-empty-string'    => [$visitor, "/^[^\r\n]*$/", [PsalmType::NonEmptyString], [PsalmType::NonEmptyString]],
+            'week'                    => [$visitor, '/^[0-9]{4}\-W[0-9]{2}$/', [PsalmType::String], [PsalmType::NonEmptyString]],
+        ];
+        // phpcs:enable
     }
 
     private static function assertContainerHasDependency(ContainerInterface $container, string $dependency): void
