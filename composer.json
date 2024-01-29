@@ -6,7 +6,8 @@
   "keywords": [
     "laminas",
     "form",
-    "psalm"
+    "psalm",
+    "dev"
   ],
   "authors": [
     {
@@ -18,6 +19,12 @@
     "sort-packages": true,
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "extra": {
+    "laminas": {
+      "component": "Kynx\\Laminas\\FormCli",
+      "config-provider": "Kynx\\Laminas\\FormCli\\ConfigProvider"
     }
   },
   "require": {
