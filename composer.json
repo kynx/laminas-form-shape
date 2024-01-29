@@ -34,6 +34,7 @@
     "nette/php-generator": "^4.1"
   },
   "require-dev": {
+    "cuyz/valinor": "^1.8",
     "laminas/laminas-coding-standard": "^2.5",
     "laminas/laminas-i18n": "^2.26",
     "laminas/laminas-servicemanager": "^3.22",

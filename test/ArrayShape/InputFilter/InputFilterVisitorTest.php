@@ -32,8 +32,8 @@ final class InputFilterVisitorTest extends TestCase
     public function testGetArrayTypeReturnsInputTypes(): void
     {
         $expected = new ArrayShape('', [
-            new ElementShape('foo', [PsalmType::String], false),
-            new ElementShape('bar', [PsalmType::String], false),
+            new ElementShape('foo', [PsalmType::Null, PsalmType::String], false),
+            new ElementShape('bar', [PsalmType::Null, PsalmType::String], false),
         ]);
 
         $inputFilter = new InputFilter();
@@ -48,8 +48,8 @@ final class InputFilterVisitorTest extends TestCase
     {
         $expected = new ArrayShape('', [
             new ArrayShape('foo', [
-                new ElementShape('bar', [PsalmType::String], false),
-                new ElementShape('baz', [PsalmType::String], false),
+                new ElementShape('bar', [PsalmType::Null, PsalmType::String], false),
+                new ElementShape('baz', [PsalmType::Null, PsalmType::String], false),
             ]),
         ]);
 

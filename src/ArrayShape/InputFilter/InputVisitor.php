@@ -41,7 +41,7 @@ final readonly class InputVisitor implements InputVisitorInterface
 
     public function visit(InputInterface $input): ElementShape
     {
-        $types = [PsalmType::String];
+        $types = [PsalmType::Null, PsalmType::String];
 
         foreach ($input->getFilterChain()->getIterator() as $filter) {
             if (! $filter instanceof FilterInterface) {
@@ -61,7 +61,7 @@ final readonly class InputVisitor implements InputVisitorInterface
          * while I _think_ this should be `! $continueIfEmpty && ($input->isRequired() || ! $input->allowEmpty())`, it
          * can't be. And I shudder to think of the mayhem it would cause if I raised it as a bug ;)
          */
-        if (! $continueIfEmpty && $input->isRequired()) {
+        if (! $continueIfEmpty && $input->isRequired() && ! $input->allowEmpty()) {
             array_unshift($validators, new NotEmpty());
         }
 
@@ -70,6 +70,7 @@ final readonly class InputVisitor implements InputVisitorInterface
         }
 
         if (! $continueIfEmpty && ($input->allowEmpty() || ! $input->isRequired())) {
+            $types   = TypeUtil::replaceStringTypes($types, [PsalmType::String]);
             $types[] = PsalmType::Null;
         }
 

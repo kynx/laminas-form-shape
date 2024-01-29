@@ -31,7 +31,9 @@ final class InputFilterVisitorFactoryTest extends TestCase
         $factory  = new InputFilterVisitorFactory();
         $instance = $factory($container);
 
-        $expected    = new ArrayShape('', [new ElementShape('foo', [PsalmType::String])], false);
+        $expected    = new ArrayShape('', [
+            new ElementShape('foo', [PsalmType::Null, PsalmType::String]),
+        ], false);
         $inputFilter = new InputFilter();
         $inputFilter->add(new Input('foo'));
 

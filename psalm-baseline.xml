@@ -40,7 +40,6 @@
     <PossiblyUnusedMethod>
       <code>addFallbackProvider</code>
       <code>addNotEmptyProvider</code>
-      <code>addNullProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/ArrayShape/Shape/ArrayShapeTest.php">
