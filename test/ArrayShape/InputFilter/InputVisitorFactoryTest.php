@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\InputFilter;
 
 use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitorFactory;
 use Kynx\Laminas\FormCli\ArrayShape\Shape\ElementShape;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor;
+use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Filter\AllowList;
+use Laminas\Filter\FilterInterface;
 use Laminas\InputFilter\Input;
 use Laminas\Validator\Digits;
+use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -34,6 +38,34 @@ final class InputVisitorFactoryTest extends TestCase
         $input->getFilterChain()->attach(new AllowList(['list' => [1.23], 'strict' => false]));
         $input->getValidatorChain()->attach(new Digits());
 
+        $actual = $instance->visit($input);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testInvokeGetsVisitorFromContainer(): void
+    {
+        $config    = $this->getConfig([], [ValidatorVisitorInterface::class]);
+        $validatorVisitor = $this->createMock(ValidatorVisitorInterface::class);
+        $container = self::createStub(ContainerInterface::class);
+        $container->method('has')
+            ->willReturn(true);
+        $container->method('get')
+            ->willReturnMap([
+                ['config', $config],
+                [ValidatorVisitorInterface::class, $validatorVisitor],
+            ]);
+
+        $factory  = new InputVisitorFactory();
+        $instance = $factory($container);
+
+        $expected = new ElementShape('foo', [PsalmType::Int, PsalmType::Null], true);
+        $input    = new Input('foo');
+        $input->setRequired(false);
+        $input->getValidatorChain()->attach($this->createStub(ValidatorInterface::class));
+
+        $validatorVisitor->expects(self::once())
+            ->method('visit')
+            ->willReturn([PsalmType::Int]);
         $actual = $instance->visit($input);
         self::assertEquals($expected, $actual);
     }

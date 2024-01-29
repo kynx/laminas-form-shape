@@ -16,6 +16,14 @@
         </ignoreFiles>
     </projectFiles>
 
+    <issueHandlers>
+        <MissingTemplateParam>
+            <errorLevel type="suppress">
+                <directory name="test/Form/Asset"/>
+            </errorLevel>
+        </MissingTemplateParam>
+    </issueHandlers>
+
     <stubs>
         <file name=".psr-container.php.stub" preloadClasses="true"/>
     </stubs>
