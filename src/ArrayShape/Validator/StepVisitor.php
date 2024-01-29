@@ -17,11 +17,14 @@ final readonly class StepVisitor implements ValidatorVisitorInterface
             return $existing;
         }
 
-        // Validator accepts strings, but floor() and round() only accept int|float
+        // `floor()` and `round()` _do_ accept numeric strings!
+        $existing = PsalmType::replaceStringTypes($existing, [PsalmType::NumericString]);
+
         return PsalmType::filter($existing, [
             PsalmType::Float,
             PsalmType::Int,
             PsalmType::NegativeInt,
+            PsalmType::NumericString,
             PsalmType::PositiveInt,
         ]);
     }

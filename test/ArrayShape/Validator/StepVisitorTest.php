@@ -38,7 +38,7 @@ final class StepVisitorTest extends TestCase
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'invalid' => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'string'  => [new Step(), [PsalmType::String], []],
+            'string'  => [new Step(), [PsalmType::String], [PsalmType::NumericString]],
             'numbers' => [new Step(), [PsalmType::Bool, PsalmType::Int, PsalmType::Float], [PsalmType::Int, PsalmType::Float]],
         ];
         // phpcs:enable
