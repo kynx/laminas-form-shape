@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Filter;
 
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToNullVisitor;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
 use Laminas\Filter\ToNull;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use function array_values;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(ToNullVisitor::class)]
 final class ToNullVisitorTest extends TestCase

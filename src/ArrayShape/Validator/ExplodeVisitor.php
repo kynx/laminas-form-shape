@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormCli\ArrayShape\Validator;
 
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Generic;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Validator\Explode;
 use Laminas\Validator\ValidatorInterface;
@@ -20,7 +20,7 @@ use function sort;
 use const SORT_STRING;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class ExplodeVisitor implements ValidatorVisitorInterface
 {
@@ -46,7 +46,7 @@ final readonly class ExplodeVisitor implements ValidatorVisitorInterface
 
         $types = [];
 
-        if (PsalmType::hasArrayType($existing)) {
+        if (TypeUtil::hasArrayType($existing)) {
             $itemTypes = $this->getItemTypes($validator, $this->itemTypes);
             $types[]   = new Generic(PsalmType::Array, $itemTypes);
         }
@@ -66,7 +66,7 @@ final readonly class ExplodeVisitor implements ValidatorVisitorInterface
      */
     private function hasItems(Explode $explode, array $existing): bool
     {
-        if (PsalmType::hasArrayType($existing) || $this->hasClassString(Traversable::class, $existing)) {
+        if (TypeUtil::hasArrayType($existing) || $this->hasClassString(Traversable::class, $existing)) {
             return true;
         }
 
@@ -79,7 +79,7 @@ final readonly class ExplodeVisitor implements ValidatorVisitorInterface
     private function hasExplodeableString(Explode $explode, array $existing): bool
     {
         /** @psalm-suppress  RedundantConditionGivenDocblockType There is nothing upstream to stop it being null */
-        return PsalmType::hasStringType($existing) && $explode->getValueDelimiter() !== null;
+        return TypeUtil::hasStringType($existing) && $explode->getValueDelimiter() !== null;
     }
 
     /**

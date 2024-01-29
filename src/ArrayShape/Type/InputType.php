@@ -12,7 +12,7 @@ use function str_contains;
 use const SORT_STRING;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class InputType implements TypeNameInterface, TypeStringInterface
 {

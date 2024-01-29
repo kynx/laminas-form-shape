@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli;
 
 use Generator;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexVisitor;
 use Kynx\Laminas\FormCli\ConfigProvider;
 use Laminas\Validator\Regex;
@@ -31,7 +31,7 @@ use const DIRECTORY_SEPARATOR;
 
 /**
  * @psalm-import-type FormCliConfigurationArray from ConfigProvider
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(ConfigProvider::class)]
 final class ConfigProviderTest extends TestCase

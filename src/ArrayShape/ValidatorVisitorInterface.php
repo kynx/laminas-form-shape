@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormCli\ArrayShape;
 
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Laminas\Validator\ValidatorInterface;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 interface ValidatorVisitorInterface
 {

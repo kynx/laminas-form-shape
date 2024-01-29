@@ -65,7 +65,7 @@
       <code>withTypesProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Type/PsalmTypeTest.php">
+  <file src="test/ArrayShape/Type/TypeUtilTest.php">
     <PossiblyUnusedMethod>
       <code>arrayTypeProvider</code>
       <code>boolTypeProvider</code>
@@ -187,6 +187,11 @@
       <code>filterVisitorsProvider</code>
       <code>regexPatternProvider</code>
       <code>validatorVisitorsProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Form/FormElementSmokeTest.php">
+    <PossiblyUnusedMethod>
+      <code>defaultElementProvider</code>
     </PossiblyUnusedMethod>
   </file>
 </files>

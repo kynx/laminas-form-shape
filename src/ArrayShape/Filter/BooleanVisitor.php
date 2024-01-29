@@ -6,6 +6,7 @@ namespace Kynx\Laminas\FormCli\ArrayShape\Filter;
 
 use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
 
@@ -23,7 +24,7 @@ final readonly class BooleanVisitor implements FilterVisitorInterface
 
         $type = $filter->getType();
         if ($type & Boolean::TYPE_NULL) {
-            $existing = PsalmType::removeType(PsalmType::Null, $existing);
+            $existing = TypeUtil::removeType(PsalmType::Null, $existing);
         }
 
         $existing[] = PsalmType::Bool;

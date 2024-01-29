@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormCli\ArrayShape\Filter;
 
 use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Laminas\Filter\AllowList;
 use Laminas\Filter\FilterInterface;
 
@@ -21,7 +21,7 @@ use function is_scalar;
 use function is_string;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class AllowListVisitor implements FilterVisitorInterface
 {
@@ -67,7 +67,7 @@ final readonly class AllowListVisitor implements FilterVisitorInterface
         $types = [];
         foreach ($list as $allow) {
             assert(is_scalar($allow) || $allow === null);
-            $types = $this->appendUnique(PsalmType::fromPhpValue($allow), $types, $existing);
+            $types = $this->appendUnique(TypeUtil::fromPhpValue($allow), $types, $existing);
         }
         $types[] = PsalmType::Null;
 
@@ -93,12 +93,12 @@ final readonly class AllowListVisitor implements FilterVisitorInterface
         $types = $literals = [];
         foreach ($list as $allow) {
             assert(is_scalar($allow) || $allow === null);
-            $type = PsalmType::fromPhpValue($allow);
-            if (is_string($allow) && PsalmType::hasStringType($existing)) {
+            $type = TypeUtil::fromPhpValue($allow);
+            if (is_string($allow) && TypeUtil::hasStringType($existing)) {
                 $literals[] = "$allow";
-            } elseif (is_int($allow) && PsalmType::hasIntType($existing)) {
+            } elseif (is_int($allow) && TypeUtil::hasIntType($existing)) {
                 $literals[] = $allow;
-            } elseif (PsalmType::hasType($type, $existing)) {
+            } elseif (TypeUtil::hasType($type, $existing)) {
                 $types[] = $type;
             }
         }
@@ -123,27 +123,27 @@ final readonly class AllowListVisitor implements FilterVisitorInterface
         $numeric     = true;
         foreach ($list as $allow) {
             assert(is_scalar($allow) || $allow === null);
-            $type = PsalmType::fromPhpValue($allow);
-            if (is_int($allow) && PsalmType::hasIntType($existing)) {
+            $type = TypeUtil::fromPhpValue($allow);
+            if (is_int($allow) && TypeUtil::hasIntType($existing)) {
                 $literals[] = $allow;
             }
-            if ((is_string($allow) || is_int($allow)) && PsalmType::hasStringType($existing)) {
+            if ((is_string($allow) || is_int($allow)) && TypeUtil::hasStringType($existing)) {
                 $literals[] = "$allow";
                 $numLiterals++;
                 continue;
             }
-            if (PsalmType::hasType($type, $existing)) {
+            if (TypeUtil::hasType($type, $existing)) {
                 $types[] = $type;
             }
             $numeric = $numeric && is_numeric($allow);
         }
 
-        if (count($list) !== $numLiterals && PsalmType::hasStringType($existing)) {
+        if (count($list) !== $numLiterals && TypeUtil::hasStringType($existing)) {
             $types = $this->appendUnique(PsalmType::String, $types, $existing);
         }
 
         if ($numeric) {
-            $types = PsalmType::replaceStringTypes($types, [PsalmType::NumericString]);
+            $types = TypeUtil::replaceStringTypes($types, [PsalmType::NumericString]);
         }
 
         $types = $this->appendUnique(PsalmType::Null, $types, $existing);
@@ -162,7 +162,7 @@ final readonly class AllowListVisitor implements FilterVisitorInterface
      */
     private function appendUnique(ClassString|PsalmType $type, array $types, array $existing): array
     {
-        if (PsalmType::hasType($type, $existing) && ! in_array($type, $types)) {
+        if (TypeUtil::hasType($type, $existing) && ! in_array($type, $types)) {
             $types[] = $type;
         }
 

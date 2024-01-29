@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormCli\ArrayShape\Validator;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Validator\Regex;
 use Laminas\Validator\ValidatorInterface;
@@ -37,7 +38,7 @@ final readonly class RegexVisitor implements ValidatorVisitorInterface
         }
 
         $types    = $pattern->types;
-        $replaced = PsalmType::filter($existing, [
+        $replaced = TypeUtil::filter($existing, [
             PsalmType::Float,
             PsalmType::Int,
             PsalmType::NegativeInt,
@@ -47,10 +48,10 @@ final readonly class RegexVisitor implements ValidatorVisitorInterface
         ]);
         foreach ($pattern->replace as $replacement) {
             [$search, $replace] = $replacement;
-            $replaced           = PsalmType::replaceType($search, $replace, $replaced);
+            $replaced           = TypeUtil::replaceType($search, $replace, $replaced);
             $types[]            = $replace;
         }
 
-        return PsalmType::filter($replaced, $types);
+        return TypeUtil::filter($replaced, $types);
     }
 }

@@ -16,7 +16,7 @@ use function sort;
 use const SORT_STRING;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class Literal extends AbstractVisitedType
 {
@@ -46,7 +46,7 @@ final readonly class Literal extends AbstractVisitedType
     {
         $valueTypes = $this->getTypes();
 
-        return PsalmType::filter($valueTypes, $types) !== [];
+        return TypeUtil::filter($valueTypes, $types) !== [];
     }
 
     /**
@@ -54,8 +54,8 @@ final readonly class Literal extends AbstractVisitedType
      */
     public function withTypes(array $types): self
     {
-        $hasString = PsalmType::hasStringType($types);
-        $hasInt    = PsalmType::hasIntType($types);
+        $hasString = TypeUtil::hasStringType($types);
+        $hasInt    = TypeUtil::hasIntType($types);
         $filtered  = array_filter(
             $this->values,
             static fn (string|int $value): bool => (is_string($value) && $hasString) || (is_int($value) && $hasInt)

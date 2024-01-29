@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormCli\ArrayShape\Validator;
 
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\ValidatorInterface;
@@ -17,7 +18,7 @@ final readonly class NotEmptyVisitor implements ValidatorVisitorInterface
             return $existing;
         }
 
-        $types  = PsalmType::filter($existing, [
+        $types  = TypeUtil::filter($existing, [
             PsalmType::Null,
             PsalmType::String,
             PsalmType::NonEmptyString,
@@ -34,25 +35,25 @@ final readonly class NotEmptyVisitor implements ValidatorVisitorInterface
         $object = (bool) ($type & (NotEmpty::OBJECT_COUNT | NotEmpty::OBJECT_STRING));
 
         if (! $object && $type & NotEmpty::OBJECT) {
-            $types = PsalmType::removeObjectTypes($types);
+            $types = TypeUtil::removeObjectTypes($types);
         }
         if ($type & NotEmpty::SPACE) {
-            $types = PsalmType::replaceStringTypes($types, [PsalmType::NonEmptyString]);
+            $types = TypeUtil::replaceStringTypes($types, [PsalmType::NonEmptyString]);
         }
         if ($type & NotEmpty::NULL) {
-            $types = PsalmType::removeType(PsalmType::Null, $types);
+            $types = TypeUtil::removeType(PsalmType::Null, $types);
         }
         if ($type & NotEmpty::EMPTY_ARRAY) {
-            $types = PsalmType::replaceArrayTypes($types, [PsalmType::NonEmptyArray]);
+            $types = TypeUtil::replaceArrayTypes($types, [PsalmType::NonEmptyArray]);
         }
         if ($type & NotEmpty::STRING) {
-            $types = PsalmType::replaceStringTypes($types, [PsalmType::NonEmptyString]);
+            $types = TypeUtil::replaceStringTypes($types, [PsalmType::NonEmptyString]);
         }
         if ($type & NotEmpty::INTEGER) {
-            $types = PsalmType::replaceIntTypes($types, [PsalmType::NegativeInt, PsalmType::PositiveInt]);
+            $types = TypeUtil::replaceIntTypes($types, [PsalmType::NegativeInt, PsalmType::PositiveInt]);
         }
         if ($type & NotEmpty::BOOLEAN) {
-            $types = PsalmType::replaceBoolTypes($types, [PsalmType::True]);
+            $types = TypeUtil::replaceBoolTypes($types, [PsalmType::True]);
         }
 
         return $types;

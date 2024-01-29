@@ -7,10 +7,10 @@ namespace Kynx\Laminas\FormCli\ArrayShape\InputFilter;
 use Kynx\Laminas\FormCli\ArrayShape\ArrayShapeException;
 use Kynx\Laminas\FormCli\ArrayShape\FilterVisitorInterface;
 use Kynx\Laminas\FormCli\ArrayShape\InputVisitorInterface;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Filter\FilterInterface;
 use Laminas\InputFilter\EmptyContextInterface;
@@ -27,7 +27,7 @@ use function is_int;
 use function is_string;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class InputVisitor implements InputVisitorInterface
 {
@@ -127,23 +127,23 @@ final readonly class InputVisitor implements InputVisitorInterface
      */
     private function addFallbackType(mixed $value, array $types): array
     {
-        if (is_string($value) && ! PsalmType::hasStringType($types)) {
+        if (is_string($value) && ! TypeUtil::hasStringType($types)) {
             $types[] = new Literal([$value]);
         }
-        if (is_int($value) && ! PsalmType::hasIntType($types)) {
+        if (is_int($value) && ! TypeUtil::hasIntType($types)) {
             $types[] = new Literal([$value]);
         }
-        if ($value === true && ! PsalmType::hasBoolType($types)) {
+        if ($value === true && ! TypeUtil::hasBoolType($types)) {
             $types[] = PsalmType::True;
         }
-        if ($value === false && ! PsalmType::hasBoolType($types)) {
+        if ($value === false && ! TypeUtil::hasBoolType($types)) {
             $types[] = PsalmType::False;
         }
         if (is_string($value) || is_int($value) || is_bool($value)) {
             return $types;
         }
 
-        $types[] = PsalmType::fromPhpValue($value);
+        $types[] = TypeUtil::fromPhpValue($value);
         return $types;
     }
 }

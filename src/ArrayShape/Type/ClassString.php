@@ -7,7 +7,7 @@ namespace Kynx\Laminas\FormCli\ArrayShape\Type;
 use function ltrim;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class ClassString extends AbstractVisitedType
 {

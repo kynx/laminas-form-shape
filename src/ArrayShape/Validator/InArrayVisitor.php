@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormCli\ArrayShape\Validator;
 
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\ValidatorVisitorInterface;
 use Laminas\Validator\InArray;
 use Laminas\Validator\ValidatorInterface;
@@ -21,7 +21,7 @@ use function is_scalar;
 use function is_string;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 final readonly class InArrayVisitor implements ValidatorVisitorInterface
 {
@@ -66,7 +66,7 @@ final readonly class InArrayVisitor implements ValidatorVisitorInterface
         $types = [];
         foreach ($haystack as $value) {
             assert(is_scalar($value) || $value === null);
-            $types = $this->appendUnique(PsalmType::fromPhpValue($value), $types, $existing);
+            $types = $this->appendUnique(TypeUtil::fromPhpValue($value), $types, $existing);
         }
 
         return $types;
@@ -91,12 +91,12 @@ final readonly class InArrayVisitor implements ValidatorVisitorInterface
         $types = $literals = [];
         foreach ($haystack as $value) {
             assert(is_scalar($value) || $value === null);
-            $type = PsalmType::fromPhpValue($value);
-            if (is_string($value) && PsalmType::hasStringType($existing)) {
+            $type = TypeUtil::fromPhpValue($value);
+            if (is_string($value) && TypeUtil::hasStringType($existing)) {
                 $literals[] = "$value";
-            } elseif (is_int($value) && PsalmType::hasIntType($existing)) {
+            } elseif (is_int($value) && TypeUtil::hasIntType($existing)) {
                 $literals[] = $value;
-            } elseif (PsalmType::hasType($type, $existing)) {
+            } elseif (TypeUtil::hasType($type, $existing)) {
                 $types[] = $type;
             }
         }
@@ -116,15 +116,15 @@ final readonly class InArrayVisitor implements ValidatorVisitorInterface
         $types = $literals = [];
         foreach ($haystack as $value) {
             assert(is_scalar($value) || $value === null);
-            $type = PsalmType::fromPhpValue($value);
-            if (is_int($value) && PsalmType::hasIntType($existing)) {
+            $type = TypeUtil::fromPhpValue($value);
+            if (is_int($value) && TypeUtil::hasIntType($existing)) {
                 $literals[] = $value;
             }
-            if ((is_string($value) || is_int($value)) && PsalmType::hasStringType($existing)) {
+            if ((is_string($value) || is_int($value)) && TypeUtil::hasStringType($existing)) {
                 $literals[] = "$value";
                 continue;
             }
-            if (PsalmType::hasType($type, $existing)) {
+            if (TypeUtil::hasType($type, $existing)) {
                 $types[] = $type;
             }
         }
@@ -147,7 +147,7 @@ final readonly class InArrayVisitor implements ValidatorVisitorInterface
      */
     private function appendUnique(ClassString|PsalmType $type, array $types, array $existing): array
     {
-        if (PsalmType::hasType($type, $existing) && ! in_array($type, $types)) {
+        if (TypeUtil::hasType($type, $existing) && ! in_array($type, $types)) {
             $types[] = $type;
         }
 

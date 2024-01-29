@@ -10,10 +10,10 @@ use Kynx\Laminas\FormCli\ArrayShape\Filter\BooleanVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\InputFilter\InputVisitor;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\InputType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\DigitsVisitor;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\NotEmptyVisitor;
 use Laminas\Filter\AllowList;
@@ -27,7 +27,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(InputVisitor::class)]
 final class InputVisitorTest extends TestCase

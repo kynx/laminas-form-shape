@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Filter;
 
 use Kynx\Laminas\FormCli\ArrayShape\Filter\AllowListVisitor;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\Literal;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Laminas\Filter\AllowList;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\FilterInterface;
@@ -16,7 +16,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(AllowListVisitor::class)]
 final class AllowListVisitorTest extends TestCase

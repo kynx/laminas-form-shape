@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\IsInstanceOfVisitor;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\IsInstanceOf;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(IsInstanceOfVisitor::class)]
 final class IsInstanceOfVisitorTest extends TestCase

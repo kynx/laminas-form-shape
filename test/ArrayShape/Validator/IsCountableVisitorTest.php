@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 
 use Countable;
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\ClassString;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\IsCountableVisitor;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\IsCountable;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(IsCountableVisitor::class)]
 final class IsCountableVisitorTest extends TestCase

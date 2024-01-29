@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormCli\ArrayShape\Validator;
 
-use Kynx\Laminas\FormCli\ArrayShape\Type\AbstractVisitedType;
 use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
+use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
 use Kynx\Laminas\FormCli\ArrayShape\Validator\StringLengthVisitor;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\StringLength;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use function array_values;
 
 /**
- * @psalm-import-type VisitedArray from AbstractVisitedType
+ * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(StringLengthVisitor::class)]
 final class StringLengthVisitorTest extends TestCase
