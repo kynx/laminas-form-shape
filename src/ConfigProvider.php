@@ -6,6 +6,8 @@ namespace Kynx\Laminas\FormShape;
 
 use Kynx\Laminas\FormShape\Command\FormShapeCommand;
 use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
+use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecoratorFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
@@ -209,6 +211,7 @@ final readonly class ConfigProvider
             ],
             'factories' => [
                 AllowListVisitor::class       => AllowListVisitorFactory::class,
+                ArrayShapeDecorator::class    => ArrayShapeDecoratorFactory::class,
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
                 FormProcessor::class          => FormProcessorFactory::class,

@@ -9,6 +9,16 @@
       <code>validatorVisitorsProvider</code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Decorator/AbstractDecoratorTest.php">
+    <PossiblyUnusedMethod>
+      <code>getTypeNameProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Decorator/ElementShapeDecoratorTest.php">
+    <PossiblyUnusedMethod>
+      <code>decorateProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/Filter/AllowListVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeLiteralProvider</code>
@@ -55,17 +65,6 @@
       <code>addFallbackProvider</code>
       <code>addNotEmptyProvider</code>
       <code>correctTypeProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Shape/ArrayShapeTest.php">
-    <PossiblyUnusedMethod>
-      <code>getTypeNameProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Shape/InputShapeTest.php">
-    <PossiblyUnusedMethod>
-      <code>getTypeNameProvider</code>
-      <code>getTypeStringProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Type/ClassStringTest.php">

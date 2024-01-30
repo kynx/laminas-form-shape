@@ -6,5 +6,5 @@ namespace Kynx\Laminas\FormShape\Type;
 
 interface TypeStringInterface
 {
-    public function getTypeString(int $indent = 0, string $indentString = '    '): string;
+    public function getTypeString(): string;
 }
