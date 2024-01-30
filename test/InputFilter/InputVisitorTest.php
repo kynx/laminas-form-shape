@@ -7,6 +7,7 @@ namespace KynxTest\Laminas\FormShape\InputFilter;
 use CuyZ\Valinor\Mapper\MappingError;
 use CuyZ\Valinor\MapperBuilder;
 use Kynx\Laminas\FormShape\ArrayShapeException;
+use Kynx\Laminas\FormShape\Decorator\ElementShapeDecorator;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
 use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
@@ -198,7 +199,9 @@ final class InputVisitorTest extends TestCase
 
         $elementShape = $visitor->visit($input);
 
-        $actualShape = $elementShape->getTypeName() . ': ' . $elementShape->getTypeString();
+        $decorator   = new ElementShapeDecorator();
+        $name        = $elementShape->optional ? "{$elementShape->name}?" : $elementShape->name;
+        $actualShape = $name . ': ' . $decorator->decorate($elementShape);
         $arrayShape  = 'array{' . $actualShape . '}';
         $array       = $data === 'absent' ? [] : ['test' => $data];
 

@@ -27,7 +27,7 @@ final readonly class Literal extends AbstractVisitedType
     {
     }
 
-    public function getTypeString(int $indent = 0, string $indentString = '    '): string
+    public function getTypeString(): string
     {
         $values = array_map(
             static fn (string|int $value): string|int => is_string($value) ? "'$value'" : $value,

@@ -16,7 +16,7 @@ final readonly class Generic extends AbstractVisitedType
     {
     }
 
-    public function getTypeString(int $indent = 0, string $indentString = '    '): string
+    public function getTypeString(): string
     {
         if ($this->union === []) {
             return $this->type->getTypeString();

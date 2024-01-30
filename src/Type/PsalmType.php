@@ -54,7 +54,7 @@ enum PsalmType: string implements TypeStringInterface
         self::NonEmptyString,
     ];
 
-    public function getTypeString(int $indent = 0, string $indentString = '    '): string
+    public function getTypeString(): string
     {
         return $this->value;
     }

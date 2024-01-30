@@ -18,7 +18,7 @@ final readonly class ClassString extends AbstractVisitedType
     {
     }
 
-    public function getTypeString(int $indent = 0, string $indentString = '    '): string
+    public function getTypeString(): string
     {
         return '\\' . ltrim($this->classString, '\\');
     }
