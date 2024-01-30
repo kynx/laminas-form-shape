@@ -91,7 +91,7 @@ final class FormElementSmokeTest extends TestCase
             'color'    => [Color::class, [[null, false], ['', false], [' ', false], ['a', false], ['#ffffff', true]], "test: non-empty-string"],
 //            'csrf' => [Csrf::class, [[null, false], ['', false], [' ', false], ['a', true]], "test: non-empty-string"],
             'date'           => [Date::class, [[null, false], ['', false], [' ', false], ['2024-01-28', true]], "test: non-empty-string"],
-            'dateselect'     => [DateSelect::class, [[null, true], ['', true], [' ', false], ['2024-01-28', true]], "test?: non-empty-string|null"],
+            'dateselect'     => [DateSelect::class, [[null, true], ['', true], [' ', false], ['2024-01-28', true]], "test?: null|string"],
             'datetimelocal'  => [DateTimeLocal::class, [[null, false], ['', false], [' ', false], ['2024-01-28T12:53', true]], "test: non-empty-string"],
             'datetimeselect' => [DateTimeLocal::class, [[null, false], ['', false], [' ', false], ['2024-01-28T12:54', true]], "test: non-empty-string"],
             'email'          => [Email::class, [[null, false], ['', false], [' ', false], ['foo@example.com', true]], 'test: non-empty-string'],
@@ -99,7 +99,7 @@ final class FormElementSmokeTest extends TestCase
             'hidden'        => [Hidden::class, [[null, true], ['', true], ['a', true]], 'test?: null|string'],
             'image'         => [Image::class, [[null, true], ['', true], ['a', true]], 'test?: null|string'],
             'month'         => [Month::class, [[null, false], ['', false], [' ', false], ['2024-01', true]], "test: non-empty-string"],
-            'monthselect'   => [MonthSelect::class, [[null, true], ['', true], [' ', false], ['2024-01', true]], "test?: non-empty-string|null"],
+            'monthselect'   => [MonthSelect::class, [[null, true], ['', true], [' ', false], ['2024-01', true]], "test?: null|string"],
             'multicheckbox' => [MultiCheckbox::class, [[null, false], ['', false], [' ', false]], "test: non-empty-string"], // no haystack by default
             'number'        => [Number::class, [[null, false], ['', false], [' ', false], ['a', false], ['123', true]], "test: numeric-string"],
             'password'      => [Password::class, [[null, true], ['', true], ['a', true]], 'test?: null|string'],
