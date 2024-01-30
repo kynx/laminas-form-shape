@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Laminas\FormCli\Form;
+namespace KynxTest\Laminas\FormShape\Form;
 
-use Kynx\Laminas\FormCli\ArrayShape\InputFilterVisitorInterface;
+use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Captcha;
 use Laminas\Form\Element\Checkbox;

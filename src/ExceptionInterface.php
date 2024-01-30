@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Laminas\FormCli;
+namespace Kynx\Laminas\FormShape;
 
 use Throwable;
 

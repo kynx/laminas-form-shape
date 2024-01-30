@@ -1,70 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.20.0@3f284e96c9d9be6fe6b15c79416e1d1903dcfef4">
-  <file src="test/ArrayShape/Filter/AllowListVisitorTest.php">
+  <file src="test/ConfigProviderTest.php">
+    <PossiblyUnusedMethod>
+      <code>aliasProvider</code>
+      <code>factoryProvider</code>
+      <code>filterVisitorsProvider</code>
+      <code>regexPatternProvider</code>
+      <code>validatorVisitorsProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Filter/AllowListVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeLiteralProvider</code>
       <code>getTypeTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Filter/BooleanVisitorTest.php">
+  <file src="test/Filter/BooleanVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Filter/DigitsVisitorTest.php">
+  <file src="test/Filter/DigitsVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Filter/InflectorVisitorTest.php">
+  <file src="test/Filter/InflectorVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Filter/ToFloatVisitorTest.php">
+  <file src="test/Filter/ToFloatVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Filter/ToIntVisitorTest.php">
+  <file src="test/Filter/ToIntVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Filter/ToNullVisitorTest.php">
+  <file src="test/Filter/ToNullVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/InputFilter/InputVisitorTest.php">
+  <file src="test/Form/FormElementSmokeTest.php">
+    <PossiblyUnusedMethod>
+      <code>defaultElementProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/InputFilter/InputVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>addFallbackProvider</code>
       <code>addNotEmptyProvider</code>
+      <code>correctTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Shape/ArrayShapeTest.php">
+  <file src="test/Shape/ArrayShapeTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeNameProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Shape/InputShapeTest.php">
+  <file src="test/Shape/InputShapeTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeNameProvider</code>
       <code>getTypeStringProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Type/ClassStringTest.php">
+  <file src="test/Type/ClassStringTest.php">
     <PossiblyUnusedMethod>
       <code>matchesProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Type/LiteralTest.php">
+  <file src="test/Type/LiteralTest.php">
     <PossiblyUnusedMethod>
       <code>hasTypesProvider</code>
       <code>withTypesProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Type/TypeUtilTest.php">
+  <file src="test/Type/TypeUtilTest.php">
     <PossiblyUnusedMethod>
       <code>arrayTypeProvider</code>
       <code>boolTypeProvider</code>
@@ -83,114 +98,100 @@
       <code>stringTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/BetweenVisitorTest.php">
+  <file src="test/Validator/BetweenVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/CsrfVisitorTest.php">
+  <file src="test/Validator/CsrfVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/DateStepVisitorTest.php">
+  <file src="test/Validator/DateStepVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/DateVisitorTest.php">
+  <file src="test/Validator/DateVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/DigitsVisitorTest.php">
+  <file src="test/Validator/DigitsVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/ExplodeVisitorTest.php">
+  <file src="test/Validator/ExplodeVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/FileValidatorVisitorTest.php">
+  <file src="test/Validator/FileValidatorVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/HexVisitorTest.php">
+  <file src="test/Validator/HexVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/InArrayVisitorTest.php">
+  <file src="test/Validator/InArrayVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitLiteralProvider</code>
       <code>visitTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/IsCountableVisitorTest.php">
+  <file src="test/Validator/IsCountableVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/IsInstanceOfVisitorTest.php">
+  <file src="test/Validator/IsInstanceOfVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/IsbnVisitorTest.php">
+  <file src="test/Validator/IsbnVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/NotEmptyVisitorTest.php">
+  <file src="test/Validator/NotEmptyVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/RegexVisitorTest.php">
+  <file src="test/Validator/RegexVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/Sitemap/PriorityVisitorTest.php">
+  <file src="test/Validator/Sitemap/PriorityVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/StepVisitorTest.php">
+  <file src="test/Validator/StepVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/StringLengthVisitorTest.php">
+  <file src="test/Validator/StringLengthVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/StringValidatorVisitorTest.php">
+  <file src="test/Validator/StringValidatorVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/ArrayShape/Validator/TimezoneVisitorTest.php">
+  <file src="test/Validator/TimezoneVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/ConfigProviderTest.php">
-    <PossiblyUnusedMethod>
-      <code>aliasProvider</code>
-      <code>factoryProvider</code>
-      <code>filterVisitorsProvider</code>
-      <code>regexPatternProvider</code>
-      <code>validatorVisitorsProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Form/FormElementSmokeTest.php">
-    <PossiblyUnusedMethod>
-      <code>defaultElementProvider</code>
     </PossiblyUnusedMethod>
   </file>
 </files>

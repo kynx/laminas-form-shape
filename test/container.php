@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Kynx\Laminas\FormCli\ConfigProvider;
+use Kynx\Laminas\FormShape\ConfigProvider;
 use Laminas\ServiceManager\ServiceManager;
 
 $config = (new ConfigProvider())();

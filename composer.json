@@ -1,6 +1,6 @@
 {
-  "name": "kynx/laminas-form-cli",
-  "description": "Command line tools for Laminas forms",
+  "name": "kynx/laminas-form-shape",
+  "description": "Generate Psalm types for Laminas forms",
   "type": "library",
   "license": "BSD-3-Clause",
   "keywords": [
@@ -23,8 +23,8 @@
   },
   "extra": {
     "laminas": {
-      "component": "Kynx\\Laminas\\FormCli",
-      "config-provider": "Kynx\\Laminas\\FormCli\\ConfigProvider"
+      "component": "Kynx\\Laminas\\FormShape",
+      "config-provider": "Kynx\\Laminas\\FormShape\\ConfigProvider"
     }
   },
   "require": {
@@ -49,12 +49,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Kynx\\Laminas\\FormCli\\": "src/"
+      "Kynx\\Laminas\\FormShape\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "KynxTest\\Laminas\\FormCli\\": "test/"
+      "KynxTest\\Laminas\\FormShape\\": "test/"
     }
   },
   "scripts": {

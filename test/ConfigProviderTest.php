@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Laminas\FormCli;
+namespace KynxTest\Laminas\FormShape;
 
 use Generator;
-use Kynx\Laminas\FormCli\ArrayShape\Type\PsalmType;
-use Kynx\Laminas\FormCli\ArrayShape\Type\TypeUtil;
-use Kynx\Laminas\FormCli\ArrayShape\Validator\RegexVisitor;
-use Kynx\Laminas\FormCli\ConfigProvider;
+use Kynx\Laminas\FormShape\ConfigProvider;
+use Kynx\Laminas\FormShape\Type\PsalmType;
+use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Validator\RegexVisitor;
 use Laminas\Validator\Regex;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -30,7 +30,7 @@ use function str_ends_with;
 use const DIRECTORY_SEPARATOR;
 
 /**
- * @psalm-import-type FormCliConfigurationArray from ConfigProvider
+ * @psalm-import-type FormShapeConfigurationArray from ConfigProvider
  * @psalm-import-type VisitedArray from TypeUtil
  */
 #[CoversClass(ConfigProvider::class)]
@@ -40,7 +40,7 @@ final class ConfigProviderTest extends TestCase
     {
         $expected = [
             'laminas-cli',
-            'laminas-form-cli',
+            'laminas-form-shape',
             'dependencies',
         ];
         $actual   = array_keys(self::getConfig());
@@ -52,14 +52,14 @@ final class ConfigProviderTest extends TestCase
     {
         $config = self::getConfig();
         /** @psalm-suppress RedundantConditionGivenDocblockType We're testing that docblock is correct */
-        self::assertIsArray($config['laminas-form-cli']['array-shape']['filter-visitors']);
-        $filterVisitors = $config['laminas-form-cli']['array-shape']['filter-visitors'];
+        self::assertIsArray($config['laminas-form-shape']['filter-visitors']);
+        $filterVisitors = $config['laminas-form-shape']['filter-visitors'];
         self::assertContains($filterVisitor, $filterVisitors);
     }
 
     public static function filterVisitorsProvider(): array
     {
-        return self::getClasses('src/ArrayShape/Filter', 'Visitor');
+        return self::getClasses('src/Filter', 'Visitor');
     }
 
     #[DataProvider('validatorVisitorsProvider')]
@@ -67,14 +67,14 @@ final class ConfigProviderTest extends TestCase
     {
         $config = self::getConfig();
         /** @psalm-suppress RedundantConditionGivenDocblockType We're testing that docblock is correct */
-        self::assertIsArray($config['laminas-form-cli']['array-shape']['validator-visitors']);
-        $validatorVisitors = $config['laminas-form-cli']['array-shape']['validator-visitors'];
+        self::assertIsArray($config['laminas-form-shape']['validator-visitors']);
+        $validatorVisitors = $config['laminas-form-shape']['validator-visitors'];
         self::assertContains($validatorVisitor, $validatorVisitors);
     }
 
     public static function validatorVisitorsProvider(): array
     {
-        return self::getClasses('src/ArrayShape/Validator', 'Visitor');
+        return self::getClasses('src/Validator', 'Visitor');
     }
 
     #[CoversNothing]
@@ -161,7 +161,7 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @return FormCliConfigurationArray
+     * @return FormShapeConfigurationArray
      */
     private static function getConfig(): array
     {
@@ -188,7 +188,7 @@ final class ConfigProviderTest extends TestCase
                 continue;
             }
             $parts           = explode(DIRECTORY_SEPARATOR, $file);
-            $class           = 'Kynx\\Laminas\\FormCli\\' . implode('\\', $parts);
+            $class           = 'Kynx\\Laminas\\FormShape\\' . implode('\\', $parts);
             $classes[$class] = [$class];
         }
 
