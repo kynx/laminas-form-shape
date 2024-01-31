@@ -8,10 +8,10 @@ use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use KynxTest\Laminas\FormShape\File\Asset\TestForm;
 use Laminas\Form\FormElementManager;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\PluginManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 #[CoversClass(FormReaderFactory::class)]
@@ -34,7 +34,7 @@ final class FormReaderFactoryTest extends TestCase
         $formElementManager->expects(self::once())
             ->method('get')
             ->with(TestForm::class)
-            ->willThrowException(self::createStub(ContainerExceptionInterface::class));
+            ->willThrowException(new ServiceNotFoundException());
 
         $actual = $instance->getFormFile(__DIR__ . '/Asset/TestForm.php');
         self::assertNull($actual);

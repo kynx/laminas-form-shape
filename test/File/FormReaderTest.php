@@ -8,12 +8,12 @@ use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReader;
 use KynxTest\Laminas\FormShape\File\Asset\TestForm;
 use Laminas\Form\FormElementManager;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\PluginManagerInterface;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 use function file_get_contents;
@@ -50,7 +50,7 @@ final class FormReaderTest extends TestCase
         $formElementManager->expects(self::once())
             ->method('get')
             ->with(TestForm::class)
-            ->willThrowException(self::createStub(ContainerExceptionInterface::class));
+            ->willThrowException(new ServiceNotFoundException());
         $formReader = new FormReader($formElementManager);
 
         $actual = $formReader->getFormFile(__DIR__ . '/Asset/TestForm.php');
