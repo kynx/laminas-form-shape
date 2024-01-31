@@ -6,8 +6,8 @@ namespace Kynx\Laminas\FormShape;
 
 use Kynx\Laminas\FormShape\Command\FormShapeCommand;
 use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecoratorFactory;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecoratorFactory;
 use Kynx\Laminas\FormShape\File\FormReader;
 use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
@@ -19,6 +19,9 @@ use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormShape\Filter\ToNullVisitor;
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
+use Kynx\Laminas\FormShape\Form\FormVisitor;
+use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
+use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -207,21 +210,23 @@ final readonly class ConfigProvider
     {
         return [
             'aliases'   => [
+                FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
             ],
             'factories' => [
-                AllowListVisitor::class       => AllowListVisitorFactory::class,
-                ArrayShapeDecorator::class    => ArrayShapeDecoratorFactory::class,
-                ExplodeVisitor::class         => ExplodeVisitorFactory::class,
-                FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormReader::class             => FormReaderFactory::class,
-                FormShapeCommand::class       => FormShapeCommandFactory::class,
-                InArrayVisitor::class         => InArrayVisitorFactory::class,
-                InputFilterVisitor::class     => InputFilterVisitorFactory::class,
-                InputVisitor::class           => InputVisitorFactory::class,
-                InputVisitorManager::class    => InputVisitorManagerFactory::class,
-                RegexVisitor::class           => RegexVisitorFactory::class,
-                StringValidatorVisitor::class => StringValidatorVisitorFactory::class,
+                AllowListVisitor::class          => AllowListVisitorFactory::class,
+                InputFilterShapeDecorator::class => InputFilterShapeDecoratorFactory::class,
+                ExplodeVisitor::class            => ExplodeVisitorFactory::class,
+                FileValidatorVisitor::class      => FileValidatorVisitorFactory::class,
+                FormReader::class                => FormReaderFactory::class,
+                FormShapeCommand::class          => FormShapeCommandFactory::class,
+                FormVisitor::class               => FormVisitorFactory::class,
+                InArrayVisitor::class            => InArrayVisitorFactory::class,
+                InputFilterVisitor::class        => InputFilterVisitorFactory::class,
+                InputVisitor::class              => InputVisitorFactory::class,
+                InputVisitorManager::class       => InputVisitorManagerFactory::class,
+                RegexVisitor::class              => RegexVisitorFactory::class,
+                StringValidatorVisitor::class    => StringValidatorVisitorFactory::class,
             ],
         ];
     }

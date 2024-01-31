@@ -7,8 +7,8 @@ namespace KynxTest\Laminas\FormShape\InputFilter;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormShape\Shape\ArrayShape;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
@@ -31,8 +31,8 @@ final class InputFilterVisitorFactoryTest extends TestCase
         $factory  = new InputFilterVisitorFactory();
         $instance = $factory($container);
 
-        $expected    = new ArrayShape('', [
-            new ElementShape('foo', [PsalmType::Null, PsalmType::String]),
+        $expected    = new InputFilterShape('', [
+            new InputShape('foo', [PsalmType::Null, PsalmType::String]),
         ], false);
         $inputFilter = new InputFilter();
         $inputFilter->add(new Input('foo'));

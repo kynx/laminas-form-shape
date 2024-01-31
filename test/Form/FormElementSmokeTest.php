@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Form;
 
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Captcha;
@@ -65,9 +65,11 @@ final class FormElementSmokeTest extends TestCase
         $container   = include __DIR__ . '/../container.php';
         $visitor     = $container->get(InputFilterVisitorInterface::class);
         $inputFilter = $form->getInputFilter();
+        $shape       = $visitor->visit($inputFilter);
 
-        $decorator    = new ArrayShapeDecorator();
-        $actualString = $decorator->decorate($visitor->visit($inputFilter));
+        $decorator = new InputFilterShapeDecorator();
+        /** @psalm-suppress PossiblyInvalidArgument */
+        $actualString = $decorator->decorate($shape);
 
         foreach ($tests as $expectation) {
             [$data, $valid] = $expectation;

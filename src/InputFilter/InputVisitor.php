@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\InputFilter;
 
-use Kynx\Laminas\FormShape\ArrayShapeException;
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
+use Kynx\Laminas\FormShape\InputVisitorException;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\Literal;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Type\TypeUtil;
@@ -39,7 +39,7 @@ final readonly class InputVisitor implements InputVisitorInterface
     {
     }
 
-    public function visit(InputInterface $input): ElementShape
+    public function visit(InputInterface $input): InputShape
     {
         $types = [PsalmType::Null, PsalmType::String];
 
@@ -88,10 +88,10 @@ final readonly class InputVisitor implements InputVisitorInterface
         }
 
         if ($types === []) {
-            throw ArrayShapeException::cannotGetInputType($input);
+            throw InputVisitorException::cannotGetInputType($input);
         }
 
-        return new ElementShape($input->getName(), $unique, $hasFallback || ! $input->isRequired());
+        return new InputShape($input->getName(), $unique, $hasFallback || ! $input->isRequired());
     }
 
     /**

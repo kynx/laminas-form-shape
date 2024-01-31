@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\InputFilter;
 
-use Kynx\Laminas\FormShape\ArrayShapeException;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
+use Kynx\Laminas\FormShape\InputVisitorException;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -26,7 +26,7 @@ final class InputVisitorManagerTest extends TestCase
     {
         $expected = "No input visitor configured for '" . Input::class . "'";
         $manager  = new InputVisitorManager([]);
-        self::expectException(ArrayShapeException::class);
+        self::expectException(InputVisitorException::class);
         self::expectExceptionMessage($expected);
         $manager->getVisitor(new Input());
     }

@@ -10,7 +10,7 @@ use RuntimeException;
 
 use function sprintf;
 
-final class ArrayShapeException extends RuntimeException implements ExceptionInterface
+final class InputVisitorException extends RuntimeException implements ExceptionInterface
 {
     public static function noVisitorForInput(InputInterface $input): self
     {

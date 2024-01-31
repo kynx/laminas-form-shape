@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\InputFilter;
 
-use Kynx\Laminas\FormShape\ArrayShapeException;
+use Kynx\Laminas\FormShape\InputVisitorException;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Laminas\InputFilter\InputInterface;
 
@@ -23,6 +23,6 @@ final readonly class InputVisitorManager
             return $this->inputVisitors[$input::class];
         }
 
-        throw ArrayShapeException::noVisitorForInput($input);
+        throw InputVisitorException::noVisitorForInput($input);
     }
 }
