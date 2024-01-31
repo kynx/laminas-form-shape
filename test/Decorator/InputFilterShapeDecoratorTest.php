@@ -9,12 +9,37 @@ use Kynx\Laminas\FormShape\Shape\InputFilterShape;
 use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(InputFilterShapeDecorator::class)]
 final class InputFilterShapeDecoratorTest extends TestCase
 {
-    public function testDecorateReturnsPsalmType(): void
+    #[DataProvider('typeNameProvider')]
+    public function testDecorateEscapesName(InputFilterShape|InputShape $shape, string $expected): void
+    {
+        $expected         = <<<END_OF_EXPECTED
+        array{
+            $expected,
+        }
+        END_OF_EXPECTED;
+        $decorator        = new InputFilterShapeDecorator();
+        $inputFilterShape = new InputFilterShape('', [$shape]);
+
+        $actual = $decorator->decorate($inputFilterShape);
+        self::assertSame($expected, $actual);
+    }
+
+    public static function typeNameProvider(): array
+    {
+        return [
+            'required' => [new InputShape('foo', [PsalmType::Int]), 'foo: int'],
+            'escaped'  => [new InputShape('foo bar', [PsalmType::Int]), "'foo bar': int"],
+            'optional' => [new InputShape('foo', [PsalmType::Int], true), 'foo?: int'],
+        ];
+    }
+
+    public function testDecorateFormatsPsalmType(): void
     {
         $expected = <<<END_OF_EXPECTED
         array{
@@ -33,7 +58,7 @@ final class InputFilterShapeDecoratorTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function testDecorateRecursesArrayShapes(): void
+    public function testDecorateRecursesInputFilterShapes(): void
     {
         $expected = <<<END_OF_EXPECTED
         array{

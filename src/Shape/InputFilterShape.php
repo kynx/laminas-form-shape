@@ -7,7 +7,7 @@ namespace Kynx\Laminas\FormShape\Shape;
 final readonly class InputFilterShape
 {
     /**
-     * @param list<InputFilterShape|InputShape> $shapes
+     * @param list<CollectionFilterShape|InputFilterShape|InputShape> $shapes
      */
     public function __construct(public string $name, public array $shapes, public bool $optional = false)
     {

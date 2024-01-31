@@ -65,9 +65,11 @@ final class FormElementSmokeTest extends TestCase
         $container   = include __DIR__ . '/../container.php';
         $visitor     = $container->get(InputFilterVisitorInterface::class);
         $inputFilter = $form->getInputFilter();
+        $shape       = $visitor->visit($inputFilter);
 
-        $decorator    = new InputFilterShapeDecorator();
-        $actualString = $decorator->decorate($visitor->visit($inputFilter));
+        $decorator = new InputFilterShapeDecorator();
+        /** @psalm-suppress PossiblyInvalidArgument */
+        $actualString = $decorator->decorate($shape);
 
         foreach ($tests as $expectation) {
             [$data, $valid] = $expectation;
