@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape;
 
+use Kynx\Laminas\FormShape\Command\FormShapeCommand;
+use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
 use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecoratorFactory;
+use Kynx\Laminas\FormShape\File\FormReader;
+use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
@@ -88,7 +92,11 @@ final readonly class ConfigProvider
 
     private function getCliConfig(): array
     {
-        return [];
+        return [
+            'commands' => [
+                'form:shape' => FormShapeCommand::class,
+            ],
+        ];
     }
 
     /**
@@ -206,6 +214,8 @@ final readonly class ConfigProvider
                 ArrayShapeDecorator::class    => ArrayShapeDecoratorFactory::class,
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
+                FormReader::class             => FormReaderFactory::class,
+                FormShapeCommand::class       => FormShapeCommandFactory::class,
                 InArrayVisitor::class         => InArrayVisitorFactory::class,
                 InputFilterVisitor::class     => InputFilterVisitorFactory::class,
                 InputVisitor::class           => InputVisitorFactory::class,
