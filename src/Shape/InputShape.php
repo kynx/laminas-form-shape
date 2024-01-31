@@ -9,7 +9,7 @@ use Kynx\Laminas\FormShape\Type\TypeUtil;
 /**
  * @psalm-import-type VisitedArray from TypeUtil
  */
-final readonly class ElementShape
+final readonly class InputShape
 {
     /**
      * @param VisitedArray $types

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Decorator;
 
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecoratorFactory;
-use Kynx\Laminas\FormShape\Shape\ArrayShape;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecoratorFactory;
+use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-#[CoversClass(ArrayShapeDecoratorFactory::class)]
-final class ArrayShapeDecoratorFactoryTest extends TestCase
+#[CoversClass(InputFilterShapeDecoratorFactory::class)]
+final class InputFilterShapeDecoratorFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void
     {
@@ -22,11 +22,11 @@ final class ArrayShapeDecoratorFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
-        $factory  = new ArrayShapeDecoratorFactory();
+        $factory  = new InputFilterShapeDecoratorFactory();
         $instance = $factory($container);
 
         $expected = "array{\n\tfoo: int,\n}";
-        $shape    = new ArrayShape('', [new ElementShape('foo', [PsalmType::Int])]);
+        $shape    = new InputFilterShape('', [new InputShape('foo', [PsalmType::Int])]);
         $actual   = $instance->decorate($shape);
         self::assertSame($expected, $actual);
     }

@@ -6,7 +6,7 @@ namespace KynxTest\Laminas\FormShape\InputFilter;
 
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorFactory;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Validator\DigitsVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
@@ -31,7 +31,7 @@ final class InputVisitorFactoryTest extends TestCase
         $factory  = new InputVisitorFactory();
         $instance = $factory($container);
 
-        $expected = new ElementShape('foo', [PsalmType::NumericString]);
+        $expected = new InputShape('foo', [PsalmType::NumericString]);
         $input    = new Input('foo');
         $input->getFilterChain()->attach(new AllowList(['list' => [1.23], 'strict' => false]));
         $input->getValidatorChain()->attach(new Digits());
@@ -56,7 +56,7 @@ final class InputVisitorFactoryTest extends TestCase
         $factory  = new InputVisitorFactory();
         $instance = $factory($container);
 
-        $expected = new ElementShape('foo', [PsalmType::Int, PsalmType::Null], true);
+        $expected = new InputShape('foo', [PsalmType::Int, PsalmType::Null], true);
         $input    = new Input('foo');
         $input->setRequired(false);
         $input->getValidatorChain()->attach($this->createStub(ValidatorInterface::class));

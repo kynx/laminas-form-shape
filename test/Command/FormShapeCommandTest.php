@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Command;
 
-use Kynx\Laminas\FormShape\ArrayShapeException;
 use Kynx\Laminas\FormShape\Command\FormShapeCommand;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
 use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
-use Kynx\Laminas\FormShape\Shape\ArrayShape;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\InputVisitorException;
+use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\Form\Form;
 use Nette\PhpGenerator\PhpFile;
@@ -38,7 +38,7 @@ final class FormShapeCommandTest extends TestCase
         $command             = new FormShapeCommand(
             $this->formReader,
             $this->inputFilterVisitor,
-            new ArrayShapeDecorator()
+            new InputFilterShapeDecorator()
         );
         $this->commandTester = new CommandTester($command);
     }
@@ -55,7 +55,7 @@ final class FormShapeCommandTest extends TestCase
 
     public function testExecuteReturnsFailureErrorForArrayShapeException(): void
     {
-        $exception = new ArrayShapeException('Test fail');
+        $exception = new InputVisitorException('Test fail');
         $formFile  = new FormFile(__DIR__ . '/Form.php', new PhpFile(), new Form());
         $this->formReader->method('getFormFile')
             ->willReturn($formFile);
@@ -69,7 +69,7 @@ final class FormShapeCommandTest extends TestCase
 
     public function testExecuteReturnsSuccess(): void
     {
-        $shape    = new ArrayShape('', [new ElementShape('foo', [PsalmType::Int])]);
+        $shape    = new InputFilterShape('', [new InputShape('foo', [PsalmType::Int])]);
         $formFile = new FormFile(__DIR__ . '/Form.php', new PhpFile(), new Form());
         $this->formReader->method('getFormFile')
             ->willReturn($formFile);

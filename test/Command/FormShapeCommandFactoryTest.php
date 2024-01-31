@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Command;
 
 use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
 use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReader;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
-use Kynx\Laminas\FormShape\Shape\ArrayShape;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\Form\Form;
 use Nette\PhpGenerator\PhpFile;
@@ -33,13 +33,13 @@ final class FormShapeCommandFactoryTest extends TestCase
             ->willReturnMap([
                 [FormReader::class, $formReader],
                 [InputFilterVisitorInterface::class, $inputFilterVisitor],
-                [ArrayShapeDecorator::class, new ArrayShapeDecorator()],
+                [InputFilterShapeDecorator::class, new InputFilterShapeDecorator()],
             ]);
 
         $factory  = new FormShapeCommandFactory();
         $instance = $factory($container);
 
-        $shape    = new ArrayShape('', [new ElementShape('foo', [PsalmType::Int])]);
+        $shape    = new InputFilterShape('', [new InputShape('foo', [PsalmType::Int])]);
         $formFile = new FormFile(__DIR__ . '/Form.php', new PhpFile(), new Form());
         $formReader->method('getFormFile')
             ->willReturn($formFile);

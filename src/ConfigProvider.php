@@ -6,8 +6,8 @@ namespace Kynx\Laminas\FormShape;
 
 use Kynx\Laminas\FormShape\Command\FormShapeCommand;
 use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecoratorFactory;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecoratorFactory;
 use Kynx\Laminas\FormShape\File\FormReader;
 use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
@@ -210,18 +210,18 @@ final readonly class ConfigProvider
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
             ],
             'factories' => [
-                AllowListVisitor::class       => AllowListVisitorFactory::class,
-                ArrayShapeDecorator::class    => ArrayShapeDecoratorFactory::class,
-                ExplodeVisitor::class         => ExplodeVisitorFactory::class,
-                FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormReader::class             => FormReaderFactory::class,
-                FormShapeCommand::class       => FormShapeCommandFactory::class,
-                InArrayVisitor::class         => InArrayVisitorFactory::class,
-                InputFilterVisitor::class     => InputFilterVisitorFactory::class,
-                InputVisitor::class           => InputVisitorFactory::class,
-                InputVisitorManager::class    => InputVisitorManagerFactory::class,
-                RegexVisitor::class           => RegexVisitorFactory::class,
-                StringValidatorVisitor::class => StringValidatorVisitorFactory::class,
+                AllowListVisitor::class          => AllowListVisitorFactory::class,
+                InputFilterShapeDecorator::class => InputFilterShapeDecoratorFactory::class,
+                ExplodeVisitor::class            => ExplodeVisitorFactory::class,
+                FileValidatorVisitor::class      => FileValidatorVisitorFactory::class,
+                FormReader::class                => FormReaderFactory::class,
+                FormShapeCommand::class          => FormShapeCommandFactory::class,
+                InArrayVisitor::class            => InArrayVisitorFactory::class,
+                InputFilterVisitor::class        => InputFilterVisitorFactory::class,
+                InputVisitor::class              => InputVisitorFactory::class,
+                InputVisitorManager::class       => InputVisitorManagerFactory::class,
+                RegexVisitor::class              => RegexVisitorFactory::class,
+                StringValidatorVisitor::class    => StringValidatorVisitorFactory::class,
             ],
         ];
     }

@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Decorator;
 
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
-use Kynx\Laminas\FormShape\Shape\ArrayShape;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
+use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator
- */
-final class ArrayShapeDecoratorTest extends TestCase
+#[CoversClass(InputFilterShapeDecorator::class)]
+final class InputFilterShapeDecoratorTest extends TestCase
 {
     public function testDecorateReturnsPsalmType(): void
     {
@@ -24,11 +23,11 @@ final class ArrayShapeDecoratorTest extends TestCase
         }
         END_OF_EXPECTED;
 
-        $shape     = new ArrayShape('baz', [
-            new ElementShape('foo', [PsalmType::Int, PsalmType::Float]),
-            new ElementShape('barbar', [PsalmType::String], true),
+        $shape     = new InputFilterShape('baz', [
+            new InputShape('foo', [PsalmType::Int, PsalmType::Float]),
+            new InputShape('barbar', [PsalmType::String], true),
         ]);
-        $decorator = new ArrayShapeDecorator();
+        $decorator = new InputFilterShapeDecorator();
 
         $actual = $decorator->decorate($shape);
         self::assertSame($expected, $actual);
@@ -45,13 +44,13 @@ final class ArrayShapeDecoratorTest extends TestCase
         }
         END_OF_EXPECTED;
 
-        $shape     = new ArrayShape('', [
-            new ElementShape('foo', [PsalmType::String]),
-            new ArrayShape('bar', [
-                new ElementShape('baz', [PsalmType::Int]),
+        $shape     = new InputFilterShape('', [
+            new InputShape('foo', [PsalmType::String]),
+            new InputFilterShape('bar', [
+                new InputShape('baz', [PsalmType::Int]),
             ]),
         ]);
-        $decorator = new ArrayShapeDecorator();
+        $decorator = new InputFilterShapeDecorator();
 
         $actual = $decorator->decorate($shape);
         self::assertSame($expected, $actual);

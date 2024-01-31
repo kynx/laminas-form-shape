@@ -10,12 +10,12 @@ use Psr\Container\ContainerInterface;
 /**
  * @psalm-import-type FormShapeConfigurationArray from ConfigProvider
  */
-final readonly class ArrayShapeDecoratorFactory
+final readonly class InputFilterShapeDecoratorFactory
 {
-    public function __invoke(ContainerInterface $container): ArrayShapeDecorator
+    public function __invoke(ContainerInterface $container): InputFilterShapeDecorator
     {
         /** @var FormShapeConfigurationArray $config */
         $config = $container->get('config') ?? [];
-        return new ArrayShapeDecorator($config['laminas-form-shape']['indent']);
+        return new InputFilterShapeDecorator($config['laminas-form-shape']['indent']);
     }
 }

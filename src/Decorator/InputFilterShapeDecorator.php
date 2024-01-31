@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Decorator;
 
-use Kynx\Laminas\FormShape\Shape\ArrayShape;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 
 use function array_map;
 use function array_reduce;
@@ -16,20 +16,20 @@ use function str_pad;
 use function str_repeat;
 use function strlen;
 
-final readonly class ArrayShapeDecorator extends AbstractDecorator
+final readonly class InputFilterShapeDecorator extends AbstractInputFilterShapeDecorator
 {
-    private ElementShapeDecorator $elementShapeDecorator;
+    private InputShapeDecorator $elementShapeDecorator;
 
     public function __construct(private string $indentString = '    ')
     {
-        $this->elementShapeDecorator = new ElementShapeDecorator();
+        $this->elementShapeDecorator = new InputShapeDecorator();
     }
 
-    public function decorate(ArrayShape $arrayShape, int $indent = 0): string
+    public function decorate(InputFilterShape $arrayShape, int $indent = 0): string
     {
         $padding  = $this->calculatePadding($arrayShape);
         $elements = array_map(
-            fn (ArrayShape|ElementShape $shape): string => $this->formatShape($shape, $padding, $indent + 1),
+            fn (InputFilterShape|InputShape $shape): string => $this->formatShape($shape, $padding, $indent + 1),
             $arrayShape->shapes
         );
 
@@ -40,17 +40,17 @@ final readonly class ArrayShapeDecorator extends AbstractDecorator
         );
     }
 
-    private function calculatePadding(ArrayShape $shape): int
+    private function calculatePadding(InputFilterShape $shape): int
     {
-        return array_reduce($shape->shapes, function (int $max, ArrayShape|ElementShape $input): int {
+        return array_reduce($shape->shapes, function (int $max, InputFilterShape|InputShape $input): int {
             $padding = strlen(sprintf('%s: ', $this->getTypeName($input)));
             return max($padding, $max);
         }, 0);
     }
 
-    private function formatShape(ArrayShape|ElementShape $shape, int $padding, int $indent): string
+    private function formatShape(InputFilterShape|InputShape $shape, int $padding, int $indent): string
     {
-        $shapeString = $shape instanceof ArrayShape
+        $shapeString = $shape instanceof InputFilterShape
             ? $this->decorate($shape, $indent)
             : $this->elementShapeDecorator->decorate($shape);
 

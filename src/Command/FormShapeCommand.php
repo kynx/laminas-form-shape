@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Command;
 
-use Kynx\Laminas\FormShape\ArrayShapeException;
-use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
+use Kynx\Laminas\FormShape\InputVisitorException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +19,7 @@ final class FormShapeCommand extends Command
     public function __construct(
         private readonly FormReaderInterface $formProcessor,
         private readonly InputFilterVisitorInterface $inputFilterVisitor,
-        private readonly ArrayShapeDecorator $decorator,
+        private readonly InputFilterShapeDecorator $decorator,
     ) {
         parent::__construct();
     }
@@ -45,7 +45,7 @@ final class FormShapeCommand extends Command
 
         try {
             $arrayShape = $this->inputFilterVisitor->visit($formFile->form->getInputFilter());
-        } catch (ArrayShapeException $e) {
+        } catch (InputVisitorException $e) {
             $io->error($e->getMessage());
             return self::FAILURE;
         }

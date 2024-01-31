@@ -6,14 +6,14 @@ namespace KynxTest\Laminas\FormShape\InputFilter;
 
 use CuyZ\Valinor\Mapper\MappingError;
 use CuyZ\Valinor\MapperBuilder;
-use Kynx\Laminas\FormShape\ArrayShapeException;
-use Kynx\Laminas\FormShape\Decorator\ElementShapeDecorator;
+use Kynx\Laminas\FormShape\Decorator\InputShapeDecorator;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
 use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
-use Kynx\Laminas\FormShape\Shape\ElementShape;
+use Kynx\Laminas\FormShape\InputVisitorException;
+use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\Literal;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Type\TypeUtil;
@@ -43,7 +43,7 @@ final class InputVisitorTest extends TestCase
 {
     public function testVisitCallsFilter(): void
     {
-        $expected = new ElementShape('foo', [PsalmType::Null, PsalmType::String, PsalmType::Int]);
+        $expected = new InputShape('foo', [PsalmType::Null, PsalmType::String, PsalmType::Int]);
         $input    = new Input('foo');
         $input->getFilterChain()->attach(new ToInt());
         $visitor = new InputVisitor([new ToIntVisitor()], []);
@@ -54,7 +54,7 @@ final class InputVisitorTest extends TestCase
 
     public function testVisitSkipsCallableFilters(): void
     {
-        $expected = new ElementShape('foo', [PsalmType::Null, PsalmType::String]);
+        $expected = new InputShape('foo', [PsalmType::Null, PsalmType::String]);
         $filter   = static fn (): never => self::fail("Should not be called");
         $input    = new Input('foo');
         $input->getFilterChain()->attach($filter);
@@ -66,7 +66,7 @@ final class InputVisitorTest extends TestCase
 
     public function testVisitCallsValidator(): void
     {
-        $expected = new ElementShape('foo', [PsalmType::NumericString]);
+        $expected = new InputShape('foo', [PsalmType::NumericString]);
         $input    = new Input('foo');
         $input->getValidatorChain()->attach(new Digits());
         $visitor = new InputVisitor([], [new DigitsVisitor()]);
@@ -85,7 +85,7 @@ final class InputVisitorTest extends TestCase
         bool $required,
         array $expected
     ): void {
-        $expected = new ElementShape('foo', $expected, ! $required);
+        $expected = new InputShape('foo', $expected, ! $required);
         $input    = new Input('foo');
         $input->setContinueIfEmpty($continueIfEmpty);
         $input->setAllowEmpty($allowEmpty);
@@ -115,7 +115,7 @@ final class InputVisitorTest extends TestCase
 
     public function testVisitAllowEmptyReplacesNotEmptyString(): void
     {
-        $expected         = new ElementShape('foo', [PsalmType::String, PsalmType::Null], true);
+        $expected         = new InputShape('foo', [PsalmType::String, PsalmType::Null], true);
         $validatorVisitor = $this->createMock(ValidatorVisitorInterface::class);
         $validatorVisitor->expects(self::once())
             ->method('visit')
@@ -136,7 +136,7 @@ final class InputVisitorTest extends TestCase
     #[DataProvider('addFallbackProvider')]
     public function testVisitAddsFallback(mixed $fallback, array $expected): void
     {
-        $expected = new ElementShape('foo', $expected, true);
+        $expected = new InputShape('foo', $expected, true);
         $input    = new Input('foo');
         $input->setFallbackValue($fallback);
         $input->getFilterChain()->attach(new Boolean());
@@ -160,7 +160,7 @@ final class InputVisitorTest extends TestCase
 
     public function testVisitReturnsUniqueTypes(): void
     {
-        $expected = new ElementShape('foo', [PsalmType::Null, PsalmType::String, PsalmType::Float], true);
+        $expected = new InputShape('foo', [PsalmType::Null, PsalmType::String, PsalmType::Float], true);
         $input    = new Input('foo');
         $input->setFallbackValue(1.23);
         $input->getFilterChain()->attach(new ToFloat());
@@ -177,7 +177,7 @@ final class InputVisitorTest extends TestCase
         $input->getValidatorChain()->attach(new Digits());
         $visitor = new InputVisitor([new BooleanVisitor()], [new DigitsVisitor()]);
 
-        self::expectException(ArrayShapeException::class);
+        self::expectException(InputVisitorException::class);
         self::expectExceptionMessage("Cannot get type for 'foo'");
         $visitor->visit($input);
     }
@@ -199,7 +199,7 @@ final class InputVisitorTest extends TestCase
 
         $elementShape = $visitor->visit($input);
 
-        $decorator   = new ElementShapeDecorator();
+        $decorator   = new InputShapeDecorator();
         $name        = $elementShape->optional ? "{$elementShape->name}?" : $elementShape->name;
         $actualShape = $name . ': ' . $decorator->decorate($elementShape);
         $arrayShape  = 'array{' . $actualShape . '}';

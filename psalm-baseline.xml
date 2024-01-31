@@ -14,12 +14,12 @@
       <code>validatorVisitorsProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Decorator/AbstractDecoratorTest.php">
+  <file src="test/Decorator/AbstractInputFilterShapeDecoratorTest.php">
     <PossiblyUnusedMethod>
       <code>getTypeNameProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Decorator/ElementShapeDecoratorTest.php">
+  <file src="test/Decorator/InputShapeDecoratorTest.php">
     <PossiblyUnusedMethod>
       <code>decorateProvider</code>
     </PossiblyUnusedMethod>
