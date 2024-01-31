@@ -19,6 +19,9 @@ use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormShape\Filter\ToNullVisitor;
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
+use Kynx\Laminas\FormShape\Form\FormVisitor;
+use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
+use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -207,6 +210,7 @@ final readonly class ConfigProvider
     {
         return [
             'aliases'   => [
+                FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
             ],
             'factories' => [
@@ -216,6 +220,7 @@ final readonly class ConfigProvider
                 FileValidatorVisitor::class      => FileValidatorVisitorFactory::class,
                 FormReader::class                => FormReaderFactory::class,
                 FormShapeCommand::class          => FormShapeCommandFactory::class,
+                FormVisitor::class               => FormVisitorFactory::class,
                 InArrayVisitor::class            => InArrayVisitorFactory::class,
                 InputFilterVisitor::class        => InputFilterVisitorFactory::class,
                 InputVisitor::class              => InputVisitorFactory::class,

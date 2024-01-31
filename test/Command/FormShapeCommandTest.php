@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Command;
 
 use Kynx\Laminas\FormShape\Command\FormShapeCommand;
+use Kynx\Laminas\FormShape\Decorator\CollectionFilterShapeDecorator;
 use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
 use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
-use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
+use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
 use Kynx\Laminas\FormShape\InputVisitorException;
 use Kynx\Laminas\FormShape\Shape\InputFilterShape;
 use Kynx\Laminas\FormShape\Shape\InputShape;
@@ -25,20 +26,22 @@ use Symfony\Component\Console\Tester\CommandTester;
 final class FormShapeCommandTest extends TestCase
 {
     private FormReaderInterface&Stub $formReader;
-    private InputFilterVisitorInterface&Stub $inputFilterVisitor;
+    private FormVisitorInterface&Stub $formVisitor;
     private CommandTester $commandTester;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->formReader         = self::createStub(FormReaderInterface::class);
-        $this->inputFilterVisitor = self::createStub(InputFilterVisitorInterface::class);
+        $this->formReader  = self::createStub(FormReaderInterface::class);
+        $this->formVisitor = self::createStub(FormVisitorInterface::class);
+        $decorator         = new InputFilterShapeDecorator();
 
         $command             = new FormShapeCommand(
             $this->formReader,
-            $this->inputFilterVisitor,
-            new InputFilterShapeDecorator()
+            $this->formVisitor,
+            $decorator,
+            new CollectionFilterShapeDecorator($decorator)
         );
         $this->commandTester = new CommandTester($command);
     }
@@ -59,7 +62,7 @@ final class FormShapeCommandTest extends TestCase
         $formFile  = new FormFile(__DIR__ . '/Form.php', new PhpFile(), new Form());
         $this->formReader->method('getFormFile')
             ->willReturn($formFile);
-        $this->inputFilterVisitor->method('visit')
+        $this->formVisitor->method('visit')
             ->willThrowException($exception);
 
         $actual = $this->commandTester->execute(['path' => $formFile->fileName]);
@@ -73,7 +76,7 @@ final class FormShapeCommandTest extends TestCase
         $formFile = new FormFile(__DIR__ . '/Form.php', new PhpFile(), new Form());
         $this->formReader->method('getFormFile')
             ->willReturn($formFile);
-        $this->inputFilterVisitor->method('visit')
+        $this->formVisitor->method('visit')
             ->willReturn($shape);
 
         $actual = $this->commandTester->execute(['path' => $formFile->fileName]);
