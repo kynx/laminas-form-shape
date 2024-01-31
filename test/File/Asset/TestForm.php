@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Laminas\FormShape\Form\Asset;
+namespace KynxTest\Laminas\FormShape\File\Asset;
 
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;

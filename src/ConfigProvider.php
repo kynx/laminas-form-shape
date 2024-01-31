@@ -8,6 +8,8 @@ use Kynx\Laminas\FormShape\Command\FormShapeCommand;
 use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
 use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecoratorFactory;
+use Kynx\Laminas\FormShape\File\FormReader;
+use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
@@ -17,8 +19,6 @@ use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormShape\Filter\ToNullVisitor;
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
-use Kynx\Laminas\FormShape\Form\FormProcessor;
-use Kynx\Laminas\FormShape\Form\FormProcessorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -214,7 +214,7 @@ final readonly class ConfigProvider
                 ArrayShapeDecorator::class    => ArrayShapeDecoratorFactory::class,
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormProcessor::class          => FormProcessorFactory::class,
+                FormReader::class             => FormReaderFactory::class,
                 FormShapeCommand::class       => FormShapeCommandFactory::class,
                 InArrayVisitor::class         => InArrayVisitorFactory::class,
                 InputFilterVisitor::class     => InputFilterVisitorFactory::class,

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Command;
 
 use Kynx\Laminas\FormShape\ArrayShapeException;
-use Kynx\Laminas\FormShape\Form\FormProcessor;
+use Kynx\Laminas\FormShape\Decorator\ArrayShapeDecorator;
+use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,13 +17,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class FormShapeCommand extends Command
 {
     public function __construct(
-        private readonly FormProcessor $formProcessor,
-        private readonly InputFilterVisitorInterface $inputFilterVisitor
+        private readonly FormReaderInterface $formProcessor,
+        private readonly InputFilterVisitorInterface $inputFilterVisitor,
+        private readonly ArrayShapeDecorator $decorator,
     ) {
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
@@ -35,21 +37,21 @@ final class FormShapeCommand extends Command
         $path = (string) $input->getArgument('path');
         $io   = new SymfonyStyle($input, $output);
 
-        $form = $this->formProcessor->getFormFromPath($path);
-        if ($form === null) {
+        $formFile = $this->formProcessor->getFormFile($path);
+        if ($formFile === null) {
             $io->error("Cannot find form at path '$path'");
             return self::INVALID;
         }
 
         try {
-            $arrayShape = $this->inputFilterVisitor->visit($form->getInputFilter())->getTypeString();
+            $arrayShape = $this->inputFilterVisitor->visit($formFile->form->getInputFilter());
         } catch (ArrayShapeException $e) {
             $io->error($e->getMessage());
             return self::FAILURE;
         }
 
         $io->section("Psalm type for $path");
-        $io->block($arrayShape);
+        $io->block($this->decorator->decorate($arrayShape));
         return self::SUCCESS;
     }
 }

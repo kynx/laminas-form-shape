@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Laminas\FormShape\Form;
+namespace Kynx\Laminas\FormShape\File;
 
 use Laminas\Form\FormElementManager;
 use Psr\Container\ContainerInterface;
 
-final readonly class FormProcessorFactory
+final readonly class FormReaderFactory
 {
-    public function __invoke(ContainerInterface $container): FormProcessor
+    public function __invoke(ContainerInterface $container): FormReader
     {
         if ($container->has(FormElementManager::class)) {
             $formElementManger = $container->get(FormElementManager::class);
@@ -17,6 +17,6 @@ final readonly class FormProcessorFactory
             $formElementManger = new FormElementManager($container);
         }
 
-        return new FormProcessor($formElementManger);
+        return new FormReader($formElementManger);
     }
 }
