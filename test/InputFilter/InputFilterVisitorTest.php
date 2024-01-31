@@ -12,6 +12,7 @@ use Kynx\Laminas\FormShape\Shape\InputShape;
 use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\OptionalInputFilter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +30,7 @@ final class InputFilterVisitorTest extends TestCase
         $this->visitor       = new InputFilterVisitor($inputVisitorManager);
     }
 
-    public function testGetArrayTypeReturnsInputTypes(): void
+    public function testVisitReturnsInputShape(): void
     {
         $expected = new InputFilterShape('', [
             new InputShape('foo', [PsalmType::Null, PsalmType::String], false),
@@ -58,6 +59,16 @@ final class InputFilterVisitorTest extends TestCase
         $childFilter->add(new Input('baz'));
         $inputFilter = new InputFilter();
         $inputFilter->add($childFilter, 'foo');
+
+        $actual = $this->visitor->visit($inputFilter);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitReturnsOptionalInputFilterShape(): void
+    {
+        $expected = new InputFilterShape('', [], true);
+
+        $inputFilter = new OptionalInputFilter();
 
         $actual = $this->visitor->visit($inputFilter);
         self::assertEquals($expected, $actual);

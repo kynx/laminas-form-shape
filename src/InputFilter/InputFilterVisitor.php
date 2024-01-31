@@ -8,6 +8,7 @@ use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\Shape\InputFilterShape;
 use Laminas\InputFilter\InputFilterInterface;
 use Laminas\InputFilter\InputInterface;
+use Laminas\InputFilter\OptionalInputFilter;
 
 use function array_keys;
 
@@ -31,6 +32,6 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
             $types[] = $this->visit($child, (string) $childName, $indent + 1);
         }
 
-        return new InputFilterShape($name, $types);
+        return new InputFilterShape($name, $types, $inputFilter instanceof OptionalInputFilter);
     }
 }
