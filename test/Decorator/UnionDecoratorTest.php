@@ -1,0 +1,185 @@
+<?php
+
+declare(strict_types=1);
+
+namespace KynxTest\Laminas\FormShape\Decorator;
+
+use Kynx\Laminas\FormShape\Decorator\DecoratorException;
+use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Psalm\Config;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TCallable;
+use Psalm\Type\Atomic\TClassString;
+use Psalm\Type\Atomic\TClosure;
+use Psalm\Type\Atomic\TFalse;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TLiteralString;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TScalar;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Atomic\TTrue;
+use Psalm\Type\Union;
+use stdClass;
+
+use function array_map;
+use function range;
+
+#[CoversClass(UnionDecorator::class)]
+final class UnionDecoratorTest extends TestCase
+{
+    private UnionDecorator $decorator;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->decorator = new UnionDecorator();
+    }
+
+    public function testDecorateEmptyUnionThrowsException(): void
+    {
+        $expected = DecoratorException::fromEmptyUnion()->getMessage();
+        $union    = new Union([]);
+
+        self::expectException(DecoratorException::class);
+        self::expectExceptionMessage($expected);
+        $this->decorator->decorate($union);
+    }
+
+    public function testDecorateReturnsUnion(): void
+    {
+        $expected = 'float|int';
+        $union    = new Union([new TFloat(), new TInt()]);
+
+        $actual = $this->decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
+
+    public function testDecorateReturnArray(): void
+    {
+        $expected = 'array<int, string>';
+        $union    = new Union([new TArray([new Union([new TInt()]), new Union([new TString()])])]);
+
+        $actual = $this->decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
+
+    public function testDecorateReturnsKeyedArray(): void
+    {
+        $expected = <<<END_OF_EXPECTED
+        array{
+            foo: int,
+        }
+        END_OF_EXPECTED;
+        $union    = new Union([new TKeyedArray(['foo' => new Union([new TInt()])])]);
+
+        $actual = $this->decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
+
+    public function testDecorateSortsTypes(): void
+    {
+        $expected = "'1'|'b'|1|float|null";
+        $union    = new Union([
+            new TNull(),
+            new TLiteralFloat(1.23),
+            new TLiteralInt(1),
+            new TLiteralString('b'),
+            new TLiteralString('1'),
+        ]);
+
+        $actual = $this->decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
+
+    #[DataProvider('typeProvider')]
+    public function testDecorateHandleType(Atomic $type, string $expected): void
+    {
+        $actual = $this->decorator->decorate(new Union([$type]));
+        self::assertSame($expected, $actual);
+    }
+
+    public static function typeProvider(): array
+    {
+        Config::initDecoratorConfig(100);
+
+        return [
+            'scalar'           => [new TScalar(), 'scalar'],
+            'bool'             => [new TBool(), 'bool'],
+            'callable'         => [new TCallable(), 'callable'],
+            'class-string'     => [new TClassString(), 'class-string'],
+            'closure'          => [new TClosure(), 'callable'],
+            'false'            => [new TFalse(), 'false'],
+            'true'             => [new TTrue(), 'true'],
+            'int'              => [new TInt(), 'int'],
+            'negative-int'     => [new TIntRange(null, -1), 'negative-int'],
+            'positive-int'     => [new TIntRange(1, null), 'positive-int'],
+            'named object'     => [new TNamedObject(stdClass::class), "stdClass"],
+            'non-empty-string' => [new TNonEmptyString(), 'non-empty-string'],
+            'numeric-string'   => [new TNumericString(), 'numeric-string'],
+        ];
+    }
+
+    /**
+     * @param array<Atomic> $types
+     */
+    #[DataProvider('combineTypesProvider')]
+    public function testDecorateCombinesTypes(array $types, string $expected): void
+    {
+        $actual = $this->decorator->decorate(new Union($types));
+        self::assertSame($expected, $actual);
+    }
+
+    public static function combineTypesProvider(): array
+    {
+        return [
+            'true, false'            => [[new TTrue(), new TFalse()], 'bool'],
+            'literal int, int'       => [[new TLiteralInt(3), new TInt()], 'int'],
+            'int, literal int'       => [[new TInt(), new TLiteralInt(3)], 'int'],
+            'int, int range'         => [[new TInt(), new TIntRange(1, null)], 'int'],
+            'literal float, float'   => [[new TLiteralFloat(1.23), new TFloat()], 'float'],
+            'float, literal float'   => [[new TFloat(), new TLiteralFloat(1.23)], 'float'],
+            'literal string, string' => [[new TLiteralString('foo'), new TString()], 'string'],
+            'string, literal string' => [[new TString(), new TLiteralString('foo')], 'string'],
+            'numeric-string, string' => [[new TNumericString(), new TString()], 'string'],
+            'string, numeric-string' => [[new TString(), new TNumericString()], 'string'],
+
+            // This behaviour is inconsistent, but can only be fixed upstream: when a TNumericString is added to a union
+            // it overrides any other string type!
+            'non-empty-string, string' => [[new TNonEmptyString(), new TString()], 'string'],
+            'string, non-empty-string' => [[new TString(), new TNonEmptyString()], 'non-empty-string'],
+        ];
+    }
+
+    public function testDecorateLimitsLiterals(): void
+    {
+        $expected  = 'string';
+        $types     = array_map(
+            static fn (int $i): TLiteralString => new TLiteralString((string) $i),
+            range(1, 4)
+        );
+        $union     = new Union($types);
+        $decorator = new UnionDecorator('', 3);
+
+        $actual = $decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
+}
