@@ -6,7 +6,7 @@ namespace KynxTest\Laminas\FormShape\Decorator;
 
 use Kynx\Laminas\FormShape\Decorator\DecoratorException;
 use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
-use Kynx\Laminas\FormShape\Psalm\Config;
+use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -119,7 +119,7 @@ final class UnionDecoratorTest extends TestCase
 
     public static function typeProvider(): array
     {
-        Config::initDecoratorConfig(100);
+        ConfigLoader::load(100);
 
         return [
             'scalar'           => [new TScalar(), 'scalar'],

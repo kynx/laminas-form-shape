@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Decorator;
 
 use Kynx\Laminas\FormShape\ConfigProvider;
-use Kynx\Laminas\FormShape\Psalm\Config;
+use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -18,7 +18,7 @@ final readonly class UnionDecoratorFactory
         /** @var FormShapeConfigurationArray $config */
         $config = $container->get('config') ?? [];
 
-        Config::initDecoratorConfig($config['laminas-form-shape']['max-string-length']);
+        ConfigLoader::load($config['laminas-form-shape']['max-string-length']);
 
         return new UnionDecorator($config['laminas-form-shape']['indent']);
     }

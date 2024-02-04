@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Psalm;
 
-use Kynx\Laminas\FormShape\Psalm\Config;
+use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Config as PsalmConfig;
 
-#[CoversClass(Config::class)]
-final class ConfigTest extends TestCase
+#[CoversClass(ConfigLoader::class)]
+final class ConfigLoaderTest extends TestCase
 {
     public function testInitDecoratorConfigSetsMaxStringLength(): void
     {
         $expected = 1;
-        Config::initDecoratorConfig(maxStringLength: $expected);
+        ConfigLoader::load(maxStringLength: $expected);
 
         $actual = PsalmConfig::getInstance()->max_string_length;
         self::assertSame($expected, $actual);
