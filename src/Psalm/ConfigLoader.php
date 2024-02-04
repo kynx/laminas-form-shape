@@ -33,7 +33,7 @@ final class ConfigLoader
     }
 
     /**
-     * Prevent psalm's `CliUtils` from trying to parse script arguments
+     * Prevent Psalm's `CliUtils::getRawCliArguments()` from trying to parse script arguments
      */
     private static function hackPsalmCli(): void
     {
