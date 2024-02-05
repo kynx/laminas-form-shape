@@ -16,6 +16,9 @@ use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyArray;
@@ -41,14 +44,50 @@ final class TypeComparatorTest extends TestCase
         ConfigLoader::load(500);
 
         return [
-            'mixed'                                       => [new TString(), new TMixed()],
-            'inherited'                                   => [new TTrue(), new TBool()],
-            'int array key'                               => [new TInt(), new TArrayKey()],
-            'string array key'                            => [new TString(), new TArrayKey()],
-            'bool scalar'                                 => [new TBool(), new TScalar()],
-            'int scalar'                                  => [new TInt(), new TScalar()],
-            'float scalar'                                => [new TFloat(), new TScalar()],
-            'string scalar'                               => [new TString(), new TScalar()],
+            'mixed'                                       => [
+                new TString(),
+                new TMixed(),
+            ],
+            'literal float'                               => [
+                new TLiteralFloat(1.23),
+                new TLiteralFloat(1.23),
+            ],
+            'literal int'                                 => [
+                new TLiteralInt(123),
+                new TLiteralInt(123),
+            ],
+            'literall string'                             => [
+                TLiteralString::make('abc'),
+                TLiteralString::make('abc'),
+            ],
+            'inherited'                                   => [
+                new TTrue(),
+                new TBool(),
+            ],
+            'int array key'                               => [
+                new TInt(),
+                new TArrayKey(),
+            ],
+            'string array key'                            => [
+                new TString(),
+                new TArrayKey(),
+            ],
+            'bool scalar'                                 => [
+                new TBool(),
+                new TScalar(),
+            ],
+            'int scalar'                                  => [
+                new TInt(),
+                new TScalar(),
+            ],
+            'float scalar'                                => [
+                new TFloat(),
+                new TScalar(),
+            ],
+            'string scalar'                               => [
+                new TString(),
+                new TScalar(),
+            ],
             'named object'                                => [
                 new TNamedObject(stdClass::class),
                 new TNamedObject(stdClass::class),
@@ -134,7 +173,26 @@ final class TypeComparatorTest extends TestCase
         ConfigLoader::load(500);
 
         return [
-            'not contained'                          => [new TString(), new TInt()],
+            'not contained'                          => [
+                new TString(),
+                new TInt(),
+            ],
+            'float contained by literal float'       => [
+                new TFloat(),
+                new TLiteralFloat(1.23),
+            ],
+            'int contained by literal float'         => [
+                new TInt(),
+                new TLiteralFloat(1.23),
+            ],
+            'int contained by literal int'           => [
+                new TInt(),
+                new TLiteralInt(123),
+            ],
+            'string contained by literal string'     => [
+                new TString(),
+                TLiteralString::make('abc'),
+            ],
             'named object with different class'      => [
                 new TNamedObject(stdClass::class),
                 new TNamedObject(self::class),

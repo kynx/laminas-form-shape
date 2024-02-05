@@ -11,6 +11,9 @@ use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyArray;
@@ -45,6 +48,10 @@ final readonly class TypeComparator
             return true;
         }
 
+        if (self::isContainedByLiteral($type, $container)) {
+            return true;
+        }
+
         if (self::isContainedByInheritance($type, $container)) {
             return true;
         }
@@ -70,6 +77,18 @@ final readonly class TypeComparator
         }
 
         return false;
+    }
+
+    private static function isContainedByLiteral(Atomic $type, Atomic $container): bool
+    {
+        if (! (self::isLiteral($type) && self::isLiteral($container))) {
+            return false;
+        }
+        if (! $type instanceof $container) {
+            return false;
+        }
+
+        return $type->value === $container->value;
     }
 
     private static function isContainedByInheritance(Atomic $type, Atomic $container): bool
@@ -234,5 +253,15 @@ final readonly class TypeComparator
         }
 
         return true;
+    }
+
+    /**
+     * @psalm-assert-if-true TLiteralFloat|TLiteralInt|TLiteralString $type
+     */
+    private static function isLiteral(Atomic $type): bool
+    {
+        return $type instanceof TLiteralFloat
+            || $type instanceof TLiteralInt
+            || $type instanceof TLiteralString;
     }
 }
