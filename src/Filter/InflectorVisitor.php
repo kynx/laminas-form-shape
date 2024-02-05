@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
-use Kynx\Laminas\FormShape\Type\PsalmType;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Laminas\Filter\FilterInterface;
 use Laminas\Filter\Inflector;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
 final readonly class InflectorVisitor implements FilterVisitorInterface
 {
-    public function visit(FilterInterface $filter, array $existing): array
+    public function visit(FilterInterface $filter, Union $previous): Union
     {
         if (! $filter instanceof Inflector) {
-            return $existing;
+            return $previous;
         }
 
-        return [PsalmType::String];
+        return TypeUtil::narrow($previous, new Union([new TString()]));
     }
 }

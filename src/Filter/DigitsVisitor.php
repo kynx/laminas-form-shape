@@ -5,43 +5,34 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Laminas\Filter\Digits;
 use Laminas\Filter\FilterInterface;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 final readonly class DigitsVisitor implements FilterVisitorInterface
 {
-    public function visit(FilterInterface $filter, array $existing): array
+    public function visit(FilterInterface $filter, Union $previous): Union
     {
         if (! $filter instanceof Digits) {
-            return $existing;
+            return $previous;
         }
 
-        if (! $this->hasDigitType($existing)) {
-            return $existing;
+        $builder = $previous->getBuilder();
+
+        $builder->removeType((new TFloat())->getKey());
+        $builder->removeType((new TInt())->getKey());
+        $builder->removeType((new TString())->getKey());
+
+        if ($builder->equals($previous->getBuilder())) {
+            return $previous;
         }
 
-        $existing = TypeUtil::removeIntTypes($existing);
-        $existing = TypeUtil::removeType(PsalmType::Float, $existing);
+        $builder->addType(new TNumericString());
 
-        if (! TypeUtil::hasStringType($existing)) {
-            $existing[] = PsalmType::NumericString;
-        }
-
-        return $existing;
-    }
-
-    /**
-     * @param VisitedArray $existing
-     */
-    private function hasDigitType(array $existing): bool
-    {
-        return TypeUtil::hasIntType($existing)
-            || TypeUtil::hasStringType($existing)
-            || TypeUtil::hasType(PsalmType::Float, $existing);
+        return $builder->freeze();
     }
 }

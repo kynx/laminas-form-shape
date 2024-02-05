@@ -144,7 +144,7 @@ final readonly class ConfigProvider
             ],
             'filter'             => [
                 'allow-list' => [
-                    'allow-empty-haystack' => true,
+                    'allow-empty-list'     => true,
                     'max-literals'         => 10,
                 ],
             ],

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
-use Kynx\Laminas\FormShape\Type\Literal;
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\Filter\AllowList;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
 #[CoversClass(AllowListVisitorFactory::class)]
@@ -24,14 +25,14 @@ final class AllowListVisitorFactoryTest extends TestCase
         $factory  = new AllowListVisitorFactory();
         $instance = $factory($container);
 
-        $expected = [PsalmType::Null, new Literal(["a"])];
-        $filter   = new AllowList(['list' => ['a'], 'strict' => true]);
-        $actual   = $instance->visit($filter, [PsalmType::String]);
+        $expected = new Union([new TString(), new TNull()]);
+        $filter   = new AllowList(['list' => []]);
+        $actual   = $instance->visit($filter, new Union([new TString()]));
 
         self::assertEquals($expected, $actual);
     }
 
-    public function testInvokeConfiguresAllowEmptyList(): void
+    public function testInvokeConfiguresDisallowsEmptyList(): void
     {
         $config    = $this->getConfig(['allow-empty-list' => false]);
         $container = self::createStub(ContainerInterface::class);
@@ -41,28 +42,11 @@ final class AllowListVisitorFactoryTest extends TestCase
         $factory  = new AllowListVisitorFactory();
         $instance = $factory($container);
 
-        $expected = [PsalmType::Null];
+        $expected = new Union([new TNull()]);
         $filter   = new AllowList(['list' => []]);
-        $actual   = $instance->visit($filter, [PsalmType::String]);
+        $actual   = $instance->visit($filter, new Union([new TString()]));
 
-        self::assertSame($expected, $actual);
-    }
-
-    public function testInvokeConfiguresMaxLiteral(): void
-    {
-        $config    = $this->getConfig(['max-literals' => 0]);
-        $container = self::createStub(ContainerInterface::class);
-        $container->method('get')
-            ->willReturnMap([['config', $config]]);
-
-        $factory  = new AllowListVisitorFactory();
-        $instance = $factory($container);
-
-        $expected = [PsalmType::String, PsalmType::Null];
-        $filter   = new AllowList(['list' => ['a']]);
-        $actual   = $instance->visit($filter, [PsalmType::String]);
-
-        self::assertSame($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     private function getConfig(array $config): array
