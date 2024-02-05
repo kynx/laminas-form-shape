@@ -8,37 +8,30 @@ use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TArrayKey;
+use Psalm\Type\Atomic\TEmptyNumeric;
 use Psalm\Type\Atomic\TFalse;
-use Psalm\Type\Atomic\TFloat;
-use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
-use Psalm\Type\Atomic\TNonEmptyArray;
-use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNonEmptyScalar;
 use Psalm\Type\Atomic\TNull;
-use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TResource;
-use Psalm\Type\Atomic\TString;
 use Psalm\Type\Atomic\TTrue;
 use Psalm\Type\Union;
 
-use function array_combine;
 use function array_filter;
 use function array_is_list;
-use function array_keys;
 use function array_map;
 use function array_pop;
-use function assert;
-use function count;
+use function array_reduce;
 use function is_array;
 use function is_bool;
 use function is_float;
 use function is_int;
-use function is_numeric;
 use function is_object;
 use function is_resource;
 use function is_string;
@@ -105,91 +98,159 @@ final readonly class TypeUtil
     }
 
     /**
-     * Returns Psalm type for given PHP value
+     * Returns Psalm literal for PHP value, if possible, otherwise Psalm type
      */
-    public static function toType(mixed $value): Atomic
+    public static function toStrictUnion(mixed $value): Union
     {
         return match (true) {
-            is_array($value)    => self::toArrayType($value),
-            is_bool($value)     => $value ? new TTrue() : new TFalse(),
-            is_float($value)    => new TFloat(),
-            is_int($value)      => new TInt(),
-            is_object($value)   => new TNamedObject($value::class),
-            is_numeric($value)  => new TNumericString(),
-            is_string($value)   => $value === '' ? new TString() : new TNonEmptyString(),
-            is_resource($value) => new TResource(),
-            default             => new TMixed(),
-            $value === null     => new TNull(),
+            is_array($value)    => new Union([self::toStrictArray($value)]),
+            is_bool($value)     => new Union([$value ? new TTrue() : new TFalse()]),
+            is_float($value)    => new Union([new TLiteralFloat($value)]),
+            is_int($value)      => new Union([new TLiteralInt($value)]),
+            is_object($value)   => new Union([new TNamedObject($value::class)]),
+            is_string($value)   => new Union([TLiteralString::make($value)]),
+            is_resource($value) => new Union([new TResource()]),
+            $value === null     => new Union([new TNull()]),
+            default             => new Union([new TMixed()]),
         };
     }
 
     /**
-     * Returns Psalm literal for PHP value, if possible, otherwise Psalm type
+     * Returns Psalm type for given PHP value
      */
-    public static function toLiteralType(mixed $value): Atomic
+    public static function toLaxUnion(mixed $value): Union
     {
         return match (true) {
-            is_array($value)  => self::toLiteralArrayType($value),
-            is_float($value)  => new TLiteralFloat($value),
-            is_int($value)    => new TLiteralInt($value),
-            is_string($value) => TLiteralString::make($value),
-            default           => self::toType($value),
+            is_array($value)    => new Union([self::toLaxArray($value)]),
+            is_bool($value)     => self::toLaxBool($value),
+            is_float($value)    => self::toLaxFloat($value),
+            is_int($value)      => self::toLaxInt($value),
+            is_object($value)   => new Union([new TNamedObject($value::class)]),
+            is_string($value)   => self::toLaxString($value),
+            is_resource($value) => self::toLaxResource(),
+            $value === null     => self::toLaxBool(false),
+            default             => new Union([new TMixed()]),
         };
     }
 
-    private static function toArrayType(array $value): TKeyedArray|TArray
+    private static function toStrictArray(array $value): TKeyedArray|TArray
+    {
+        if ($value === []) {
+            return self::toLaxArray($value);
+        }
+
+        if (array_is_list($value)) {
+            return Type::getNonEmptyListAtomic(self::combineTypes($value, true));
+        }
+
+        $properties = array_map(static fn (mixed $v): Union => self::toStrictUnion($v), $value);
+        assert($properties !== []);
+
+        return new TKeyedArray($properties);
+    }
+
+    private static function toLaxArray(array $value): TKeyedArray|TArray
     {
         if ($value === []) {
             return new TArray([new Union([new TArrayKey()]), new Union([new TMixed()])]);
         }
 
-        $types = array_map(static fn (mixed $item): Atomic => self::toType($item), $value);
-        $last  = array_pop($types);
-        if ($types === []) {
-            $union = new Union([$last]);
-        } else {
-            $union = Type::combineUnionTypes(new Union([$last]), new Union($types));
-        }
-
         if (array_is_list($value)) {
-            return Type::getNonEmptyListAtomic($union);
+            return Type::getNonEmptyListAtomic(self::combineTypes($value, false));
         }
 
-        /** @var non-empty-array<Atomic> $keys */
-        $keys = array_map(
-            static fn (mixed $key): TInt|TString => is_int($key) ? new TInt() : new TString(),
-            array_keys($value)
-        );
-        if (count($keys) > 1) {
-            $keys = [new TArrayKey()];
-        }
-
-        return new TNonEmptyArray([new Union($keys), $union]);
-    }
-
-    private static function toLiteralArrayType(array $value): TKeyedArray|TArray
-    {
-        if ($value === []) {
-            return self::toArrayType($value);
-        }
-
-        $literals = array_map(static fn (mixed $item): Atomic => self::toLiteralType($item), $value);
-        $last     = array_pop($literals);
-        if ($literals === []) {
-            $union = new Union([$last]);
-        } else {
-            $union = Type::combineUnionTypes(new Union([$last]), new Union($literals));
-        }
-        if (array_is_list($value)) {
-            return Type::getNonEmptyListAtomic($union);
-        }
-
-        $properties = array_combine(array_keys($value), array_map(
-            static fn (Atomic $type): Union => new Union([$type]),
-            $union->getAtomicTypes()
-        ));
+        $properties = array_map(static fn (mixed $v): Union => self::toLaxUnion($v), $value);
         assert($properties !== []);
 
         return new TKeyedArray($properties);
+    }
+
+    private static function toLaxBool(bool $value): Union
+    {
+        if ($value) {
+            return new Union([new TNonEmptyScalar()]);
+        }
+
+        return Type::combineUnionTypes(self::toStrictUnion($value), new Union([
+            new TEmptyNumeric(),
+            TLiteralString::make(""),
+            new TNull(),
+        ]));
+    }
+
+    private static function toLaxFloat(float $value): Union
+    {
+        if ($value === 0.0) {
+            return self::toLaxBool(false);
+        }
+
+        $types = [
+            new TLiteralFloat($value),
+            TLiteralString::make("$value"),
+        ];
+        if ((string) $value === (int) $value . "") {
+            $types[] = new TLiteralInt((int) $value);
+        }
+
+        return new Union($types);
+    }
+
+    private static function toLaxInt(int $value): Union
+    {
+        if ($value === 0) {
+            return self::toLaxBool(false);
+        }
+
+        return new Union([
+            new TLiteralInt($value),
+            // new TLiteralFloat($value), // this would output 'float'
+            TLiteralString::make("$value"),
+        ]);
+    }
+
+    private static function toLaxString(string $value): Union
+    {
+        if ($value === '') {
+            return self::toLaxBool(false);
+        }
+
+        $types = [
+            TLiteralString::make($value),
+        ];
+        if ($value === (int) $value . "") {
+            $types[] = new TLiteralInt((int) $value);
+        }
+
+        return new Union($types);
+    }
+
+    private static function toLaxResource(): Union
+    {
+        return new Union([
+            new TResource(),
+            new TNumeric(),
+        ]);
+    }
+
+    private static function combineTypes(array $types, bool $strict): Union
+    {
+        assert($types !== []);
+
+        /** @var mixed $type */
+        $type  = array_pop($types);
+        $union = $strict ? self::toStrictUnion($type) : self::toLaxUnion($type);
+        if ($types === []) {
+            return $union;
+        }
+
+        return array_reduce(
+            $types,
+            static function (Union $union, mixed $item) use ($strict): Union {
+                return $strict
+                    ? Type::combineUnionTypes($union, self::toStrictUnion($item))
+                    : Type::combineUnionTypes($union, self::toLaxUnion($item));
+            },
+            $union
+        );
     }
 }

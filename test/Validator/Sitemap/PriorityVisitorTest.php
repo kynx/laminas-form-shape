@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Validator\Sitemap;
 
 use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\Sitemap\PriorityVisitor;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\Sitemap\Priority;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use function array_values;
 
 /**
- * @psalm-import-type VisitedArray from TypeUtil
+ * @psalm-import-type VisitedArray from \Kynx\Laminas\FormShape\Psalm\TypeUtil
  */
 #[CoversClass(PriorityVisitor::class)]
 final class PriorityVisitorTest extends TestCase

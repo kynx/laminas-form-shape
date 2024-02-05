@@ -17,7 +17,7 @@ final class ConfigLoader
 {
     private static bool $loaded = false;
 
-    public static function load(int $maxStringLength): void
+    public static function load(int $maxStringLength = 500): void
     {
         if (self::$loaded) {
             return;

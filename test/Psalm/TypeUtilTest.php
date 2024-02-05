@@ -13,6 +13,7 @@ use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TEmptyNumeric;
 use Psalm\Type\Atomic\TFalse;
 use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
@@ -22,9 +23,9 @@ use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
-use Psalm\Type\Atomic\TNonEmptyArray;
-use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNonEmptyScalar;
 use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TNumericString;
 use Psalm\Type\Atomic\TResource;
 use Psalm\Type\Atomic\TString;
@@ -32,6 +33,8 @@ use Psalm\Type\Atomic\TTrue;
 use Psalm\Type\Union;
 use stdClass;
 
+use function array_values;
+use function current;
 use function fopen;
 
 #[CoversClass(TypeUtil::class)]
@@ -130,63 +133,102 @@ final class TypeUtilTest extends TestCase
         ];
     }
 
-    #[DataProvider('toTypeProvider')]
-    public function testToType(mixed $value, Atomic $expected): void
+    #[DataProvider('toLaxUnion')]
+    public function testToLaxUnion(mixed $value, array $expected): void
     {
-        $actual = TypeUtil::toType($value);
+        $union  = TypeUtil::toLaxUnion($value);
+        $actual = array_values($union->getAtomicTypes());
         self::assertEquals($expected, $actual);
     }
 
-    public static function toTypeProvider(): array
+    public static function toLaxUnion(): array
     {
         ConfigLoader::load(500);
 
         $resource = fopen('php://memory', 'r');
         return [
-            'array int key'    => [
-                [1 => 'b'],
-                new TNonEmptyArray([Type::getInt(), new Union([new TNonEmptyString()])]),
-            ],
-            'array mixed key'  => [
-                ['a' => 'b', 1 => 'c'],
-                new TNonEmptyArray([Type::getArrayKey(), new Union([new TNonEmptyString()])]),
-            ],
-            'array string key' => [
-                ['a' => 'b'],
-                new TNonEmptyArray([Type::getString(), new Union([new TNonEmptyString()])]),
+            'array'            => [
+                ['a' => true],
+                [new TKeyedArray(['a' => new Union([new TNonEmptyScalar()])])],
             ],
             'empty array'      => [
                 [],
-                new TArray([Type::getArrayKey(), new Union([new TMixed()])]),
+                [new TArray([Type::getArrayKey(), new Union([new TMixed()])])],
             ],
             'list'             => [
                 ['a', 'b'],
-                Type::getNonEmptyListAtomic(new Union([new TNonEmptyString()])),
+                [Type::getNonEmptyListAtomic(new Union([TLiteralString::make('a'), TLiteralString::make('b')]))],
             ],
-            'empty string'     => ['', new TString()],
-            'false'            => [false, new TFalse()],
-            'float'            => [1.23, new TFloat()],
-            'int'              => [123, new TInt()],
-            'non-empty-string' => ['abc', new TNonEmptyString()],
-            'null'             => [null, new TNull()],
-            'numeric'          => ['123', new TNumericString()],
-            'object'           => [new stdClass(), new TNamedObject(stdClass::class)],
-            'resource'         => [$resource, new TResource()],
-            'true'             => [true, new TTrue()],
+            'false'            => [
+                false,
+                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+            ],
+            'true'             => [
+                true,
+                [new TNonEmptyScalar()],
+            ],
+            'zero float'       => [
+                0.0,
+                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+            ],
+            'float'            => [
+                1.23,
+                [new TLiteralFloat(1.23), TLiteralString::make('1.23')],
+            ],
+            'int float'        => [
+                1.0,
+                [new TLiteralFloat(1.0), TLiteralString::make('1'), new TLiteralInt(1)],
+            ],
+            'zero int'         => [
+                0,
+                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+            ],
+            'int'              => [
+                123,
+                [new TLiteralInt(123), TLiteralString::make('123')],
+            ],
+            'null'             => [
+                null,
+                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+            ],
+            'object'           => [
+                new stdClass(),
+                [new TNamedObject(stdClass::class)],
+            ],
+            'resource'         => [
+                $resource,
+                [new TResource(), new TNumeric()],
+            ],
+            'empty string'     => [
+                '',
+                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+            ],
+            'int string'       => [
+                '123',
+                [TLiteralString::make('123'), new TLiteralInt(123)],
+            ],
+            'non-empty-string' => [
+                'abc',
+                [TLiteralString::make('abc')],
+            ],
         ];
     }
 
-    #[DataProvider('toLiteralTypeProvider')]
-    public function testToLiteralType(mixed $value, Atomic $expected): void
+    #[DataProvider('toStrictUnionProvider')]
+    public function testToStrictUnion(mixed $value, Atomic $expected): void
     {
-        $actual = TypeUtil::toLiteralType($value);
+        $union = TypeUtil::toStrictUnion($value);
+        $types = array_values($union->getAtomicTypes());
+        self::assertCount(1, $types);
+        $actual = current($types);
         self::assertEquals($expected, $actual);
     }
 
-    public static function toLiteralTypeProvider(): array
+    public static function toStrictUnionProvider(): array
     {
         ConfigLoader::load(200);
 
+        $resource = fopen('php://memory', 'r');
         return [
             'empty array' => [
                 [],
@@ -197,15 +239,41 @@ final class TypeUtilTest extends TestCase
                 Type::getNonEmptyListAtomic(new Union([new TLiteralInt(1), new TLiteralInt(2)])),
             ],
             'array'       => [
-                ['a' => 'b'],
-                new TKeyedArray([
-                    'a' => new Union([TLiteralString::make('b')]),
-                ]),
+                ['a' => true],
+                new TKeyedArray(['a' => new Union([new TTrue()])]),
             ],
-            'float'       => [1.23, new TLiteralFloat(1.23)],
-            'int'         => [123, new TLiteralInt(123)],
-            'string'      => ['abc', TLiteralString::make('abc')],
-            'other'       => [false, new TFalse()],
+            'false'       => [
+                false,
+                new TFalse(),
+            ],
+            'true'        => [
+                true,
+                new TTrue(),
+            ],
+            'float'       => [
+                1.23,
+                new TLiteralFloat(1.23),
+            ],
+            'int'         => [
+                123,
+                new TLiteralInt(123),
+            ],
+            'null'        => [
+                null,
+                new TNull(),
+            ],
+            'object'      => [
+                new stdClass(),
+                new TNamedObject(stdClass::class),
+            ],
+            'resource'    => [
+                $resource,
+                new TResource(),
+            ],
+            'string'      => [
+                'abc',
+                TLiteralString::make('abc'),
+            ],
         ];
     }
 }
