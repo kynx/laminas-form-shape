@@ -28,6 +28,7 @@ use function array_is_list;
 use function array_map;
 use function array_pop;
 use function array_reduce;
+use function assert;
 use function is_array;
 use function is_bool;
 use function is_float;
@@ -60,16 +61,58 @@ final readonly class TypeUtil
     }
 
     /**
-     * Returns union with any occurrences of type `$search` replaced by `$replace`
+     * Returns union containing types from `$replace` that are more specific than a type from `$search`
+     *
+     * If the `$preserve` option is true, non-matching entries from `$search` will be preserved.
      */
-    public static function replace(Union $union, Atomic $search, Union $replace): Union
+    public static function narrow(Union $search, Union $replace, bool $preserve = false): Union
     {
-        if (self::hasType($union, $search)) {
-            $builder = $union->getBuilder();
-            return $builder->substitute(new Union([$search]), $replace)->freeze();
+        $builder = $replace->getBuilder();
+
+        foreach ($replace->getAtomicTypes() as $replaceType) {
+            $contained = array_filter(
+                $search->getAtomicTypes(),
+                static fn (Atomic $searchType): bool => TypeComparator::isContainedBy($replaceType, $searchType)
+                    || TypeComparator::isContainedBy($searchType, $replaceType)
+            );
+            if ($contained === []) {
+                $builder->removeType($replaceType->getKey());
+            }
         }
 
-        return $union;
+        if (! $preserve) {
+            return $builder->freeze();
+        }
+
+        foreach ($search->getAtomicTypes() as $searchType) {
+            $contained = array_filter(
+                $builder->getAtomicTypes(),
+                static fn (Atomic $replaceType): bool => TypeComparator::isContainedBy($replaceType, $searchType)
+                    || TypeComparator::isContainedBy($searchType, $replaceType)
+            );
+            if ($contained === []) {
+                $builder->addType($searchType);
+            }
+        }
+
+        return $builder->freeze();
+    }
+
+    /**
+     * Returns union with one type replaced by one or more other types
+     *
+     * Unfortunately `Union::substitute()` always adds the replacement :(
+     */
+    public static function replaceType(Union $union, Atomic $search, Union $replace): Union
+    {
+        $builder = $union->getBuilder();
+        $builder->removeType($search->getKey());
+
+        if ($builder->equals($union->getBuilder())) {
+            return $union;
+        }
+
+        return Type::combineUnionTypes($builder->freeze(), $replace);
     }
 
     /**

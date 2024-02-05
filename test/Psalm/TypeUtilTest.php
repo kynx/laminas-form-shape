@@ -24,6 +24,7 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyScalar;
+use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TNumericString;
@@ -84,9 +85,9 @@ final class TypeUtilTest extends TestCase
     }
 
     #[DataProvider('replaceProvider')]
-    public function testReplace(Union $union, Atomic $search, Union $replace, Union $expected): void
+    public function testReplace(Union $search, Union $replace, bool $preserve, Union $expected): void
     {
-        $actual = TypeUtil::replace($union, $search, $replace);
+        $actual = TypeUtil::narrow($search, $replace, $preserve);
         self::assertEquals($expected, $actual);
     }
 
@@ -95,23 +96,48 @@ final class TypeUtilTest extends TestCase
         ConfigLoader::load(500);
 
         return [
-            'replaces'          => [
+            'replace, no preserve'           => [
                 new Union([new TInt(), new TString()]),
-                new TString(),
                 new Union([new TNumericString()]),
-                new Union([new TInt(), new TNumericString()]),
+                false,
+                new Union([new TNumericString()]),
             ],
-            'replaces multiple' => [
+            'replaces multiple, no preserve' => [
+                new Union([new TBool(), new TString()]),
+                new Union([new TTrue(), new TNonEmptyString()]),
+                false,
+                new Union([new TTrue(), new TNonEmptyString()]),
+            ],
+            'replace, preserve'              => [
+                new Union([new TString(), new TNull()]),
+                new Union([new TNumericString()]),
+                true,
+                new Union([new TNumericString(), new TNull()]),
+            ],
+        ];
+    }
+
+    #[DataProvider('replaceTypeProvider')]
+    public function testReplaceType(Union $union, Atomic $search, Union $replace, Union $expected): void
+    {
+        $actual = TypeUtil::replaceType($union, $search, $replace);
+        self::assertEquals($expected, $actual);
+    }
+
+    public static function replaceTypeProvider(): array
+    {
+        return [
+            'does not exist' => [
+                new Union([new TString()]),
+                new TInt(),
+                new Union([new TFloat()]),
+                new Union([new TString()]),
+            ],
+            'exists'         => [
                 new Union([new TString()]),
                 new TString(),
-                new Union([new TFloat(), new TInt()]),
-                new Union([new TFloat(), new TInt()]),
-            ],
-            'does not replace'  => [
-                new Union([new TString(), new TNull()]),
-                new TFloat(),
-                new Union([new TInt()]),
-                new Union([new TString(), new TNull()]),
+                new Union([new TNonEmptyString()]),
+                new Union([new TNonEmptyString()]),
             ],
         ];
     }
