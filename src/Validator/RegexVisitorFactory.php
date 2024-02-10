@@ -6,10 +6,13 @@ namespace Kynx\Laminas\FormShape\Validator;
 
 use Kynx\Laminas\FormShape\ConfigProvider;
 use Psalm\Type\Atomic;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TString;
 use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
+use function array_filter;
 use function is_a;
 use function is_string;
 
@@ -18,6 +21,8 @@ use function is_string;
  */
 final readonly class RegexVisitorFactory
 {
+    private const VALID_TYPES = [TFloat::class, TInt::class, TString::class];
+
     public function __invoke(ContainerInterface $container): RegexVisitor
     {
         /** @var FormShapeConfigurationArray $config */
@@ -51,11 +56,18 @@ final readonly class RegexVisitorFactory
     }
 
     /**
-     * @psalm-assert class-string<TString> $classString
+     * @psalm-assert class-string<TFloat|TInt|TString> $classString
      */
     private function assertIsTString(mixed $classString): void
     {
-        if (! (is_string($classString) && is_a($classString, TString::class, true))) {
+        if (! is_string($classString)) {
+            throw InvalidValidatorConfigurationException::forRegex($classString);
+        }
+        $valid = (bool) array_filter(
+            self::VALID_TYPES,
+            static fn (string $type): bool => is_a($classString, $type, true)
+        );
+        if (! $valid) {
             throw InvalidValidatorConfigurationException::forRegex($classString);
         }
     }
