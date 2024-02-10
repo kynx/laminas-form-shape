@@ -17,7 +17,7 @@ final class ConfigLoader
 {
     private static bool $loaded = false;
 
-    public static function load(int $maxStringLength = 500): void
+    public static function load(?int $maxStringLength = null): void
     {
         if (self::$loaded) {
             return;
@@ -26,8 +26,10 @@ final class ConfigLoader
         self::hackPsalmCli();
         self::setPsalmVersion();
 
-        $config                    = Config::getConfigForPath(__DIR__, getcwd());
-        $config->max_string_length = $maxStringLength;
+        $config = Config::getConfigForPath(__DIR__, getcwd());
+        if ($maxStringLength !== null) {
+            $config->max_string_length = $maxStringLength;
+        }
 
         self::$loaded = true;
     }

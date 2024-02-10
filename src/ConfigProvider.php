@@ -71,6 +71,8 @@ use Psalm\Type\Atomic\TString;
  * @psalm-type InputVisitorArray = array<class-string<InputInterface>, class-string<InputVisitorInterface>>
  * @psalm-type FormShapeArray = array{
  *      indent: string,
+ *      max-string-length: ?int,
+ *      literal-limit: ?int,
  *      filter-visitors: FilterVisitorList,
  *      validator-visitors: ValidatorVisitorList,
  *      input-visitors: InputVisitorArray,
@@ -113,6 +115,8 @@ final readonly class ConfigProvider
     {
         return [
             'indent'             => '    ',
+            'max-string-length'  => null,
+            'literal-limit'      => null,
             'filter-visitors'    => [
                 AllowListVisitor::class,
                 BooleanVisitor::class,
@@ -148,13 +152,11 @@ final readonly class ConfigProvider
             'filter'             => [
                 'allow-list' => [
                     'allow-empty-list'     => true,
-                    'max-literals'         => 10,
                 ],
             ],
             'validator'          => [
                 'in-array' => [
                     'allow-empty-haystack' => true,
-                    'max-literals'         => 10,
                 ],
                 'regex'    => [
                     'patterns' => [

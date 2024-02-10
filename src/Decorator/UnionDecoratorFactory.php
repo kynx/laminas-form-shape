@@ -17,9 +17,10 @@ final readonly class UnionDecoratorFactory
     {
         /** @var FormShapeConfigurationArray $config */
         $config = $container->get('config') ?? [];
+        $shapeConfig = $config['laminas-form-shape'];
 
-        ConfigLoader::load($config['laminas-form-shape']['max-string-length']);
+        ConfigLoader::load($shapeConfig['max-string-length'] ?? null);
 
-        return new UnionDecorator($config['laminas-form-shape']['indent']);
+        return new UnionDecorator($shapeConfig['indent'], $shapeConfig['literal-limit']);
     }
 }

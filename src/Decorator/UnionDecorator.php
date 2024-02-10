@@ -25,7 +25,7 @@ final readonly class UnionDecorator
     private ArrayDecorator $arrayDecorator;
     private KeyedArrayDecorator $keyedArrayDecorator;
 
-    public function __construct(public string $indentString = '    ', private int $literalLimit = 10)
+    public function __construct(public string $indentString = '    ', private ?int $literalLimit = null)
     {
         $this->arrayDecorator      = new ArrayDecorator($this);
         $this->keyedArrayDecorator = new KeyedArrayDecorator($this);
@@ -73,7 +73,7 @@ final readonly class UnionDecorator
         $combined = Type::combineUnionTypes(
             type_1:        new Union([array_pop($types)]),
             type_2:        new Union($types),
-            literal_limit: $this->literalLimit
+            literal_limit: $this->literalLimit ?? 500,
         );
 
         return array_map(
