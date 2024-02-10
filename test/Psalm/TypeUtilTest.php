@@ -17,18 +17,19 @@ use Psalm\Type\Atomic\TEmptyNumeric;
 use Psalm\Type\Atomic\TFalse;
 use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
-use Psalm\Type\Atomic\TNonEmptyScalar;
 use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TNumericString;
 use Psalm\Type\Atomic\TResource;
+use Psalm\Type\Atomic\TScalar;
 use Psalm\Type\Atomic\TString;
 use Psalm\Type\Atomic\TTrue;
 use Psalm\Type\Union;
@@ -84,35 +85,80 @@ final class TypeUtilTest extends TestCase
         ];
     }
 
-    #[DataProvider('replaceProvider')]
-    public function testReplace(Union $search, Union $replace, bool $preserve, Union $expected): void
+    #[DataProvider('narrowProvider')]
+    public function testNarrow(Union $search, Union $replace, Union $expected): void
     {
-        $actual = TypeUtil::narrow($search, $replace, $preserve);
+        $actual = TypeUtil::narrow($search, $replace);
         self::assertEquals($expected, $actual);
     }
 
-    public static function replaceProvider(): array
+    public static function narrowProvider(): array
     {
         ConfigLoader::load(500);
 
         return [
-            'replace, no preserve'           => [
-                new Union([new TInt(), new TString()]),
+            'uses replace type'  => [
+                new Union([new TString()]),
                 new Union([new TNumericString()]),
-                false,
                 new Union([new TNumericString()]),
             ],
-            'replaces multiple, no preserve' => [
+            'uses search type'   => [
+                new Union([new TNumericString()]),
+                new Union([new TString()]),
+                new Union([new TNumericString()]),
+            ],
+            'uses same type'     => [
+                new Union([new TNonEmptyString()]),
+                new Union([new TNonEmptyString()]),
+                new Union([new TNonEmptyString()]),
+            ],
+            'removes type'       => [
                 new Union([new TBool(), new TString()]),
-                new Union([new TTrue(), new TNonEmptyString()]),
-                false,
-                new Union([new TTrue(), new TNonEmptyString()]),
+                new Union([new TTrue()]),
+                new Union([new TTrue()]),
             ],
-            'replace, preserve'              => [
-                new Union([new TString(), new TNull()]),
+            'replaces narrowest' => [
+                new Union([new TString()]),
+                new Union([new TNonEmptyString(), TLiteralString::make('a')]),
+                new Union([TLiteralString::make('a')]),
+            ],
+            'replaces multiple'  => [
+                new Union([new TScalar()]),
+                new Union([new TInt(), new TFloat()]),
+                new Union([new TInt(), new TFloat()]),
+            ],
+        ];
+    }
+
+    #[DataProvider('widenProvider')]
+    public function testWiden(Union $search, Union $replace, Union $expected): void
+    {
+        $actual = TypeUtil::widen($search, $replace);
+        self::assertEquals($expected, $actual);
+    }
+
+    public static function widenProvider(): array
+    {
+        return [
+            'uses replace type' => [
+                new Union([new TNonEmptyString()]),
+                new Union([new TString()]),
+                new Union([new TString()]),
+            ],
+            'uses search type'  => [
+                new Union([new TString()]),
+                new Union([new TNonEmptyString()]),
+                new Union([new TString()]),
+            ],
+            'uses widest type'  => [
                 new Union([new TNumericString()]),
-                true,
-                new Union([new TNumericString(), new TNull()]),
+                new Union([new TScalar(), new TString()]),
+                new Union([new TScalar()]),
+            ],
+            'adds type'         => [
+                new Union([new TInt()]),
+                new Union([new TString()]),
+                new Union([new TInt(), new TString()]),
             ],
         ];
     }
@@ -142,27 +188,10 @@ final class TypeUtilTest extends TestCase
         ];
     }
 
-    #[DataProvider('hasTypeProvider')]
-    public function testHasType(Union $union, Atomic $type, bool $expected): void
-    {
-        $actual = TypeUtil::hasType($union, $type);
-        self::assertSame($expected, $actual);
-    }
-
-    public static function hasTypeProvider(): array
-    {
-        ConfigLoader::load(500);
-
-        return [
-            'does not exist' => [new Union([new TString()]), new TInt(), false],
-            'exists'         => [new Union([new TString()]), new TString(), true],
-        ];
-    }
-
     #[DataProvider('toLaxUnion')]
     public function testToLaxUnion(mixed $value, array $expected): void
     {
-        $union  = TypeUtil::toLaxUnion($value);
+        $union  = TypeUtil::toLooseUnion($value);
         $actual = array_values($union->getAtomicTypes());
         self::assertEquals($expected, $actual);
     }
@@ -174,12 +203,12 @@ final class TypeUtilTest extends TestCase
         $resource = fopen('php://memory', 'r');
         return [
             'array'            => [
-                ['a' => true],
-                [new TKeyedArray(['a' => new Union([new TNonEmptyScalar()])])],
+                ['a' => 123],
+                [new TKeyedArray(['a' => new Union([new TLiteralInt(123), TLiteralString::make('123')])])],
             ],
             'empty array'      => [
                 [],
-                [new TArray([Type::getArrayKey(), new Union([new TMixed()])])],
+                [new TArray([Type::getArrayKey(), Type::getMixed()])],
             ],
             'list'             => [
                 ['a', 'b'],
@@ -191,7 +220,7 @@ final class TypeUtilTest extends TestCase
             ],
             'true'             => [
                 true,
-                [new TNonEmptyScalar()],
+                [new TFloat(), new TIntRange(null, -1), new TIntRange(1, null), new TNonEmptyString(), new TTrue()],
             ],
             'zero float'       => [
                 0.0,

@@ -10,17 +10,21 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TArrayKey;
 use Psalm\Type\Atomic\TEmptyNumeric;
 use Psalm\Type\Atomic\TFalse;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
-use Psalm\Type\Atomic\TNonEmptyScalar;
+use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TResource;
+use Psalm\Type\Atomic\TString;
 use Psalm\Type\Atomic\TTrue;
+use Psalm\Type\MutableUnion;
 use Psalm\Type\Union;
 
 use function array_filter;
@@ -37,11 +41,13 @@ use function is_object;
 use function is_resource;
 use function is_string;
 use function str_contains;
+use function strpos;
+use function substr;
 
 final readonly class TypeUtil
 {
     /**
-     * Returns union with any types not found in `$filter` removed
+     * Returns a union with only types found in `$filter` present
      */
     public static function filter(Union $union, Union $filter): Union
     {
@@ -61,38 +67,69 @@ final readonly class TypeUtil
     }
 
     /**
-     * Returns union containing types from `$replace` that are more specific than a type from `$search`
-     *
-     * If the `$preserve` option is true, non-matching entries from `$search` will be preserved.
+     * Returns union of most specific types
      */
-    public static function narrow(Union $search, Union $replace, bool $preserve = false): Union
+    public static function narrow(Union $search, Union $replace): Union
     {
-        $builder = $replace->getBuilder();
-
-        foreach ($replace->getAtomicTypes() as $replaceType) {
-            $contained = array_filter(
-                $search->getAtomicTypes(),
-                static fn (Atomic $searchType): bool => TypeComparator::isContainedBy($replaceType, $searchType)
-                    || TypeComparator::isContainedBy($searchType, $replaceType)
-            );
-            if ($contained === []) {
-                $builder->removeType($replaceType->getKey());
-            }
-        }
-
-        if (! $preserve) {
-            return $builder->freeze();
-        }
+        $builder = $search->getBuilder();
 
         foreach ($search->getAtomicTypes() as $searchType) {
-            $contained = array_filter(
-                $builder->getAtomicTypes(),
-                static fn (Atomic $replaceType): bool => TypeComparator::isContainedBy($replaceType, $searchType)
-                    || TypeComparator::isContainedBy($searchType, $replaceType)
-            );
-            if ($contained === []) {
-                $builder->addType($searchType);
+            $builder->removeType($searchType->getKey());
+
+            $found     = false;
+            $narrowest = [];
+            foreach ($replace->getAtomicTypes() as $replaceType) {
+                $key           = self::getNarrowingKey($replaceType);
+                $narrowestType = $narrowest[$key] ?? $searchType;
+                $type          = self::narrowestType($narrowestType, $replaceType);
+                if ($type !== null) {
+                    $found           = true;
+                    $narrowest[$key] = $type;
+                }
             }
+
+            if ($found) {
+                foreach ($narrowest as $type) {
+                    $builder->addType($type);
+                }
+            }
+        }
+
+        return $builder->freeze();
+    }
+
+    public static function widen(Union $search, Union $replace): Union
+    {
+        $builder = $search->getBuilder();
+
+        foreach ($replace->getAtomicTypes() as $replaceType) {
+            $found  = false;
+            $widest = $replaceType;
+            foreach ($builder->getAtomicTypes() as $searchType) {
+                $type = self::widestType($searchType, $widest);
+                if ($type !== null) {
+                    $builder->removeType($searchType->getKey());
+                    $builder->removeType($widest->getKey());
+                    $builder->addType($type);
+                    $widest = $type;
+                    $found  = true;
+                }
+            }
+
+            if (! $found) {
+                $builder->addType($replaceType);
+            }
+        }
+
+        return $builder->freeze();
+    }
+
+    public static function remove(Union $union, Union $remove): Union
+    {
+        $builder = $union->getBuilder();
+
+        foreach (self::filter($union, $remove)->getAtomicTypes() as $type) {
+            $builder->removeType($type->getKey());
         }
 
         return $builder->freeze();
@@ -116,32 +153,7 @@ final readonly class TypeUtil
     }
 
     /**
-     * Returns true if `$union` has any types equivalent to `$type`
-     *
-     * Simple types (scalars, arrays) are considered equivalent if one of the `$union` types is an `instance of $type`.
-     * Complex types (for example, `TNamedObject`) defer to `Atomic::equals()` for the equivalence check.
-     */
-    public static function hasType(Union $union, Atomic $container): bool
-    {
-        foreach ($union->getAtomicTypes() as $unionType) {
-            if (TypeComparator::isContainedBy($unionType, $container)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns true if type is a literal
-     */
-    public static function isLiteral(Atomic $type): bool
-    {
-        return str_contains($type->getId(), '(');
-    }
-
-    /**
-     * Returns Psalm literal for PHP value, if possible, otherwise Psalm type
+     * Returns union of Psalm types for `$value` for use in strictly-typed comparisons
      */
     public static function toStrictUnion(mixed $value): Union
     {
@@ -159,27 +171,72 @@ final readonly class TypeUtil
     }
 
     /**
-     * Returns Psalm type for given PHP value
+     * Returns union of Psalm types for `$value` for use in loosely-typed comparisons
      */
-    public static function toLaxUnion(mixed $value): Union
+    public static function toLooseUnion(mixed $value): Union
     {
         return match (true) {
-            is_array($value)    => new Union([self::toLaxArray($value)]),
-            is_bool($value)     => self::toLaxBool($value),
-            is_float($value)    => self::toLaxFloat($value),
-            is_int($value)      => self::toLaxInt($value),
+            is_array($value)    => new Union([self::toLooseArray($value)]),
+            is_bool($value)     => self::toLooseBool($value),
+            is_float($value)    => self::toLooseFloat($value),
+            is_int($value)      => self::toLooseInt($value),
             is_object($value)   => new Union([new TNamedObject($value::class)]),
-            is_string($value)   => self::toLaxString($value),
-            is_resource($value) => self::toLaxResource(),
-            $value === null     => self::toLaxBool(false),
+            is_string($value)   => self::toLooseString($value),
+            is_resource($value) => self::toLooseResource(),
+            $value === null     => self::toLooseBool(false),
             default             => new Union([new TMixed()]),
         };
+    }
+
+    public static function getEmptyUnion(): Union
+    {
+        $builder = new MutableUnion([new TString()]);
+        $builder->removeType('string');
+        return $builder->freeze();
+    }
+
+    private static function getNarrowingKey(Atomic $type): string
+    {
+        if ($type instanceof TString) {
+            return 'string';
+        }
+
+        $key = $type->getKey();
+        if (str_contains($key, '(')) {
+            return substr($key, 0, (int) strpos($key, '('));
+        }
+
+        return $key;
+    }
+
+    private static function narrowestType(Atomic $type, Atomic $container): ?Atomic
+    {
+        if (TypeComparator::isContainedBy($type, $container)) {
+            return $type;
+        }
+        if (TypeComparator::isContainedBy($container, $type)) {
+            return $container;
+        }
+
+        return null;
+    }
+
+    private static function widestType(Atomic $type, Atomic $container): ?Atomic
+    {
+        if (TypeComparator::isContainedBy($type, $container)) {
+            return $container;
+        }
+        if (TypeComparator::isContainedBy($container, $type)) {
+            return $type;
+        }
+
+        return null;
     }
 
     private static function toStrictArray(array $value): TKeyedArray|TArray
     {
         if ($value === []) {
-            return self::toLaxArray($value);
+            return self::toLooseArray($value);
         }
 
         if (array_is_list($value)) {
@@ -192,7 +249,7 @@ final readonly class TypeUtil
         return new TKeyedArray($properties);
     }
 
-    private static function toLaxArray(array $value): TKeyedArray|TArray
+    private static function toLooseArray(array $value): TKeyedArray|TArray
     {
         if ($value === []) {
             return new TArray([new Union([new TArrayKey()]), new Union([new TMixed()])]);
@@ -202,16 +259,22 @@ final readonly class TypeUtil
             return Type::getNonEmptyListAtomic(self::combineTypes($value, false));
         }
 
-        $properties = array_map(static fn (mixed $v): Union => self::toLaxUnion($v), $value);
+        $properties = array_map(static fn (mixed $v): Union => self::toLooseUnion($v), $value);
         assert($properties !== []);
 
         return new TKeyedArray($properties);
     }
 
-    private static function toLaxBool(bool $value): Union
+    private static function toLooseBool(bool $value): Union
     {
         if ($value) {
-            return new Union([new TNonEmptyScalar()]);
+            return new Union([
+                new TFloat(), // can't make this more specific :(
+                new TIntRange(null, -1),
+                new TIntRange(1, null),
+                new TNonEmptyString(),
+                new TTrue(),
+            ]);
         }
 
         return Type::combineUnionTypes(self::toStrictUnion($value), new Union([
@@ -221,10 +284,10 @@ final readonly class TypeUtil
         ]));
     }
 
-    private static function toLaxFloat(float $value): Union
+    private static function toLooseFloat(float $value): Union
     {
         if ($value === 0.0) {
-            return self::toLaxBool(false);
+            return self::toLooseBool(false);
         }
 
         $types = [
@@ -238,10 +301,10 @@ final readonly class TypeUtil
         return new Union($types);
     }
 
-    private static function toLaxInt(int $value): Union
+    private static function toLooseInt(int $value): Union
     {
         if ($value === 0) {
-            return self::toLaxBool(false);
+            return self::toLooseBool(false);
         }
 
         return new Union([
@@ -251,10 +314,10 @@ final readonly class TypeUtil
         ]);
     }
 
-    private static function toLaxString(string $value): Union
+    private static function toLooseString(string $value): Union
     {
         if ($value === '') {
-            return self::toLaxBool(false);
+            return self::toLooseBool(false);
         }
 
         $types = [
@@ -267,7 +330,7 @@ final readonly class TypeUtil
         return new Union($types);
     }
 
-    private static function toLaxResource(): Union
+    private static function toLooseResource(): Union
     {
         return new Union([
             new TResource(),
@@ -281,7 +344,7 @@ final readonly class TypeUtil
 
         /** @var mixed $type */
         $type  = array_pop($types);
-        $union = $strict ? self::toStrictUnion($type) : self::toLaxUnion($type);
+        $union = $strict ? self::toStrictUnion($type) : self::toLooseUnion($type);
         if ($types === []) {
             return $union;
         }
@@ -291,7 +354,7 @@ final readonly class TypeUtil
             static function (Union $union, mixed $item) use ($strict): Union {
                 return $strict
                     ? Type::combineUnionTypes($union, self::toStrictUnion($item))
-                    : Type::combineUnionTypes($union, self::toLaxUnion($item));
+                    : Type::combineUnionTypes($union, self::toLooseUnion($item));
             },
             $union
         );
