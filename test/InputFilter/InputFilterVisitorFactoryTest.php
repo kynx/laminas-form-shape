@@ -7,13 +7,14 @@ namespace KynxTest\Laminas\FormShape\InputFilter;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormShape\Shape\InputFilterShape;
-use Kynx\Laminas\FormShape\Shape\InputShape;
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
 #[CoversClass(InputFilterVisitorFactory::class)]
@@ -31,9 +32,11 @@ final class InputFilterVisitorFactoryTest extends TestCase
         $factory  = new InputFilterVisitorFactory();
         $instance = $factory($container);
 
-        $expected    = new InputFilterShape('', [
-            new InputShape('foo', [PsalmType::Null, PsalmType::String]),
-        ], false);
+        $expected    = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()]),
+            ]),
+        ]);
         $inputFilter = new InputFilter();
         $inputFilter->add(new Input('foo'));
 

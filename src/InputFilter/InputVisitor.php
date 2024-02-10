@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\InputFilter;
 
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
-use Kynx\Laminas\FormShape\InputVisitorException;
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
-use Kynx\Laminas\FormShape\Shape\InputShape;
-use Kynx\Laminas\FormShape\Type\Literal;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Filter\FilterInterface;
 use Laminas\InputFilter\EmptyContextInterface;
@@ -18,17 +15,14 @@ use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputInterface;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
 use function array_map;
 use function array_unshift;
-use function in_array;
-use function is_bool;
-use function is_int;
-use function is_string;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 final readonly class InputVisitor implements InputVisitorInterface
 {
     /**
@@ -39,15 +33,17 @@ final readonly class InputVisitor implements InputVisitorInterface
     {
     }
 
-    public function visit(InputInterface $input): InputShape
+    public function visit(InputInterface $input): Union
     {
-        $types = [PsalmType::Null, PsalmType::String];
+        $hasFallback       = $input instanceof Input && $input->hasFallback();
+        $possiblyUndefined = $hasFallback || ! $input->isRequired();
+        $union             = new Union([new TNull(), new TString()]);
 
         foreach ($input->getFilterChain()->getIterator() as $filter) {
             if (! $filter instanceof FilterInterface) {
                 continue;
             }
-            $types = $this->getFilterTypes($filter, $types);
+            $union = $this->visitFilters($filter, $union);
         }
 
         $validators = array_map(
@@ -66,85 +62,39 @@ final readonly class InputVisitor implements InputVisitorInterface
         }
 
         foreach ($validators as $validator) {
-            $types = $this->getValidatorTypes($validator, $types);
+            $union = $this->visitValidators($validator, $union);
         }
 
         if (! $continueIfEmpty && ($input->allowEmpty() || ! $input->isRequired())) {
-            $types   = TypeUtil::replaceStringTypes($types, [PsalmType::String]);
-            $types[] = PsalmType::Null;
+            $union = TypeUtil::widen($union, new Union([new TString(), new TNull()]));
         }
 
-        $hasFallback = $input instanceof Input && $input->hasFallback();
-        if ($hasFallback) {
-            $hasFallback = true;
-            $types       = $this->addFallbackType($input->getFallbackValue(), $types);
+        if ($input instanceof Input && $hasFallback) {
+            $union = Type::combineUnionTypes($union, TypeUtil::toStrictUnion($input->getFallbackValue()));
         }
 
-        $unique = [];
-        foreach ($types as $type) {
-            if (! in_array($type, $unique)) {
-                $unique[] = $type;
-            }
-        }
-
-        if ($types === []) {
+        if ($union->getAtomicTypes() === []) {
             throw InputVisitorException::cannotGetInputType($input);
         }
 
-        return new InputShape($input->getName(), $unique, $hasFallback || ! $input->isRequired());
+        return $union->setPossiblyUndefined($possiblyUndefined);
     }
 
-    /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function getFilterTypes(FilterInterface $filter, array $existing): array
+    private function visitFilters(FilterInterface $filter, Union $union): Union
     {
-        $types = $existing;
         foreach ($this->filterVisitors as $visitor) {
-            $types = $visitor->visit($filter, $types);
+            $union = $visitor->visit($filter, $union);
         }
 
-        return $types;
+        return $union;
     }
 
-    /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function getValidatorTypes(ValidatorInterface $validator, array $existing): array
+    private function visitValidators(ValidatorInterface $validator, Union $union): Union
     {
-        $types = $existing;
         foreach ($this->validatorVisitors as $visitor) {
-            $types = $visitor->visit($validator, $types);
+            $union = $visitor->visit($validator, $union);
         }
 
-        return $types;
-    }
-
-    /**
-     * @param VisitedArray $types
-     * @return VisitedArray
-     */
-    private function addFallbackType(mixed $value, array $types): array
-    {
-        if (is_string($value) && ! TypeUtil::hasStringType($types)) {
-            $types[] = new Literal([$value]);
-        }
-        if (is_int($value) && ! TypeUtil::hasIntType($types)) {
-            $types[] = new Literal([$value]);
-        }
-        if ($value === true && ! TypeUtil::hasBoolType($types)) {
-            $types[] = PsalmType::True;
-        }
-        if ($value === false && ! TypeUtil::hasBoolType($types)) {
-            $types[] = PsalmType::False;
-        }
-        if (is_string($value) || is_int($value) || is_bool($value)) {
-            return $types;
-        }
-
-        $types[] = TypeUtil::fromPhpValue($value);
-        return $types;
+        return $union;
     }
 }

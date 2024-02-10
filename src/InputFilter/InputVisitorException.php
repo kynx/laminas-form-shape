@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kynx\Laminas\FormShape;
+namespace Kynx\Laminas\FormShape\InputFilter;
 
 use Kynx\Laminas\FormShape\ExceptionInterface;
 use Laminas\InputFilter\InputInterface;

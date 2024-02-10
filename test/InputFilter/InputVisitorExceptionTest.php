@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace KynxTest\Laminas\FormShape;
+namespace KynxTest\Laminas\FormShape\InputFilter;
 
-use Kynx\Laminas\FormShape\InputVisitorException;
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(InputVisitorException::class)]
-final class ArrayShapeExceptionTest extends TestCase
+final class InputVisitorExceptionTest extends TestCase
 {
     public function testNoVisitorForInput(): void
     {
