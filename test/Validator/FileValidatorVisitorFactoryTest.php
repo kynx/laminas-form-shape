@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Validator\FileValidatorVisitorFactory;
 use Laminas\Validator\File\Crc32;
 use Laminas\Validator\File\ExcludeMimeType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
+
+use function current;
 
 #[CoversClass(FileValidatorVisitorFactory::class)]
 final class FileValidatorVisitorFactoryTest extends TestCase
@@ -24,11 +30,13 @@ final class FileValidatorVisitorFactoryTest extends TestCase
         $factory  = new FileValidatorVisitorFactory();
         $instance = $factory($container);
 
-        $expected  = [PsalmType::NonEmptyString];
+        $previous  = new Union([new TArray([Type::getArrayKey(), Type::getMixed()])]);
         $validator = new Crc32();
-        $actual    = $instance->visit($validator, [PsalmType::String]);
+        $actual    = $instance->visit($validator, $previous);
 
-        self::assertEquals($expected, $actual);
+        self::assertCount(1, $actual->getAtomicTypes());
+        $type = current($actual->getAtomicTypes());
+        self::assertInstanceOf(TKeyedArray::class, $type);
     }
 
     public function testInvokeReturnsConfiguredInstance(): void
@@ -41,9 +49,9 @@ final class FileValidatorVisitorFactoryTest extends TestCase
         $factory  = new FileValidatorVisitorFactory();
         $instance = $factory($container);
 
-        $expected  = [PsalmType::Bool];
+        $expected  = new Union([new TBool()]);
         $validator = new Crc32();
-        $actual    = $instance->visit($validator, [PsalmType::Bool]);
+        $actual    = $instance->visit($validator, new Union([new TBool()]));
 
         self::assertEquals($expected, $actual);
     }

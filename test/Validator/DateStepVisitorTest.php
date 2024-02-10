@@ -6,53 +6,75 @@ namespace KynxTest\Laminas\FormShape\Validator;
 
 use DateTime;
 use DateTimeImmutable;
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\DateStepVisitor;
-use Laminas\Validator\Barcode;
 use Laminas\Validator\DateStep;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
 
-use function array_values;
-
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(DateStepVisitor::class)]
-final class DateStepVisitorTest extends TestCase
+final class DateStepVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
-    {
-        $visitor = new DateStepVisitor();
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertEquals($expected, array_values($actual));
-    }
-
     public static function visitProvider(): array
     {
-        $dateTime          = new ClassString(DateTime::class);
-        $dateTimeImmutable = new ClassString(DateTimeImmutable::class);
+        $dateTime          = new TNamedObject(DateTime::class);
+        $dateTimeImmutable = new TNamedObject(DateTimeImmutable::class);
 
-        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid'            => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'datetime'           => [new DateStep(), [$dateTime, PsalmType::Null], [$dateTime]],
-            'datetime immutable' => [new DateStep(), [$dateTimeImmutable, PsalmType::Null], [$dateTimeImmutable]],
-            'float'              => [new DateStep(), [PsalmType::Float, PsalmType::Null], [PsalmType::Float]],
-            'int'                => [new DateStep(), [PsalmType::Int, PsalmType::Null], [PsalmType::Int]],
-            'negative int'       => [new DateStep(), [PsalmType::NegativeInt, PsalmType::Null], [PsalmType::NegativeInt]],
-            'array'              => [new DateStep(), [PsalmType::Array, PsalmType::Null], [PsalmType::NonEmptyArray]],
-            'string'             => [new DateStep(), [PsalmType::String, PsalmType::Null], [PsalmType::NonEmptyString]],
-            'positive int'       => [new DateStep(), [PsalmType::PositiveInt, PsalmType::Null], [PsalmType::PositiveInt]],
+            'datetime'           => [
+                new DateStep(),
+                [$dateTime, new TNull()],
+                [$dateTime],
+            ],
+            'datetime immutable' => [
+                new DateStep(),
+                [$dateTimeImmutable],
+                [$dateTimeImmutable],
+            ],
+            'float'              => [
+                new DateStep(),
+                [new TFloat()],
+                [new TFloat()],
+            ],
+            'int'                => [
+                new DateStep(),
+                [new TInt()],
+                [new TInt()],
+            ],
+            'negative int'       => [
+                new DateStep(),
+                [new TIntRange(null, -1)],
+                [new TIntRange(null, -1)],
+            ],
+            'array'              => [
+                new DateStep(),
+                [new TArray([Type::getArrayKey(), Type::getMixed()])],
+                [new TNonEmptyArray([Type::getArrayKey(), new Type\Union([new TInt(), new TNumericString()])])],
+            ],
+            'string'             => [
+                new DateStep(),
+                [new TString()],
+                [new TNonEmptyString()],
+            ],
+            'positive int'       => [
+                new DateStep(),
+                [new TIntRange(1, null)],
+                [new TIntRange(1, null)],
+            ],
         ];
-        // phpcs:enable
+    }
+
+    protected static function getValidatorVisitor(): DateStepVisitor
+    {
+        return new DateStepVisitor();
     }
 }

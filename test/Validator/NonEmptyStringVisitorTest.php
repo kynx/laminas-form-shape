@@ -4,36 +4,30 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Validator\HexVisitor;
+use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
-use Laminas\Validator\Hex;
+use Laminas\Validator\Barcode;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TString;
 
-#[CoversClass(HexVisitor::class)]
-final class HexVisitorTest extends AbstractValidatorVisitorTestCase
+#[CoversClass(NonEmptyStringVisitor::class)]
+final class NonEmptyStringVisitorTest extends AbstractValidatorVisitorTestCase
 {
     public static function visitProvider(): array
     {
         return [
-            'string' => [
-                new Hex(),
+            'barcode' => [
+                new Barcode(),
                 [new TString(), new TNull()],
                 [new TNonEmptyString()],
-            ],
-            'int'    => [
-                new Hex(),
-                [new TInt()],
-                [new TInt()],
             ],
         ];
     }
 
     protected static function getValidatorVisitor(): ValidatorVisitorInterface
     {
-        return new HexVisitor();
+        return new NonEmptyStringVisitor();
     }
 }

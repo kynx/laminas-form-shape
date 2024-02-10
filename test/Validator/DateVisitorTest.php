@@ -4,53 +4,59 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use DateTime;
-use DateTimeImmutable;
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use DateTimeInterface;
 use Kynx\Laminas\FormShape\Validator\DateVisitor;
-use Laminas\Validator\Barcode;
 use Laminas\Validator\Date;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
-use function array_values;
-
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(DateVisitor::class)]
-final class DateVisitorTest extends TestCase
+final class DateVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
-    {
-        $visitor = new DateVisitor();
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertEquals($expected, array_values($actual));
-    }
-
     public static function visitProvider(): array
     {
-        $dateTime          = new ClassString(DateTime::class);
-        $dateTimeImmutable = new ClassString(DateTimeImmutable::class);
+        $dateTimeInterface = new TNamedObject(DateTimeInterface::class);
 
         return [
-            'invalid'            => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'datetime'           => [new Date(), [$dateTime, PsalmType::Null], [$dateTime]],
-            'datetime immutable' => [new Date(), [$dateTimeImmutable, PsalmType::Null], [$dateTimeImmutable]],
-            'float'              => [new Date(), [PsalmType::Float, PsalmType::Null], [PsalmType::Float]],
-            'int'                => [new Date(), [PsalmType::Int, PsalmType::Null], [PsalmType::Int]],
-            'negative int'       => [new Date(), [PsalmType::NegativeInt, PsalmType::Null], [PsalmType::NegativeInt]],
-            'array'              => [new Date(), [PsalmType::Array, PsalmType::Null], [PsalmType::NonEmptyArray]],
-            'string'             => [new Date(), [PsalmType::String, PsalmType::Null], [PsalmType::NonEmptyString]],
-            'positive int'       => [new Date(), [PsalmType::PositiveInt, PsalmType::Null], [PsalmType::PositiveInt]],
+            'datetime' => [
+                new Date(),
+                [$dateTimeInterface],
+                [$dateTimeInterface],
+            ],
+            'float'    => [
+                new Date(),
+                [new TFloat()],
+                [new TFloat()],
+            ],
+            'int'      => [
+                new Date(),
+                [new TInt()],
+                [new TInt()],
+            ],
+            'array'    => [
+                new Date(),
+                [new TArray([Type::getArrayKey(), Type::getMixed()])],
+                [new TNonEmptyArray([Type::getArrayKey(), new Union([new TNumericString(), new TInt()])])],
+            ],
+            'string'   => [
+                new Date(),
+                [new TString()],
+                [new TNonEmptyString()],
+            ],
         ];
+    }
+
+    protected static function getValidatorVisitor(): DateVisitor
+    {
+        return new DateVisitor();
     }
 }

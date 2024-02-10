@@ -4,72 +4,80 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\Generic;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\FileValidatorVisitor;
-use Laminas\Validator\Barcode;
+use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\File\Crc32;
-use Laminas\Validator\File\ExcludeMimeType;
-use Laminas\Validator\File\Exists;
-use Laminas\Validator\File\FilesSize;
-use Laminas\Validator\File\Hash;
-use Laminas\Validator\File\ImageSize;
-use Laminas\Validator\File\IsCompressed;
-use Laminas\Validator\File\IsImage;
-use Laminas\Validator\File\Md5;
-use Laminas\Validator\File\MimeType;
-use Laminas\Validator\File\Sha1;
-use Laminas\Validator\File\Size;
-use Laminas\Validator\File\UploadFile;
-use Laminas\Validator\File\WordCount;
 use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Psr\Http\Message\UploadedFileInterface;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
+use function array_pop;
+use function explode;
+
 #[CoversClass(FileValidatorVisitor::class)]
-final class FileValidatorVisitorTest extends TestCase
+final class FileValidatorVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
+    public static function visitProvider(): array
     {
-        $visitor = new FileValidatorVisitor();
-        $actual  = $visitor->visit($validator, $existing);
+        return [
+            'array'         => [
+                new Crc32(),
+                [new TArray([Type::getArrayKey(), Type::getMixed()])],
+                [
+                    new TKeyedArray([
+                        'name'     => new Union([new TString()]),
+                        'tmp_name' => new Union([new TNonEmptyString()]),
+                        'type'     => new Union([new TString()]),
+                    ]),
+                ],
+            ],
+            'uploaded file' => [
+                new Crc32(),
+                [new TNamedObject(UploadedFileInterface::class)],
+                [new TNamedObject(UploadedFileInterface::class)],
+            ],
+        ];
+    }
+
+    #[DataProvider('defaultValidatorProvider')]
+    public function testVisitSupportsDefaultValidators(ValidatorInterface $validator): void
+    {
+        $visitor  = self::getValidatorVisitor();
+        $existing = new Union([new TArray([Type::getArrayKey(), Type::getMixed()])]);
+        $expected = new Union([
+            new TKeyedArray([
+                'name'     => new Union([new TString()]),
+                'tmp_name' => new Union([new TNonEmptyString()]),
+                'type'     => new Union([new TString()]),
+            ]),
+        ]);
+
+        $actual = $visitor->visit($validator, $existing);
         self::assertEquals($expected, $actual);
     }
 
-    public static function visitProvider(): array
+    public static function defaultValidatorProvider(): array
     {
-        $uploadFile = new ClassString(UploadedFileInterface::class);
+        $tests = [];
+        foreach (FileValidatorVisitor::DEFAULT_VALIDATORS as $validatorName) {
+            $parts         = explode('\\', $validatorName);
+            $class         = array_pop($parts);
+            $tests[$class] = [new $validatorName([])];
+        }
 
-        // phpcs:disable Generic.Files.LineLength.TooLong
-        return [
-            'invalid'       => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'array'         => [new Crc32(), [PsalmType::Array], [new Generic(PsalmType::NonEmptyArray, [PsalmType::NonEmptyString])]],
-            'string'        => [new Crc32(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'exclude mime'  => [new ExcludeMimeType(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'exists'        => [new Exists(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'file size'     => [new FilesSize(['max' => 123]), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'hash'          => [new Hash(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'image size'    => [new ImageSize(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'is compressed' => [new IsCompressed(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'is image'      => [new IsImage(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'md5'           => [new Md5(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'mime type'     => [new MimeType(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'sha1'          => [new Sha1(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'size'          => [new Size(), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'upload file'   => [new UploadFile(), [$uploadFile], [$uploadFile]],
-            'word count'    => [new WordCount(), [PsalmType::String], [PsalmType::NonEmptyString]],
-        ];
-        // phpcs:enable
+        return $tests;
+    }
+
+    protected static function getValidatorVisitor(): ValidatorVisitorInterface
+    {
+        return new FileValidatorVisitor();
     }
 }

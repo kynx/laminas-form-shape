@@ -161,8 +161,10 @@ final readonly class TypeComparator
             $max = PHP_INT_MAX;
         }
 
+        // phpcs:disable WebimpressCodingStandard.Formatting.RedundantParentheses.SingleEquality
         return $min >= ($container->min_bound ?? PHP_INT_MIN)
             && $max <= ($container->max_bound ?? PHP_INT_MAX);
+        // phpcs:enable
     }
 
     private static function isContainedByString(Atomic $type, Atomic $container): bool

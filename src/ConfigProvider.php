@@ -52,13 +52,17 @@ use Kynx\Laminas\FormShape\Validator\RegexVisitorFactory;
 use Kynx\Laminas\FormShape\Validator\Sitemap\PriorityVisitor;
 use Kynx\Laminas\FormShape\Validator\StepVisitor;
 use Kynx\Laminas\FormShape\Validator\StringLengthVisitor;
-use Kynx\Laminas\FormShape\Validator\StringValidatorVisitor;
-use Kynx\Laminas\FormShape\Validator\StringValidatorVisitorFactory;
-use Kynx\Laminas\FormShape\Validator\TimezoneVisitor;
+use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitor;
+use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitorFactory;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputInterface;
 use Laminas\ServiceManager\ConfigInterface;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
 
 /**
  * @psalm-import-type ServiceManagerConfigurationType from ConfigInterface
@@ -128,16 +132,15 @@ final readonly class ConfigProvider
                 FileValidatorVisitor::class,
                 HexVisitor::class,
                 InArrayVisitor::class,
-                IsbnVisitor::class,
                 IsCountableVisitor::class,
                 IsInstanceOfVisitor::class,
+                IsbnVisitor::class,
+                NonEmptyStringVisitor::class,
                 NotEmptyVisitor::class,
                 PriorityVisitor::class,
                 RegexVisitor::class,
                 StepVisitor::class,
                 StringLengthVisitor::class,
-                StringValidatorVisitor::class,
-                TimezoneVisitor::class,
             ],
             'input-visitors'     => [
                 Input::class => InputVisitor::class,
@@ -155,47 +158,35 @@ final readonly class ConfigProvider
                 ],
                 'regex'    => [
                     'patterns' => [
-                        [
-                            /* @link \Laminas\Form\Element\Color */
-                            'pattern' => '/^#[0-9a-fA-F]{6}$/',
-                            'types'   => [],
-                            'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
+                        /* @link \Laminas\Form\Element\Color */
+                        '/^#[0-9a-fA-F]{6}$/' => [
+                            TNonEmptyString::class
                         ],
-                        [
-                            /* @link \Laminas\Form\Element\Email */
-                            'pattern' => '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/',
-                            'types'   => [],
-                            'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
+                        /* @link \Laminas\Form\Element\Email */
+                        '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/' => [
+                            TNonEmptyString::class,
                         ],
-                        [
-                            /* @link \Laminas\Form\Element\Month */
-                            'pattern' => '/^[0-9]{4}\-(0[1-9]|1[012])$/',
-                            'types'   => [],
-                            'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
+                        /* @link \Laminas\Form\Element\Month */
+                        '/^[0-9]{4}\-(0[1-9]|1[012])$/' => [
+                            TNonEmptyString::class,
                         ],
-                        [
-                            /* @link \Laminas\Form\Element\MonthSelect */
-                            'pattern' => '/^[0-9]{4}\-(0?[1-9]|1[012])$/',
-                            'types'   => [],
-                            'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
+                        /* @link \Laminas\Form\Element\MonthSelect */
+                        '/^[0-9]{4}\-(0?[1-9]|1[012])$/' => [
+                            TNonEmptyString::class,
                         ],
-                        [
-                            /* @link \Laminas\Form\Element\Number */
-                            'pattern' => '(^-?\d*(\.\d+)?$)',
-                            'types'   => [PsalmType::Int, PsalmType::Float],
-                            'replace' => [[PsalmType::String, PsalmType::NumericString]],
+                        /* @link \Laminas\Form\Element\Number */
+                        '(^-?\d*(\.\d+)?$)' => [
+                            TFloat::class,
+                            TInt::class,
+                            TNumericString::class,
                         ],
-                        [
-                            /* @link \Laminas\Form\Element\Tel */
-                            'pattern' => "/^[^\r\n]*$/",
-                            'types'   => [PsalmType::String, PsalmType::NonEmptyString],
-                            'replace' => [],
+                        /* @link \Laminas\Form\Element\Tel */
+                        "/^[^\r\n]*$/" => [
+                            TString::class,
                         ],
-                        [
-                            /* @link \Laminas\Form\Element\Week */
-                            'pattern' => '/^[0-9]{4}\-W[0-9]{2}$/',
-                            'types'   => [],
-                            'replace' => [[PsalmType::String, PsalmType::NonEmptyString]],
+                        /* @link \Laminas\Form\Element\Week */
+                        '/^[0-9]{4}\-W[0-9]{2}$/' => [
+                            TNonEmptyString::class,
                         ],
                     ],
                 ],
@@ -224,8 +215,8 @@ final readonly class ConfigProvider
                 InputFilterVisitor::class     => InputFilterVisitorFactory::class,
                 InputVisitor::class           => InputVisitorFactory::class,
                 InputVisitorManager::class    => InputVisitorManagerFactory::class,
+                NonEmptyStringVisitor::class  => NonEmptyStringVisitorFactory::class,
                 RegexVisitor::class           => RegexVisitorFactory::class,
-                StringValidatorVisitor::class => StringValidatorVisitorFactory::class,
                 UnionDecorator::class         => UnionDecoratorFactory::class,
             ],
         ];

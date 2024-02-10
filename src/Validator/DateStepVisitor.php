@@ -8,6 +8,7 @@ use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\Date;
 use Laminas\Validator\DateStep;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type\Union;
 
 final readonly class DateStepVisitor implements ValidatorVisitorInterface
 {
@@ -17,12 +18,12 @@ final readonly class DateStepVisitor implements ValidatorVisitorInterface
         $this->dateVistor = new DateVisitor();
     }
 
-    public function visit(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, Union $previous): Union
     {
         if (! $validator instanceof DateStep) {
-            return $existing;
+            return $previous;
         }
 
-        return $this->dateVistor->visit(new Date($validator->getOptions()), $existing);
+        return $this->dateVistor->visit(new Date($validator->getOptions()), $previous);
     }
 }

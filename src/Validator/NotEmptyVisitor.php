@@ -4,58 +4,89 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Countable;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TIntRange;
+use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TLiteralString;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TObject;
+use Psalm\Type\Atomic\TScalar;
+use Psalm\Type\Atomic\TTrue;
+use Psalm\Type\Union;
+use Stringable;
 
 final readonly class NotEmptyVisitor implements ValidatorVisitorInterface
 {
-    public function visit(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, Union $previous): Union
     {
         if (! $validator instanceof NotEmpty) {
-            return $existing;
+            return $previous;
         }
 
-        $types  = TypeUtil::filter($existing, [
-            PsalmType::Null,
-            PsalmType::String,
-            PsalmType::NonEmptyString,
-            PsalmType::Int,
-            PsalmType::NegativeInt,
-            PsalmType::PositiveInt,
-            PsalmType::Float,
-            PsalmType::Bool,
-            PsalmType::Array,
-            PsalmType::NonEmptyArray,
-            PsalmType::Object,
-        ]);
+        $narrow = $remove = [];
         $type   = $validator->getType();
         $object = (bool) ($type & (NotEmpty::OBJECT_COUNT | NotEmpty::OBJECT_STRING));
 
-        if (! $object && $type & NotEmpty::OBJECT) {
-            $types = TypeUtil::removeObjectTypes($types);
+        $visited = TypeUtil::narrow($previous, new Union([
+            new TArray([Type::getArrayKey(), Type::getMixed()]),
+            new TNull(),
+            new TObject(),
+            new TScalar(),
+        ]));
+
+        if ($type & NotEmpty::OBJECT_COUNT) {
+            $narrow[] = new TNamedObject(Countable::class);
+        }
+        if ($type & NotEmpty::OBJECT_STRING) {
+            $narrow[] = new TNamedObject(Stringable::class);
+        }
+        if (! ($type & NotEmpty::OBJECT) && ! $object) {
+            $remove[] = new TObject();
         }
         if ($type & NotEmpty::SPACE) {
-            $types = TypeUtil::replaceStringTypes($types, [PsalmType::NonEmptyString]);
+            $remove[] = TLiteralString::make(' ');
         }
         if ($type & NotEmpty::NULL) {
-            $types = TypeUtil::removeType(PsalmType::Null, $types);
+            $remove[] = new TNull();
         }
         if ($type & NotEmpty::EMPTY_ARRAY) {
-            $types = TypeUtil::replaceArrayTypes($types, [PsalmType::NonEmptyArray]);
+            $narrow[] = new TNonEmptyArray([Type::getArrayKey(), Type::getMixed()]);
+        }
+        if ($type & NotEmpty::ZERO) {
+            $remove[] = TLiteralString::make('0');
         }
         if ($type & NotEmpty::STRING) {
-            $types = TypeUtil::replaceStringTypes($types, [PsalmType::NonEmptyString]);
+            $narrow[] = new TNonEmptyString();
+        }
+        if ($type & NotEmpty::FLOAT) {
+            $remove[] = new TLiteralFloat(0.0);
         }
         if ($type & NotEmpty::INTEGER) {
-            $types = TypeUtil::replaceIntTypes($types, [PsalmType::NegativeInt, PsalmType::PositiveInt]);
+            $remove[] = new TLiteralInt(0);
+            $narrow[] = new TIntRange(null, -1);
+            $narrow[] = new TIntRange(1, null);
         }
         if ($type & NotEmpty::BOOLEAN) {
-            $types = TypeUtil::replaceBoolTypes($types, [PsalmType::True]);
+            $narrow[] = new TTrue();
         }
 
-        return $types;
+        if ($narrow !== []) {
+            $visited = TypeUtil::narrow($visited, new Union($narrow));
+        }
+        if ($remove !== []) {
+            $visited = TypeUtil::remove($visited, new Union($remove));
+        }
+
+        return $visited;
     }
 }

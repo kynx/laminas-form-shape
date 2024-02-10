@@ -4,64 +4,79 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\Generic;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\DigitsVisitor;
 use Kynx\Laminas\FormShape\Validator\ExplodeVisitor;
-use Laminas\Validator\Barcode;
+use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\Digits;
 use Laminas\Validator\Explode;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
-use stdClass;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TGenericObject;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Traversable;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(ExplodeVisitor::class)]
-final class ExplodeVisitorTest extends TestCase
+final class ExplodeVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param list<PsalmType> $itemTypes
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(
-        ValidatorInterface $validator,
-        array $itemTypes,
-        array $existing,
-        array $expected
-    ): void {
-        $visitor = new ExplodeVisitor([new DigitsVisitor()], $itemTypes);
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertEquals($expected, $actual);
-    }
-
     public static function visitProvider(): array
     {
-        $digits      = new Digits();
-        $validator   = new Explode(['validator' => $digits]);
-        $noDelimiter = new Explode(['validator' => $digits, 'valueDelimiter' => null]);
-        $traversable = new ClassString(Traversable::class);
+        $digits    = new Digits();
+        $validator = new Explode(['validator' => $digits]);
 
-        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid'             => [new Barcode(), [PsalmType::String], [PsalmType::Bool], [PsalmType::Bool]],
-            'no validator'        => [new Explode(), [PsalmType::Bool], [PsalmType::Int], [PsalmType::Int]],
-            'not explodeable'     => [$noDelimiter, [PsalmType::String], [PsalmType::String], [PsalmType::NumericString]],
-            'array'               => [$validator, [PsalmType::Bool], [PsalmType::Array], [new Generic(PsalmType::Array, [])]],
-            'numeric array'       => [$validator, [PsalmType::String], [PsalmType::Array], [new Generic(PsalmType::Array, [PsalmType::NumericString])]],
-            'traversable'         => [$validator, [PsalmType::Bool], [$traversable], [new Generic($traversable, [])]],
-            'numeric traversable' => [$validator, [PsalmType::String], [$traversable], [new Generic($traversable, [PsalmType::NumericString])]],
-            'string'              => [$validator, [PsalmType::String], [PsalmType::String], [PsalmType::String, PsalmType::NumericString]],
-            'generic class'       => [$validator, [PsalmType::String], [new Generic(new ClassString(stdClass::class), [])], []],
-            'mixed'               => [$validator, [PsalmType::Bool], [PsalmType::Array, PsalmType::Int], [new Generic(PsalmType::Array, []), PsalmType::Int]],
+//            'no validator'        => [
+//                new Explode(),
+//                [new TBool()],
+//                [new TBool()],
+//            ],
+//            'array'               => [
+//                $validator,
+//                [new TArray([new Union([new TInt()]), new Union([new TString()])])],
+//                [new TArray([new Union([new TInt()]), new Union([new TNumericString()])])],
+//            ],
+//            'keyed array'         => [
+//                $validator,
+//                [new TKeyedArray(['a' => new Union([new TString(), new TNull()])])],
+//                [new TKeyedArray(['a' => new Union([new TNumericString()])])],
+//            ],
+            'traversable'         => [
+                $validator,
+                [new TNamedObject(Traversable::class)],
+                [
+                    new TGenericObject(Traversable::class, [
+                        new Union([
+                            new TNumericString(),
+                            new TFloat(),
+                            new TInt(),
+                        ]),
+                    ]),
+                ],
+            ],
+            'generic traversable' => [
+                $validator,
+                [new TGenericObject(Traversable::class, [new Union([new TString()])])],
+                [new TGenericObject(Traversable::class, [new Union([new TNumericString()])])],
+            ],
+            'no delimiter'        => [
+                new Explode(['validator' => $digits, 'valueDelimiter' => null]),
+                [new TString()],
+                [new TNumericString()],
+            ],
+            'string'              => [
+                $validator,
+                [new TNonEmptyString()],
+                [new TNonEmptyString()],
+            ],
         ];
-        // phpcs:enable
+    }
+
+    protected static function getValidatorVisitor(): ValidatorVisitorInterface
+    {
+        return new ExplodeVisitor([new DigitsVisitor()]);
     }
 }

@@ -4,79 +4,95 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\Literal;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Kynx\Laminas\FormShape\Validator\InArrayVisitor;
-use Laminas\Validator\Barcode;
+use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\InArray;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TLiteralString;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(InArrayVisitor::class)]
-final class InArrayVisitorTest extends TestCase
+final class InArrayVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitLiteralProvider')]
-    public function testVisitReturnsLiteral(ValidatorInterface $validator, array $existing, array $expected): void
+    public static function visitProvider(): array
     {
-        $visitor = new InArrayVisitor();
-        $actual  = $visitor->visit($validator, $existing);
+        ConfigLoader::load();
+
+        return [
+            'empty haystack' => [
+                new InArray(['haystack' => []]),
+                [new TBool()],
+                [new TBool()],
+            ],
+            'strict null'    => [
+                new InArray(['haystack' => [null], 'strict' => true]),
+                [new TString(), new TNull()],
+                [new TNull()],
+            ],
+            'loose null'     => [
+                new InArray(['haystack' => [null], 'strict' => false]),
+                [new TString(), new TNull()],
+                [TLiteralString::make(''), new TNull()],
+            ],
+            'literal string' => [
+                new InArray(['haystack' => ['foo'], 'strict' => true]),
+                [new TString()],
+                [TLiteralString::make("foo")],
+            ],
+            'loose string'
+                => [
+                    new InArray(['haystack' => ['foo'], 'strict' => false]),
+                    [new TString()],
+                    [TLiteralString::make('foo')],
+                ],
+            'strict int' => [
+                new InArray(['haystack' => [123], 'strict' => true]),
+                [new TInt(), new TString()],
+                [new TLiteralInt(123)],
+            ],
+            'loose int'
+                => [
+                    new InArray(['haystack' => [123], 'strict' => false]),
+                    [new TInt(), new TString()],
+                    [new TLiteralInt(123), TLiteralString::make("123")],
+                ],
+            'strict float' => [
+                new InArray(['haystack' => [1.23], 'strict' => true]),
+                [new TFloat()],
+                [new TLiteralFloat(1.23)],
+            ],
+            'loose float'
+                => [
+                    new InArray(['haystack' => [1.23], 'strict' => false]),
+                    [new TFloat(), new TString()],
+                    [new TLiteralFloat(1.23), TLiteralString::make('1.23')],
+                ],
+        ];
+    }
+
+    public function testVisitDisallowsEmptyHaystack(): void
+    {
+        $existing = new Union([new TString()]);
+        $builder  = $existing->getBuilder();
+        $builder->removeType('string');
+        $expected = $builder->freeze();
+
+        $visitor   = new InArrayVisitor(false);
+        $validator = new InArray(['haystack' => []]);
+        $actual    = $visitor->visit($validator, new Union([new TString()]));
         self::assertEquals($expected, $actual);
     }
 
-    public static function visitLiteralProvider(): array
+    protected static function getValidatorVisitor(): ValidatorVisitorInterface
     {
-        // phpcs:disable Generic.Files.LineLength.TooLong
-        return [
-            'invalid'         => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'empty'           => [new InArray(['haystack' => []]), [PsalmType::Bool], [PsalmType::Bool]],
-            'strict null'     => [new InArray(['haystack' => [null], 'strict' => true]), [PsalmType::String, PsalmType::Null], [PsalmType::Null]],
-            'lax null'        => [new InArray(['haystack' => [null], 'strict' => false]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, PsalmType::String]],
-            'strict string'   => [new InArray(['haystack' => ['foo'], 'strict' => true]), [PsalmType::String], [new Literal(["foo"])]],
-            'lax string'      => [new InArray(['haystack' => ['foo'], 'strict' => false]), [PsalmType::String], [new Literal(["foo"])]],
-            'strict int'      => [new InArray(['haystack' => [123], 'strict' => true]), [PsalmType::String, PsalmType::Int], [new Literal([123])]],
-            'lax int'         => [new InArray(['haystack' => [123], 'strict' => false]), [PsalmType::String, PsalmType::Int], [new Literal([123, "123"])]],
-            'strict float'    => [new InArray(['haystack' => [1.23], 'strict' => true]), [PsalmType::Float], [PsalmType::Float]],
-            'lax float'       => [new InArray(['haystack' => [1.23], 'strict' => false]), [PsalmType::Float], [PsalmType::Float]],
-            'strict multiple' => [new InArray(['haystack' => ['foo', null], 'strict' => true]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, new Literal(["foo"])]],
-            'lax multiple'    => [new InArray(['haystack' => ['foo', null], 'strict' => false]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, PsalmType::String, new Literal(["foo"])]],
-        ];
-        // phpcs:enable
-    }
-
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitTypeProvider')]
-    public function testVisitReturnsType(ValidatorInterface $validator, array $existing, array $expected): void
-    {
-        $visitor = new InArrayVisitor(false, 0);
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertEquals($expected, $actual);
-    }
-
-    public static function visitTypeProvider(): array
-    {
-        // phpcs:disable Generic.Files.LineLength.TooLong
-        return [
-            'empty'         => [new InArray(['haystack' => []]), [PsalmType::String], []],
-            'strict null'   => [new InArray(['haystack' => [null], 'strict' => true]), [PsalmType::String, PsalmType::Null], [PsalmType::Null]],
-            'lax null'      => [new InArray(['haystack' => [null], 'strict' => false]), [PsalmType::String, PsalmType::Null], [PsalmType::Null, PsalmType::String]],
-            'strict string' => [new InArray(['haystack' => ['foo'], 'strict' => true]), [PsalmType::String], [PsalmType::String]],
-            'lax string'    => [new InArray(['haystack' => ['foo'], 'strict' => false]), [PsalmType::String], [PsalmType::String]],
-            'strict int'    => [new InArray(['haystack' => [123], 'strict' => true]), [PsalmType::String, PsalmType::Int], [PsalmType::Int]],
-            'lax int'       => [new InArray(['haystack' => [123], 'strict' => false]), [PsalmType::String, PsalmType::Int], [PsalmType::Int, PsalmType::String]],
-            'strict float'  => [new InArray(['haystack' => [1.23], 'strict' => true]), [PsalmType::Float], [PsalmType::Float]],
-            'lax float'     => [new InArray(['haystack' => [1.23], 'strict' => false]), [PsalmType::String, PsalmType::Float], [PsalmType::Float, PsalmType::String]],
-        ];
-        // phpcs:enable
+        return new InArrayVisitor();
     }
 }

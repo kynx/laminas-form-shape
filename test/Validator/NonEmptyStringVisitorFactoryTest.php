@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Validator\StringValidatorVisitorFactory;
+use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitorFactory;
 use Laminas\Validator\Barcode;
 use Laminas\Validator\BusinessIdentifierCode;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
-#[CoversClass(StringValidatorVisitorFactory::class)]
-final class StringValidatorVisitorFactoryTest extends TestCase
+#[CoversClass(NonEmptyStringVisitorFactory::class)]
+final class NonEmptyStringVisitorFactoryTest extends TestCase
 {
     public function testInvokeReturnsDefaultInstance(): void
     {
@@ -21,13 +23,13 @@ final class StringValidatorVisitorFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([['config', []]]);
 
-        $factory  = new StringValidatorVisitorFactory();
+        $factory  = new NonEmptyStringVisitorFactory();
         $instance = $factory($container);
 
-        $expected  = [PsalmType::NonEmptyString];
+        $expected  = new Union([new TNonEmptyString()]);
         $validator = new Barcode();
-        $actual    = $instance->visit($validator, [PsalmType::String]);
-        self::assertSame($expected, $actual);
+        $actual    = $instance->visit($validator, new Union([new TString()]));
+        self::assertEquals($expected, $actual);
     }
 
     public function testInvokeReturnsConfiguredInstance(): void
@@ -37,18 +39,13 @@ final class StringValidatorVisitorFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
-        $factory  = new StringValidatorVisitorFactory();
+        $factory  = new NonEmptyStringVisitorFactory();
         $instance = $factory($container);
 
-        $expected  = [PsalmType::NonEmptyString];
-        $validator = new Barcode();
-        $actual    = $instance->visit($validator, [PsalmType::String]);
-        self::assertSame($expected, $actual);
-
-        $expected  = [PsalmType::Bool];
+        $expected  = new Union([new TString()]);
         $validator = new BusinessIdentifierCode();
         $actual    = $instance->visit($validator, $expected);
-        self::assertSame($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     private function getConfig(array $validators): array
