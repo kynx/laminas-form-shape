@@ -10,6 +10,7 @@ use Psr\Container\ContainerInterface;
 
 use function array_map;
 use function assert;
+use function in_array;
 use function is_a;
 
 /**
@@ -18,16 +19,22 @@ use function is_a;
 trait ValidatorVisitorFactoryTrait
 {
     /**
+     * @param list<class-string<ValidatorVisitorInterface>> $exclude
      * @return array<ValidatorVisitorInterface>
      */
-    protected function getValidatorVisitors(ContainerInterface $container): array
+    protected function getValidatorVisitors(ContainerInterface $container, array $exclude = []): array
     {
         /** @var FormShapeConfigurationArray $config */
         $config = $container->get('config') ?? [];
 
+        $visitors = array_filter(
+            $config['laminas-form-shape']['validator-visitors'] ?? [],
+            static fn (string $class): bool => ! in_array($class, $exclude, true)
+        );
+
         return array_map(
             static fn (string $name): ValidatorVisitorInterface => self::getValidatorVisitor($container, $name),
-            $config['laminas-form-shape']['validator-visitors'] ?? []
+            $visitors
         );
     }
 

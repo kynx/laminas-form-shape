@@ -67,6 +67,22 @@ final class ValidatorVisitorFactoryTraitTest extends TestCase
         self::assertInstanceOf(DigitsVisitor::class, $visitor);
     }
 
+    public function testGetValidatorVisitorExcludesVisitor(): void
+    {
+        $visitors  = [DigitsVisitor::class];
+        $container = self::createStub(ContainerInterface::class);
+        $container->method('has')
+            ->willReturn(false);
+        $container->method('get')
+            ->willReturnMap([
+                ['config', $this->getConfig($visitors)],
+            ]);
+
+        $mock   = new MockValidatorVisitorFactory();
+        $actual = $mock->getVisitors($container, [DigitsVisitor::class]);
+        self::assertCount(0, $actual);
+    }
+
     private function getConfig(array $validatorVisitors): array
     {
         return [

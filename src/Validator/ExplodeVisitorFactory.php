@@ -16,7 +16,7 @@ final readonly class ExplodeVisitorFactory
     public function __invoke(ContainerInterface $container): ExplodeVisitor
     {
         $validatorVisitors = array_filter(
-            $this->getValidatorVisitors($container),
+            $this->getValidatorVisitors($container, [ExplodeVisitor::class]),
             static fn (ValidatorVisitorInterface $v): bool => ! $v instanceof ExplodeVisitor
         );
 
