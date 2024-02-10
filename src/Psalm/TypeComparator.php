@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Psalm;
 
+use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TArrayKey;
 use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
@@ -17,17 +20,28 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNonEmptyScalar;
+use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TObject;
 use Psalm\Type\Atomic\TScalar;
 use Psalm\Type\Atomic\TString;
+use Psalm\Type\Atomic\TTrue;
 use Psalm\Type\Union;
 
+use function array_filter;
 use function array_merge;
+use function array_reduce;
 use function assert;
 use function count;
 use function in_array;
 use function is_a;
 use function is_int;
+use function is_numeric;
+
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
 
 /**
  * @internal
@@ -38,7 +52,7 @@ use function is_int;
 final readonly class TypeComparator
 {
     /**
-     * Returns true if `$first` type is contained by `$second` type
+     * Returns true if `$type` is contained by `$container` type
      *
      * Naive version of Psalm's internal `AtomicTypeComparator::isContainedBy()`
      */
@@ -53,6 +67,14 @@ final readonly class TypeComparator
         }
 
         if (self::isContainedByInheritance($type, $container)) {
+            return true;
+        }
+
+        if (self::isContainedByInt($type, $container)) {
+            return true;
+        }
+
+        if (self::isContainedByString($type, $container)) {
             return true;
         }
 
@@ -94,11 +116,17 @@ final readonly class TypeComparator
     private static function isContainedByInheritance(Atomic $type, Atomic $container): bool
     {
         if (
-            $type instanceof TNamedObject
-            || $type instanceof TArray
+            $type instanceof TArray
+            || $type instanceof TInt
             || $type instanceof TKeyedArray
+            || $type instanceof TNamedObject
+            || $type instanceof TString
         ) {
             return false;
+        }
+
+        if ($type instanceof TInt && $container instanceof TInt) {
+            return self::isContainedByInt($type, $container);
         }
 
         return $type instanceof $container;
@@ -113,10 +141,68 @@ final readonly class TypeComparator
         return $type instanceof TInt || $type instanceof TString;
     }
 
+    private static function isContainedByInt(Atomic $type, Atomic $container): bool
+    {
+        if (! ($type instanceof TInt && $container instanceof TInt)) {
+            return false;
+        }
+        if ($container instanceof TLiteralInt) {
+            return false;
+        }
+        if (! $container instanceof TIntRange) {
+            return true;
+        }
+
+        if ($type instanceof TIntRange) {
+            $min = $type->min_bound ?? PHP_INT_MIN;
+            $max = $type->max_bound ?? PHP_INT_MAX;
+        } else {
+            $min = PHP_INT_MIN;
+            $max = PHP_INT_MAX;
+        }
+
+        return $min >= ($container->min_bound ?? PHP_INT_MIN)
+            && $max <= ($container->max_bound ?? PHP_INT_MAX);
+    }
+
+    private static function isContainedByString(Atomic $type, Atomic $container): bool
+    {
+        if (! ($type instanceof TString && $container instanceof TString)) {
+            return false;
+        }
+
+        if ($type::class === $container::class) {
+            return true;
+        }
+        if ($type instanceof TLiteralString && $container instanceof TNumericString) {
+            return is_numeric($type->value);
+        }
+        if ($type instanceof TLiteralString && $container instanceof TNonEmptyString) {
+            return $type->value !== '';
+        }
+        if ($type instanceof TNumericString && $container instanceof TNonEmptyString) {
+            return true;
+        }
+
+        return $type::class !== TString::class && $container::class === TString::class;
+    }
+
     private static function isContainedByScalar(Atomic $type, Atomic $container): bool
     {
         if (! $container instanceof TScalar) {
             return false;
+        }
+
+        if ($container instanceof TNonEmptyScalar) {
+            if ($type instanceof TLiteralString && $type->value !== '') {
+                return true;
+            }
+            if ($type instanceof TIntRange && ($type->max_bound < 0 || $type->min_bound > 0)) {
+                return true;
+            }
+
+            return $type instanceof TNonEmptyString
+                || $type instanceof TTrue;
         }
 
         return $type instanceof TBool
@@ -125,27 +211,62 @@ final readonly class TypeComparator
             || $type instanceof TString;
     }
 
-    private static function isContainedByNamedObject(Atomic $type, Atomic $oontainer): bool
+    private static function isContainedByNamedObject(Atomic $type, Atomic $container): bool
     {
-        if (! ($type instanceof TNamedObject && $oontainer instanceof TNamedObject)) {
+        if ($type instanceof TNamedObject && $container instanceof TObject) {
+            return true;
+        }
+
+        if (! ($type instanceof TNamedObject && $container instanceof TNamedObject)) {
+            return false;
+        }
+
+        if (! $type instanceof TGenericObject && $container instanceof TGenericObject) {
             return false;
         }
 
         /** @psalm-suppress ArgumentTypeCoercion */
-        return is_a($type->value, $oontainer->value, true);
+        if (! is_a($type->value, $container->value, true)) {
+            return false;
+        }
+
+        if (! ($type instanceof TGenericObject && $container instanceof TGenericObject)) {
+            return true;
+        }
+
+        $joinParams = static fn (Union $union, Union $param): Union => Type::combineUnionTypes($union, $param);
+
+        $containerUnion = array_reduce($container->type_params, $joinParams, TypeUtil::getEmptyUnion());
+        $typeUnion      = array_reduce($type->type_params, $joinParams, TypeUtil::getEmptyUnion());
+
+        $matched = [];
+        foreach ($typeUnion->getAtomicTypes() as $key => $typeParam) {
+            foreach ($containerUnion->getAtomicTypes() as $containerParam) {
+                if (self::isContainedBy($typeParam, $containerParam)) {
+                    $matched[$key] = $typeParam;
+                    break;
+                }
+            }
+        }
+
+        return $typeUnion->getAtomicTypes() === $matched;
     }
 
     private static function isContainedByArray(Atomic $type, Atomic $container): bool
     {
+        if ($type instanceof TKeyedArray) {
+            return self::isKeyedArrayContainedByArray($type, $container);
+        }
+
         if (! ($type instanceof TArray && $container instanceof TArray)) {
             return false;
         }
 
-        if (
-            $type instanceof TNonEmptyArray
-            && $container instanceof TNonEmptyArray
-            && $type->count !== $container->count
-        ) {
+        if ($type instanceof TNonEmptyArray && $container instanceof TNonEmptyArray) {
+            if ($type->count !== $container->count) {
+                return false;
+            }
+        } elseif ($container instanceof TNonEmptyArray) {
             return false;
         }
 
@@ -178,6 +299,48 @@ final readonly class TypeComparator
         }
 
         return $all === $matched;
+    }
+
+    private static function isKeyedArrayContainedByArray(TKeyedArray $type, Atomic $container): bool
+    {
+        if (! $container instanceof TArray) {
+            return false;
+        }
+
+        $containerKeys  = $container->type_params[0]->getAtomicTypes();
+        $containerTypes = $container->type_params[1]->getAtomicTypes();
+
+        foreach ($type->properties as $key => $property) {
+            if ($property->possibly_undefined) {
+                continue;
+            }
+
+            $keyType = is_int($key) ? new TInt() : new TString();
+            $matches = (bool) array_filter(
+                $containerKeys,
+                static fn (Atomic $containerKey): bool => self::isContainedBy($keyType, $containerKey)
+            );
+            if (! $matches) {
+                return false;
+            }
+
+            foreach ($property->getAtomicTypes() as $propertyType) {
+                $matches = (bool) array_filter(
+                    $containerTypes,
+                    static fn (Atomic $containerType): bool => self::isContainedBy($propertyType, $containerType)
+                );
+
+                if (! $matches) {
+                    return false;
+                }
+            }
+        }
+
+        if ($type->fallback_params !== null) {
+            return self::isContainedByArray(new TArray($type->fallback_params), $container);
+        }
+
+        return true;
     }
 
     private static function isContainedByKeyedArray(Atomic $type, Atomic $container): bool
