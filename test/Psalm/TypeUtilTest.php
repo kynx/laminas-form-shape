@@ -97,35 +97,60 @@ final class TypeUtilTest extends TestCase
         ConfigLoader::load(500);
 
         return [
-            'uses replace type'  => [
+            'uses replace type'                          => [
                 new Union([new TString()]),
                 new Union([new TNumericString()]),
                 new Union([new TNumericString()]),
             ],
-            'uses search type'   => [
+            'uses search type'                           => [
                 new Union([new TNumericString()]),
                 new Union([new TString()]),
                 new Union([new TNumericString()]),
             ],
-            'uses same type'     => [
+            'uses same type'                             => [
                 new Union([new TNonEmptyString()]),
                 new Union([new TNonEmptyString()]),
                 new Union([new TNonEmptyString()]),
             ],
-            'removes type'       => [
+            'removes type'                               => [
                 new Union([new TBool(), new TString()]),
                 new Union([new TTrue()]),
                 new Union([new TTrue()]),
             ],
-            'replaces narrowest' => [
+            'replaces narrowest'                         => [
                 new Union([new TString()]),
                 new Union([new TNonEmptyString(), TLiteralString::make('a')]),
                 new Union([TLiteralString::make('a')]),
             ],
-            'replaces multiple'  => [
+            'replaces multiple'                          => [
                 new Union([new TScalar()]),
                 new Union([new TInt(), new TFloat()]),
                 new Union([new TInt(), new TFloat()]),
+            ],
+            'replaces string types'                      => [
+                new Union([new TString()]),
+                new Union([new TNonEmptyString(), new TNumericString()]),
+                new Union([new TNumericString()]),
+            ],
+            'replaces string types order independent'    => [
+                new Union([new TString()]),
+                new Union([new TNumericString(), new TNonEmptyString(), new TString()]),
+                new Union([new TNumericString()]),
+            ],
+            'replaces multiple literals'                 => [
+                new Union([new TInt()]),
+                new Union([new TLiteralInt(0), new TLiteralInt(1)]),
+                new Union([new TLiteralInt(0), new TLiteralInt(1)]),
+            ],
+            'replaces multiple int ranges'               => [
+                new Union([new TInt()]),
+                new Union([new TIntRange(null, -1), new TIntRange(1, null)]),
+                new Union([new TIntRange(null, -1), new TIntRange(1, null)]),
+            ],
+            'replaces string literals order independent' => [
+                new Union([new TString()]),
+                new Union([TLiteralString::make('a'), new TNonEmptyString()]),
+                new Union([TLiteralString::make('a')]),
             ],
         ];
     }

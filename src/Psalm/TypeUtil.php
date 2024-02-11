@@ -41,8 +41,6 @@ use function is_object;
 use function is_resource;
 use function is_string;
 use function str_contains;
-use function strpos;
-use function substr;
 
 final readonly class TypeUtil
 {
@@ -76,22 +74,18 @@ final readonly class TypeUtil
         foreach ($search->getAtomicTypes() as $searchType) {
             $builder->removeType($searchType->getKey());
 
-            $found     = false;
             $narrowest = [];
             foreach ($replace->getAtomicTypes() as $replaceType) {
-                $key           = self::getNarrowingKey($replaceType);
-                $narrowestType = $narrowest[$key] ?? $searchType;
-                $type          = self::narrowestType($narrowestType, $replaceType);
+                $key  = self::getNarrowingKey($replaceType, $narrowest);
+                $type = self::narrowestType($narrowest[$key] ?? $searchType, $replaceType);
+
                 if ($type !== null) {
-                    $found           = true;
                     $narrowest[$key] = $type;
                 }
             }
 
-            if ($found) {
-                foreach ($narrowest as $type) {
-                    $builder->addType($type);
-                }
+            foreach ($narrowest as $type) {
+                $builder->addType($type);
             }
         }
 
@@ -195,18 +189,24 @@ final readonly class TypeUtil
         return $builder->freeze();
     }
 
-    private static function getNarrowingKey(Atomic $type): string
+    /**
+     * @param array<string, Atomic> $narrowest
+     */
+    private static function getNarrowingKey(Atomic $type, array $narrowest): string
     {
-        if ($type instanceof TString) {
-            return 'string';
+        $id = $type->getId(false);
+
+        if (isset($narrowest[$id]) && self::isSpecific($narrowest[$id])) {
+            return $type->getKey();
         }
 
+        return $id;
+    }
+
+    private static function isSpecific(Atomic $type): bool
+    {
         $key = $type->getKey();
-        if (str_contains($key, '(')) {
-            return substr($key, 0, (int) strpos($key, '('));
-        }
-
-        return $key;
+        return str_contains($key, '(') || str_contains($key, '<');
     }
 
     private static function narrowestType(Atomic $type, Atomic $container): ?Atomic
