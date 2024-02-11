@@ -59,6 +59,7 @@ final class FileValidatorVisitorTest extends AbstractValidatorVisitorTestCase
                 'type'     => new Union([new TString()]),
             ]),
         ]);
+        self::fixUnionIds($expected->getAtomicTypes());
 
         $actual = $visitor->visit($validator, $existing);
         self::assertEquals($expected, $actual);

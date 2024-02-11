@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Validator;
 
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
+use KynxTest\Laminas\FormShape\Psalm\GetIdVisitor;
 use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +34,10 @@ abstract class AbstractValidatorVisitorTestCase extends TestCase
         $visitor   = $this->getValidatorVisitor();
         $validated = $visitor->visit($validator, new Union($existing));
         $actual    = array_values($validated->getAtomicTypes());
+
+        self::fixUnionIds($expected);
+        self::fixUnionIds($actual);
+
         self::assertEquals($expected, $actual);
     }
 
@@ -54,5 +59,19 @@ abstract class AbstractValidatorVisitorTestCase extends TestCase
 
         $actual = $this->getValidatorVisitor()->visit($validator, $expected);
         self::assertSame($expected, $actual);
+    }
+
+    /**
+     * Ensures types have called `getId()` on any sub-unions so side effects don't fail tests
+     *
+     * @param array<Atomic> $expected
+     */
+    protected static function fixUnionIds(array $expected): void
+    {
+        $getIdVisitor = new GetIdVisitor();
+        foreach ($expected as $type) {
+            /** @psalm-suppress UnusedMethodCall */
+            $type->visit($getIdVisitor);
+        }
     }
 }

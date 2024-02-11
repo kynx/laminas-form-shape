@@ -194,6 +194,7 @@ final readonly class TypeUtil
      */
     private static function getNarrowingKey(Atomic $type, array $narrowest): string
     {
+        // Note: this has side effects! The `id` of any unions will be set, messing with tests.
         $id = $type->getId(false);
 
         if (isset($narrowest[$id]) && self::isSpecific($narrowest[$id])) {

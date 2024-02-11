@@ -8,6 +8,7 @@ use Kynx\Laminas\FormShape\ConfigProvider;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Psr\Container\ContainerInterface;
 
+use function array_filter;
 use function array_map;
 use function assert;
 use function in_array;
