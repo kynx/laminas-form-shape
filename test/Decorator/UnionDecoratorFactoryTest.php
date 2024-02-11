@@ -13,6 +13,8 @@ use Psalm\Type\Atomic\TLiteralInt;
 use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
+use function array_merge;
+
 #[CoversClass(UnionDecoratorFactory::class)]
 final class UnionDecoratorFactoryTest extends TestCase
 {

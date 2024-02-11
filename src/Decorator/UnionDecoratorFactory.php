@@ -16,7 +16,7 @@ final readonly class UnionDecoratorFactory
     public function __invoke(ContainerInterface $container): UnionDecorator
     {
         /** @var FormShapeConfigurationArray $config */
-        $config = $container->get('config') ?? [];
+        $config      = $container->get('config') ?? [];
         $shapeConfig = $config['laminas-form-shape'];
 
         ConfigLoader::load($shapeConfig['max-string-length'] ?? null);

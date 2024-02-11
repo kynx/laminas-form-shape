@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Decorator;
 
+use Kynx\Laminas\FormShape\UnionDecoratorInterface;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
@@ -20,7 +21,7 @@ use function sort;
 
 use const SORT_STRING;
 
-final readonly class UnionDecorator
+final readonly class UnionDecorator implements UnionDecoratorInterface
 {
     private ArrayDecorator $arrayDecorator;
     private KeyedArrayDecorator $keyedArrayDecorator;
@@ -31,9 +32,6 @@ final readonly class UnionDecorator
         $this->keyedArrayDecorator = new KeyedArrayDecorator($this);
     }
 
-    /**
-     * @return non-empty-string
-     */
     public function decorate(Union $union, int $indent = 0): string
     {
         if ($union->getAtomicTypes() === []) {
@@ -55,23 +53,37 @@ final readonly class UnionDecorator
         return implode('|', $types);
     }
 
-    private function getNonArrayUnion(Union $union): Union
+    private function getNonArrayUnion(Union $union): ?Union
     {
-        return new Union(array_filter(
+        $types = array_filter(
             $union->getAtomicTypes(),
             static fn (Atomic $type): bool => ! ($type instanceof TArray || $type instanceof TKeyedArray)
-        ));
+        );
+
+        if ($types === []) {
+            return null;
+        }
+
+        return new Union($types);
     }
 
-    private function combineTypes(Union $union): array
+    /**
+     * @return array<string>
+     */
+    private function combineTypes(?Union $union): array
     {
+        if ($union === null) {
+            return [];
+        }
+
         $types = $union->getAtomicTypes();
         if ($types === []) {
             return [];
         }
 
-        $combined = Type::combineUnionTypes(
-            type_1:        new Union([array_pop($types)]),
+        $last     = array_pop($types);
+        $combined = $types === [] ? $union : Type::combineUnionTypes(
+            type_1:        new Union([$last]),
             type_2:        new Union($types),
             literal_limit: $this->literalLimit ?? 500,
         );

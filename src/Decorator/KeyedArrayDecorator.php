@@ -44,7 +44,7 @@ final readonly class KeyedArrayDecorator
     }
 
     /**
-     * @param array<string, Union> $properties
+     * @param array<Union> $properties
      */
     private function calculatePadding(array $properties): int
     {
@@ -57,10 +57,10 @@ final readonly class KeyedArrayDecorator
         return $padding;
     }
 
-    private function getName(string $name, bool $possiblyUndefined): string
+    private function getName(int|string $name, bool $possiblyUndefined): string
     {
-        $name = str_contains($name, ' ') ? "'" . $name . "'" : $name;
-        return $possiblyUndefined ? "$name?" : $name;
+        $name = str_contains((string) $name, ' ') ? "'" . $name . "'" : $name;
+        return $possiblyUndefined ? "$name?" : (string) $name;
     }
 
     private function getIndent(int $indent, string $indentString): string

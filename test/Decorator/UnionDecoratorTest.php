@@ -7,6 +7,7 @@ namespace KynxTest\Laminas\FormShape\Decorator;
 use Kynx\Laminas\FormShape\Decorator\DecoratorException;
 use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -42,11 +43,6 @@ final class UnionDecoratorTest extends TestCase
 {
     private UnionDecorator $decorator;
 
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,7 +53,7 @@ final class UnionDecoratorTest extends TestCase
     public function testDecorateEmptyUnionThrowsException(): void
     {
         $expected = DecoratorException::fromEmptyUnion()->getMessage();
-        $union    = new Union([]);
+        $union    = TypeUtil::getEmptyUnion();
 
         self::expectException(DecoratorException::class);
         self::expectExceptionMessage($expected);
@@ -102,8 +98,8 @@ final class UnionDecoratorTest extends TestCase
             new TNull(),
             new TLiteralFloat(1.23),
             new TLiteralInt(1),
-            new TLiteralString('b'),
-            new TLiteralString('1'),
+            TLiteralString::make('b'),
+            TLiteralString::make('1'),
         ]);
 
         $actual = $this->decorator->decorate($union);
@@ -119,7 +115,7 @@ final class UnionDecoratorTest extends TestCase
 
     public static function typeProvider(): array
     {
-        ConfigLoader::load(100);
+        ConfigLoader::load();
 
         return [
             'scalar'           => [new TScalar(), 'scalar'],
@@ -139,7 +135,7 @@ final class UnionDecoratorTest extends TestCase
     }
 
     /**
-     * @param array<Atomic> $types
+     * @param non-empty-array<Atomic> $types
      */
     #[DataProvider('combineTypesProvider')]
     public function testDecorateCombinesTypes(array $types, string $expected): void
@@ -150,6 +146,8 @@ final class UnionDecoratorTest extends TestCase
 
     public static function combineTypesProvider(): array
     {
+        ConfigLoader::load();
+
         return [
             'true, false'            => [[new TTrue(), new TFalse()], 'bool'],
             'literal int, int'       => [[new TLiteralInt(3), new TInt()], 'int'],
@@ -157,8 +155,8 @@ final class UnionDecoratorTest extends TestCase
             'int, int range'         => [[new TInt(), new TIntRange(1, null)], 'int'],
             'literal float, float'   => [[new TLiteralFloat(1.23), new TFloat()], 'float'],
             'float, literal float'   => [[new TFloat(), new TLiteralFloat(1.23)], 'float'],
-            'literal string, string' => [[new TLiteralString('foo'), new TString()], 'string'],
-            'string, literal string' => [[new TString(), new TLiteralString('foo')], 'string'],
+            'literal string, string' => [[TLiteralString::make('foo'), new TString()], 'string'],
+            'string, literal string' => [[new TString(), TLiteralString::make('foo')], 'string'],
             'numeric-string, string' => [[new TNumericString(), new TString()], 'string'],
             'string, numeric-string' => [[new TString(), new TNumericString()], 'string'],
 
@@ -173,7 +171,7 @@ final class UnionDecoratorTest extends TestCase
     {
         $expected  = 'string';
         $types     = array_map(
-            static fn (int $i): TLiteralString => new TLiteralString((string) $i),
+            static fn (int $i): TLiteralString => TLiteralString::make((string) $i),
             range(1, 4)
         );
         $union     = new Union($types);
