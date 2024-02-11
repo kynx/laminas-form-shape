@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\Generic;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\File\Crc32;
 use Laminas\Validator\File\ExcludeMimeType;
@@ -24,6 +21,11 @@ use Laminas\Validator\File\Size;
 use Laminas\Validator\File\UploadFile;
 use Laminas\Validator\File\WordCount;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Psr\Http\Message\UploadedFileInterface;
 
 use function in_array;
@@ -54,24 +56,19 @@ final readonly class FileValidatorVisitor implements ValidatorVisitorInterface
     {
     }
 
-    public function visit(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, Union $previous): Union
     {
         if (! in_array($validator::class, $this->fileValidators, true)) {
-            return $existing;
+            return $previous;
         }
 
-        $existing = TypeUtil::replaceArrayTypes($existing, [
-            new Generic(
-                PsalmType::NonEmptyArray,
-                [PsalmType::NonEmptyString]
-            ),
-        ]);
-        $existing = TypeUtil::replaceStringTypes($existing, [PsalmType::NonEmptyString]);
-
-        return TypeUtil::filter($existing, [
-            PsalmType::NonEmptyArray,
-            PsalmType::NonEmptyString,
-            new ClassString(UploadedFileInterface::class),
-        ]);
+        return TypeUtil::narrow($previous, new Union([
+            new TKeyedArray([
+                'name'     => new Union([new TString()]),
+                'tmp_name' => new Union([new TNonEmptyString()]),
+                'type'     => new Union([new TString()]),
+            ]),
+            new TNamedObject(UploadedFileInterface::class),
+        ]));
     }
 }

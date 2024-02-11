@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\InputFilter;
 
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormShape\InputVisitorException;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversClass;

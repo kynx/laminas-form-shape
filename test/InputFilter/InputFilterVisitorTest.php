@@ -7,10 +7,6 @@ namespace KynxTest\Laminas\FormShape\InputFilter;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormShape\Shape\CollectionFilterShape;
-use Kynx\Laminas\FormShape\Shape\InputFilterShape;
-use Kynx\Laminas\FormShape\Shape\InputShape;
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\InputFilter\CollectionInputFilter;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
@@ -18,6 +14,13 @@ use Laminas\InputFilter\OptionalInputFilter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
 #[CoversClass(InputFilterVisitor::class)]
 final class InputFilterVisitorTest extends TestCase
@@ -33,11 +36,13 @@ final class InputFilterVisitorTest extends TestCase
         $this->visitor       = new InputFilterVisitor($inputVisitorManager);
     }
 
-    public function testVisitReturnsInputShape(): void
+    public function testVisitReturnsUnion(): void
     {
-        $expected = new InputFilterShape('', [
-            new InputShape('foo', [PsalmType::Null, PsalmType::String], false),
-            new InputShape('bar', [PsalmType::Null, PsalmType::String], false),
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()]),
+                'bar' => new Union([new TString(), new TNull()]),
+            ]),
         ]);
 
         $inputFilter = new InputFilter();
@@ -49,14 +54,9 @@ final class InputFilterVisitorTest extends TestCase
     }
 
     #[DataProvider('collectionProvider')]
-    public function testVisitReturnsCollectionShape(bool $required, int $count, bool $optional, bool $nonEmpty): void
+    public function testVisitReturnsCollectionUnion(bool $required, int $count, TArray $array): void
     {
-        $expected = new CollectionFilterShape(
-            '',
-            new InputFilterShape('', [new InputShape('foo', [PsalmType::Null, PsalmType::String])], false),
-            $optional,
-            $nonEmpty
-        );
+        $expected = new Union([$array], ['possibly_undefined' => ! $required]);
 
         $collectionFilter = new InputFilter();
         $collectionFilter->add(new Input('foo'));
@@ -71,20 +71,45 @@ final class InputFilterVisitorTest extends TestCase
 
     public static function collectionProvider(): array
     {
+        $union = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()]),
+            ]),
+        ]);
         return [
-            'required, 0 count'     => [true, 0, false, false],
-            'required, 1 count'     => [true, 1, false, true],
-            'not required, 0 count' => [false, 0, true, false],
-            'not required, 1 count' => [false, 1, false, true],
+            'required, 0 count'     => [
+                true,
+                0,
+                new TNonEmptyArray([Type::getArrayKey(), $union], null, 1),
+            ],
+            'required, 2 count'     => [
+                true,
+                2,
+                new TNonEmptyArray([Type::getArrayKey(), $union], null, 2),
+            ],
+            'not required, 0 count' => [
+                false,
+                0,
+                new TArray([Type::getArrayKey(), $union]),
+            ],
+            'not required, 1 count' => [
+                false,
+                1,
+                new TNonEmptyArray([Type::getArrayKey(), $union], null, 1),
+            ],
         ];
     }
 
-    public function testVisitRecursesInputFilter(): void
+    public function testVisitNestedInputFilterReturnsNestedUnion(): void
     {
-        $expected = new InputFilterShape('', [
-            new InputFilterShape('foo', [
-                new InputShape('bar', [PsalmType::Null, PsalmType::String], false),
-                new InputShape('baz', [PsalmType::Null, PsalmType::String], false),
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([
+                    new TKeyedArray([
+                        'bar' => new Union([new TString(), new TNull()]),
+                        'baz' => new Union([new TString(), new TNull()]),
+                    ]),
+                ]),
             ]),
         ]);
 
@@ -98,11 +123,16 @@ final class InputFilterVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testVisitReturnsOptionalInputFilterShape(): void
+    public function testVisitReturnsPossiblyUndefinedUnion(): void
     {
-        $expected = new InputFilterShape('', [], true);
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()]),
+            ]),
+        ], ['possibly_undefined' => true]);
 
         $inputFilter = new OptionalInputFilter();
+        $inputFilter->add(new Input('foo'));
 
         $actual = $this->visitor->visit($inputFilter);
         self::assertEquals($expected, $actual);

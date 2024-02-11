@@ -4,35 +4,34 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Validator;
 
-use DateTime;
-use DateTimeImmutable;
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use DateTimeInterface;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\Date;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Union;
 
 final readonly class DateVisitor implements ValidatorVisitorInterface
 {
-    public function visit(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, Union $previous): Union
     {
         if (! $validator instanceof Date) {
-            return $existing;
+            return $previous;
         }
 
-        $existing = TypeUtil::replaceArrayTypes($existing, [PsalmType::NonEmptyArray]);
-        $existing = TypeUtil::replaceStringTypes($existing, [PsalmType::NonEmptyString]);
-
-        return TypeUtil::filter($existing, [
-            new ClassString(DateTime::class),
-            new ClassString(DateTimeImmutable::class),
-            PsalmType::Float,
-            PsalmType::Int,
-            PsalmType::NegativeInt,
-            PsalmType::NonEmptyArray,
-            PsalmType::NonEmptyString,
-            PsalmType::PositiveInt,
-        ]);
+        return TypeUtil::narrow($previous, new Union([
+            new TFloat(),
+            new TInt(),
+            new TNamedObject(DateTimeInterface::class),
+            new TNonEmptyArray([Type::getArrayKey(), new Union([new TNumericString(), new TInt()])]),
+            new TNonEmptyString(),
+        ]));
     }
 }

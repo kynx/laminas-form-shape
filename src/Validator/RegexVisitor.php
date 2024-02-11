@@ -4,54 +4,42 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\Regex;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
 final readonly class RegexVisitor implements ValidatorVisitorInterface
 {
-    /** @var array<string, RegexPattern> */
-    private array $patterns;
-
-    public function __construct(RegexPattern ...$regexPatterns)
+    /**
+     * @param array<string, Union> $patterns
+     */
+    public function __construct(private array $patterns)
     {
-        $patterns = [];
-        foreach ($regexPatterns as $pattern) {
-            $patterns[$pattern->pattern] = $pattern;
-        }
-
-        $this->patterns = $patterns;
     }
 
-    public function visit(ValidatorInterface $validator, array $existing): array
+    public function visit(ValidatorInterface $validator, Union $previous): Union
     {
         if (! $validator instanceof Regex) {
-            return $existing;
+            return $previous;
         }
+
+        $visited = TypeUtil::narrow($previous, new Union([
+            new TFloat(),
+            new TInt(),
+            new TString(),
+        ]));
 
         /** @psalm-suppress PossiblyNullArrayOffset Upstream docblock is wrong - it can't be null */
         $pattern = $this->patterns[$validator->getPattern()] ?? null;
         if ($pattern === null) {
-            return $existing;
+            return $visited;
         }
 
-        $types    = $pattern->types;
-        $replaced = TypeUtil::filter($existing, [
-            PsalmType::Float,
-            PsalmType::Int,
-            PsalmType::NegativeInt,
-            PsalmType::PositiveInt,
-            PsalmType::String,
-            PsalmType::NonEmptyString,
-        ]);
-        foreach ($pattern->replace as $replacement) {
-            [$search, $replace] = $replacement;
-            $replaced           = TypeUtil::replaceType($search, $replace, $replaced);
-            $types[]            = $replace;
-        }
-
-        return TypeUtil::filter($replaced, $types);
+        return TypeUtil::narrow($visited, $pattern);
     }
 }

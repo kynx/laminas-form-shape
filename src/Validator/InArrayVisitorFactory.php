@@ -18,9 +18,6 @@ final readonly class InArrayVisitorFactory
         $config        = $container->get('config');
         $visitorConfig = (array) ($config['laminas-form-shape']['validator']['in-array'] ?? []);
 
-        return new InArrayVisitor(
-            (bool) ($visitorConfig['allow-empty-haystack'] ?? true),
-            (int) ($visitorConfig['max-literals'] ?? InArrayVisitor::DEFAULT_MAX_LITERALS)
-        );
+        return new InArrayVisitor((bool) ($visitorConfig['allow-empty-haystack'] ?? true));
     }
 }

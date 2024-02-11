@@ -5,43 +5,57 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\Filter\DigitsVisitor;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\Digits;
-use Laminas\Filter\FilterInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(DigitsVisitor::class)]
-final class DigitsVisitorTest extends TestCase
+final class DigitsVisitorTest extends AbstractFilterVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(FilterInterface $filter, array $existing, array $expected): void
-    {
-        $visitor = new DigitsVisitor();
-        $actual  = $visitor->visit($filter, $existing);
-        self::assertSame($expected, $actual);
-    }
-
     public static function visitProvider(): array
     {
-        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid'   => [new Boolean(), [PsalmType::Int], [PsalmType::Int]],
-            'no digits' => [new Digits(), [PsalmType::Bool], [PsalmType::Bool]],
-            'int'       => [new Digits(), [PsalmType::Int], [PsalmType::NumericString]],
-            'float'     => [new Digits(), [PsalmType::Float], [PsalmType::NumericString]],
-            'string'    => [new Digits(), [PsalmType::String], [PsalmType::String]],
-            'mixed'     => [new Digits(), [PsalmType::Bool, PsalmType::Int], [PsalmType::Bool, PsalmType::NumericString]],
+            'invalid'     => [
+                new Boolean(),
+                [new TInt()],
+                [new TInt()],
+            ],
+            'no digits'   => [
+                new Digits(),
+                [new TBool()],
+                [new TBool()],
+            ],
+            'int'         => [
+                new Digits(),
+                [new TInt()],
+                [new TNumericString()],
+            ],
+            'float'       => [
+                new Digits(),
+                [new TFloat()],
+                [new TNumericString()],
+            ],
+            'string'      => [
+                new Digits(),
+                [new TString()],
+                [new TNumericString()],
+            ],
+            'literal int' => [
+                new Digits(),
+                [new TLiteralInt(123)],
+                [new TNumericString()],
+            ],
         ];
-        // phpcs:enable
+    }
+
+    protected function getVisitor(): DigitsVisitor
+    {
+        return new DigitsVisitor();
     }
 }

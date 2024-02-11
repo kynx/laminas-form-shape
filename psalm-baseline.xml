@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.20.0@3f284e96c9d9be6fe6b15c79416e1d1903dcfef4">
+<files psalm-version="5.21.0@04ba9358e3f7d14a9dc3edd4e814a9d51d8c637f">
   <file src="src/File/FormFile.php">
     <PossiblyUnusedProperty>
       <code>$file</code>
@@ -14,14 +14,15 @@
       <code>validatorVisitorsProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Decorator/InputFilterShapeDecoratorTest.php">
+  <file src="test/Decorator/KeyedArrayDecoratorTest.php">
     <PossiblyUnusedMethod>
       <code>typeNameProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Decorator/InputShapeDecoratorTest.php">
+  <file src="test/Decorator/UnionDecoratorTest.php">
     <PossiblyUnusedMethod>
-      <code>decorateProvider</code>
+      <code>combineTypesProvider</code>
+      <code>typeProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/File/FormReaderTest.php">
@@ -29,10 +30,14 @@
       <code>getFormFileProvider</code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Filter/AbstractFilterVisitorTestCase.php">
+    <PossiblyUnusedMethod>
+      <code>visitProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/Filter/AllowListVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>getTypeLiteralProvider</code>
-      <code>getTypeTypeProvider</code>
+      <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/BooleanVisitorTest.php">
@@ -77,39 +82,33 @@
   </file>
   <file src="test/InputFilter/InputVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>addFallbackProvider</code>
       <code>addNotEmptyProvider</code>
-      <code>correctTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Type/ClassStringTest.php">
+  <file src="test/Psalm/ConfigLoaderTrait.php">
     <PossiblyUnusedMethod>
-      <code>matchesProvider</code>
+      <code>reloadConfig</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Type/LiteralTest.php">
+  <file src="test/Psalm/TypeComparatorTest.php">
     <PossiblyUnusedMethod>
-      <code>hasTypesProvider</code>
-      <code>withTypesProvider</code>
+      <code>isContainedByFalseProvider</code>
+      <code>isContainedByTrueProvider</code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Type/TypeUtilTest.php">
+  <file src="test/Psalm/TypeUtilTest.php">
     <PossiblyUnusedMethod>
-      <code>arrayTypeProvider</code>
-      <code>boolTypeProvider</code>
       <code>filterProvider</code>
-      <code>hasTypeProvider</code>
-      <code>intTypeProvider</code>
-      <code>phpTypeProvider</code>
-      <code>removeArrayTypesProvider</code>
-      <code>removeObjectTypesProvider</code>
-      <code>removeTypeProvider</code>
-      <code>replaceArrayTypesProvider</code>
-      <code>replaceBoolTypesProvider</code>
-      <code>replaceIntTypesProvider</code>
-      <code>replaceStringTypesProvider</code>
+      <code>narrowProvider</code>
       <code>replaceTypeProvider</code>
-      <code>stringTypeProvider</code>
+      <code>toLaxUnion</code>
+      <code>toStrictUnionProvider</code>
+      <code>widenProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Validator/AbstractValidatorVisitorTestCase.php">
+    <PossiblyUnusedMethod>
+      <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/BetweenVisitorTest.php">
@@ -144,6 +143,7 @@
   </file>
   <file src="test/Validator/FileValidatorVisitorTest.php">
     <PossiblyUnusedMethod>
+      <code>defaultValidatorProvider</code>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
@@ -154,8 +154,7 @@
   </file>
   <file src="test/Validator/InArrayVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitLiteralProvider</code>
-      <code>visitTypeProvider</code>
+      <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/IsCountableVisitorTest.php">
@@ -169,6 +168,11 @@
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/IsbnVisitorTest.php">
+    <PossiblyUnusedMethod>
+      <code>visitProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Validator/NonEmptyStringVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
@@ -196,16 +200,6 @@
   <file src="test/Validator/StringLengthVisitorTest.php">
     <PossiblyUnusedMethod>
       <code>visitProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/StringValidatorVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code>visitProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/TimezoneVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code>getTypeProvider</code>
     </PossiblyUnusedMethod>
   </file>
 </files>

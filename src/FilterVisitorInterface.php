@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape;
 
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Laminas\Filter\FilterInterface;
+use Psalm\Type\Union;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 interface FilterVisitorInterface
 {
     /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
+     * Returns union of types that would result from running given filter
+     *
+     * If implementations cannot handle the filter they _must_ return the existing union unaltered.
      */
-    public function visit(FilterInterface $filter, array $existing): array;
+    public function visit(FilterInterface $filter, Union $previous): Union;
 }

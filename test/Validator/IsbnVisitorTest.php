@@ -4,46 +4,52 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\IsbnVisitor;
-use Laminas\Validator\Barcode;
+use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\Isbn;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
+use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TString;
 
-use function array_values;
-
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(IsbnVisitor::class)]
-final class IsbnVisitorTest extends TestCase
+final class IsbnVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
-    {
-        $visitor = new IsbnVisitor();
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertSame($expected, array_values($actual));
-    }
-
     public static function visitProvider(): array
     {
-        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid'         => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'int'             => [new Isbn(), [PsalmType::Bool, PsalmType::Int], [PsalmType::Int]],
-            'positive int'    => [new Isbn(), [PsalmType::Bool, PsalmType::PositiveInt], [PsalmType::PositiveInt]],
-            'negative int'    => [new Isbn(), [PsalmType::Bool, PsalmType::NegativeInt], []],
-            'string'          => [new Isbn(), [PsalmType::Bool, PsalmType::String], [PsalmType::String]],
-            'nonempty string' => [new Isbn(), [PsalmType::Bool, PsalmType::NonEmptyString], [PsalmType::NonEmptyString]],
+            'int, auto'    => [
+                new Isbn(['type' => Isbn::AUTO]),
+                [new TBool(), new TInt()],
+                [new TIntRange(1000000000, 9799999999999)],
+            ],
+            'int, isbn10'  => [
+                new Isbn(['type' => Isbn::ISBN10]),
+                [new TBool(), new TInt()],
+                [new TIntRange(1000000000, 9999999999)],
+            ],
+            'int, isbn13'  => [
+                new Isbn(['type' => Isbn::ISBN13]),
+                [new TBool(), new TInt()],
+                [new TIntRange(9780000000000, 9799999999999)],
+            ],
+            'negative int' => [
+                new Isbn(),
+                [new TIntRange(null, -1)],
+                [],
+            ],
+            'string'       => [
+                new Isbn(),
+                [new TString()],
+                [new TNonEmptyString()],
+            ],
         ];
-        // phpcs:eanble
+    }
+
+    protected static function getValidatorVisitor(): ValidatorVisitorInterface
+    {
+        return new IsbnVisitor();
     }
 }

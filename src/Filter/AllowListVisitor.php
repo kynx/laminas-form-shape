@@ -5,167 +5,63 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
-use Kynx\Laminas\FormShape\Type\ClassString;
-use Kynx\Laminas\FormShape\Type\Literal;
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Laminas\Filter\AllowList;
 use Laminas\Filter\FilterInterface;
+use Psalm\Type;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Union;
 
-use function assert;
-use function count;
-use function in_array;
-use function is_int;
-use function is_numeric;
-use function is_scalar;
-use function is_string;
+use function array_reduce;
+use function current;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 final readonly class AllowListVisitor implements FilterVisitorInterface
 {
-    public const DEFAULT_MAX_LITERALS = 10;
-
-    public function __construct(
-        private bool $allowEmptyList = true,
-        private int $maxLiterals = self::DEFAULT_MAX_LITERALS
-    ) {
+    public function __construct(private bool $allowEmptyList = true)
+    {
     }
 
-    public function visit(FilterInterface $filter, array $existing): array
+    public function visit(FilterInterface $filter, Union $previous): Union
     {
         if (! $filter instanceof AllowList) {
-            return $existing;
+            return $previous;
         }
+
+        $nullUnion = new Union([new TNull()]);
 
         $list = $filter->getList();
         if ($list === []) {
-            return $this->allowEmptyList ? $existing : [PsalmType::Null];
+            return $this->allowEmptyList
+                ? TypeUtil::widen($previous, $nullUnion)
+                : $nullUnion;
         }
 
-        $existing[] = PsalmType::Null;
+        $union = $filter->getStrict() === true
+            ? $this->getStrict($list, $previous)
+            : $this->getLoose($list, $previous);
 
-        if (count($list) > $this->maxLiterals) {
-            return $filter->getStrict() === true
-                ? $this->getStrictTypes($list, $existing)
-                : $this->getLaxTypes($list, $existing);
-        }
-
-        $types = $filter->getStrict() === true
-            ? $this->getStrictLiteral($list, $existing)
-            : $this->getLaxLiteral($list, $existing);
-        return $this->appendUnique(PsalmType::Null, $types, $existing);
+        return TypeUtil::widen($union, $nullUnion);
     }
 
-    /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function getStrictTypes(array $list, array $existing): array
+    private function getStrict(array $list, Union $previous): Union
     {
-        $types = [];
-        foreach ($list as $allow) {
-            assert(is_scalar($allow) || $allow === null);
-            $types = $this->appendUnique(TypeUtil::fromPhpValue($allow), $types, $existing);
-        }
-        $types[] = PsalmType::Null;
+        $union = array_reduce(
+            $list,
+            static fn (Union $u, mixed $v): Union => Type::combineUnionTypes($u, TypeUtil::toStrictUnion($v)),
+            TypeUtil::toStrictUnion(current($list))
+        );
 
-        return $types;
+        return TypeUtil::narrow($previous, $union);
     }
 
-    /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function getLaxTypes(array $list, array $existing): array
+    private function getLoose(array $list, Union $previous): Union
     {
-        $types = $this->getStrictTypes($list, $existing);
-        return $this->appendUnique(PsalmType::String, $types, $existing);
-    }
+        $union = array_reduce(
+            $list,
+            static fn (Union $u, mixed $v): Union => Type::combineUnionTypes($u, TypeUtil::toLooseUnion($v)),
+            TypeUtil::toLooseUnion(current($list))
+        );
 
-    /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function getStrictLiteral(array $list, array $existing): array
-    {
-        $types = $literals = [];
-        foreach ($list as $allow) {
-            assert(is_scalar($allow) || $allow === null);
-            $type = TypeUtil::fromPhpValue($allow);
-            if (is_string($allow) && TypeUtil::hasStringType($existing)) {
-                $literals[] = "$allow";
-            } elseif (is_int($allow) && TypeUtil::hasIntType($existing)) {
-                $literals[] = $allow;
-            } elseif (TypeUtil::hasType($type, $existing)) {
-                $types[] = $type;
-            }
-        }
-
-        $types = $this->appendUnique(PsalmType::Null, $types, $existing);
-
-        if ($literals !== []) {
-            $types[] = new Literal($literals);
-        }
-
-        return $types;
-    }
-
-    /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function getLaxLiteral(array $list, array $existing): array
-    {
-        $types       = $literals = [];
-        $numLiterals = 0;
-        $numeric     = true;
-        foreach ($list as $allow) {
-            assert(is_scalar($allow) || $allow === null);
-            $type = TypeUtil::fromPhpValue($allow);
-            if (is_int($allow) && TypeUtil::hasIntType($existing)) {
-                $literals[] = $allow;
-            }
-            if ((is_string($allow) || is_int($allow)) && TypeUtil::hasStringType($existing)) {
-                $literals[] = "$allow";
-                $numLiterals++;
-                continue;
-            }
-            if (TypeUtil::hasType($type, $existing)) {
-                $types[] = $type;
-            }
-            $numeric = $numeric && is_numeric($allow);
-        }
-
-        if (count($list) !== $numLiterals && TypeUtil::hasStringType($existing)) {
-            $types = $this->appendUnique(PsalmType::String, $types, $existing);
-        }
-
-        if ($numeric) {
-            $types = TypeUtil::replaceStringTypes($types, [PsalmType::NumericString]);
-        }
-
-        $types = $this->appendUnique(PsalmType::Null, $types, $existing);
-
-        if ($literals !== []) {
-            $types[] = new Literal($literals);
-        }
-
-        return $types;
-    }
-
-    /**
-     * @param VisitedArray $types
-     * @param VisitedArray $existing
-     * @return VisitedArray
-     */
-    private function appendUnique(ClassString|PsalmType $type, array $types, array $existing): array
-    {
-        if (TypeUtil::hasType($type, $existing) && ! in_array($type, $types)) {
-            $types[] = $type;
-        }
-
-        return $types;
+        return TypeUtil::narrow($previous, $union);
     }
 }

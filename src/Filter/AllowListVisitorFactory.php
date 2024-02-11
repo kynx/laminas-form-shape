@@ -13,12 +13,9 @@ final readonly class AllowListVisitorFactory
     public function __invoke(ContainerInterface $container): AllowListVisitor
     {
         /** @var FormShapeConfigurationArray $config */
-        $config = $container->get('config');
-        // phpcs:disable Generic.Files.LineLength.TooLong
-        $allowEmpty  = (bool) ($config['laminas-form-shape']['filter']['allow-list']['allow-empty-list'] ?? true);
-        $maxLiterals = (int) ($config['laminas-form-shape']['filter']['allow-list']['max-literals'] ?? AllowListVisitor::DEFAULT_MAX_LITERALS);
-        // phpcs:enable
+        $config     = $container->get('config');
+        $allowEmpty = (bool) ($config['laminas-form-shape']['filter']['allow-list']['allow-empty-list'] ?? true);
 
-        return new AllowListVisitor($allowEmpty, $maxLiterals);
+        return new AllowListVisitor($allowEmpty);
     }
 }

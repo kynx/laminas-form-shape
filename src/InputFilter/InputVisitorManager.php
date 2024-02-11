@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\InputFilter;
 
-use Kynx\Laminas\FormShape\InputVisitorException;
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Laminas\InputFilter\InputInterface;
 

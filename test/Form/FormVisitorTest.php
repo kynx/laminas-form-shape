@@ -8,14 +8,15 @@ use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormShape\Shape\InputFilterShape;
-use Kynx\Laminas\FormShape\Shape\InputShape;
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 
 #[CoversClass(FormVisitor::class)]
 final class FormVisitorTest extends TestCase
@@ -33,10 +34,13 @@ final class FormVisitorTest extends TestCase
 
     public function testVisitReturnsInputFilterShape(): void
     {
-        $expected = new InputFilterShape('', [
-            new InputShape('foo', [PsalmType::Null, PsalmType::String], true),
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+            ]),
         ]);
-        $form     = new Form();
+
+        $form = new Form();
         $form->add(new Text('foo'));
 
         $actual = $this->visitor->visit($form);

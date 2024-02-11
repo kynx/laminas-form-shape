@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Validator\DigitsVisitor;
 use Kynx\Laminas\FormShape\Validator\ExplodeVisitor;
 use Kynx\Laminas\FormShape\Validator\ExplodeVisitorFactory;
-use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\Digits;
 use Laminas\Validator\Explode;
 use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TNever;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
 #[CoversClass(ExplodeVisitorFactory::class)]
@@ -21,7 +23,7 @@ final class ExplodeVisitorFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void
     {
-        $config    = $this->getConfig(['item-types' => [PsalmType::String]], [DigitsVisitor::class]);
+        $config    = $this->getConfig([DigitsVisitor::class]);
         $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
@@ -31,64 +33,40 @@ final class ExplodeVisitorFactoryTest extends TestCase
         $factory  = new ExplodeVisitorFactory();
         $instance = $factory($container);
 
-        $validator = new Explode(['validator' => new Digits()]);
-        $types     = $instance->visit($validator, [PsalmType::String]);
-        self::assertSame([PsalmType::String, PsalmType::NumericString], $types);
-    }
-
-    public function testInvokeGetsValidatorFromContainer(): void
-    {
-        $config           = $this->getConfig(['item-types' => [PsalmType::String]], [ValidatorVisitorInterface::class]);
-        $validatorVisitor = self::createStub(ValidatorVisitorInterface::class);
-        $container        = self::createStub(ContainerInterface::class);
-        $container->method('has')
-            ->willReturn(true);
-        $container->method('get')
-            ->willReturnMap([
-                ['config', $config],
-                [ValidatorVisitorInterface::class, $validatorVisitor],
-            ]);
-
-        $factory  = new ExplodeVisitorFactory();
-        $instance = $factory($container);
-
-        $validatorVisitor->method('visit')
-            ->willReturn([PsalmType::Bool]);
-        $validator = self::createStub(ValidatorInterface::class);
-        $types     = $instance->visit(new Explode(['validator' => $validator]), [PsalmType::Int]);
-        self::assertSame([PsalmType::Bool], $types);
+        $expected  = new Union([new TNumericString()]);
+        $validator = new Explode(['validator' => new Digits(), 'valueDelimiter' => null]);
+        $actual    = $instance->visit($validator, new Union([new TString()]));
+        self::assertEquals($expected, $actual);
     }
 
     public function testInvokeExcludesExplodeVisitor(): void
     {
-        $config         = $this->getConfig(['item-types' => [PsalmType::String]], [ExplodeVisitor::class]);
-        $explodeVisitor = self::createMock(ValidatorVisitorInterface::class);
-        $container      = self::createStub(ContainerInterface::class);
+        $config    = $this->getConfig([ExplodeVisitor::class]);
+        $validator = new DigitsVisitor();
+        $container = self::createStub(ContainerInterface::class);
         $container->method('has')
             ->willReturn(true);
         $container->method('get')
             ->willReturnMap([
                 ['config', $config],
-                [ExplodeVisitor::class, $explodeVisitor],
+                [ExplodeVisitor::class, new ExplodeVisitor([$validator])],
             ]);
 
         $factory  = new ExplodeVisitorFactory();
         $instance = $factory($container);
 
-        $explodeVisitor->expects(self::never())
-            ->method('visit');
-        $validator = self::createStub(ValidatorInterface::class);
-        $types     = $instance->visit(new Explode(['validator' => $validator]), [PsalmType::Int]);
-        self::assertSame([PsalmType::Int], $types);
+        $expected  = new Union([new TNever()]);
+        $validator = self::createMock(ValidatorInterface::class);
+        $validator->expects(self::never())
+            ->method('isValid');
+        $actual = $instance->visit(new Explode(['validator' => $validator]), $expected);
+        self::assertEquals($expected, $actual);
     }
 
-    private function getConfig(array $visitorConfig, array $validatorVisitors): array
+    private function getConfig(array $validatorVisitors): array
     {
         return [
             'laminas-form-shape' => [
-                'validator'          => [
-                    'explode' => $visitorConfig,
-                ],
                 'validator-visitors' => $validatorVisitors,
             ],
         ];

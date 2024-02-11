@@ -4,44 +4,42 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\BetweenVisitor;
-use Laminas\Validator\Barcode;
 use Laminas\Validator\Between;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TNumericString;
+use Psalm\Type\Atomic\TString;
 
-use function array_values;
-
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(BetweenVisitor::class)]
-final class BetweenVisitorTest extends TestCase
+final class BetweenVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
-    {
-        $visitor = new BetweenVisitor();
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertEquals($expected, array_values($actual));
-    }
-
     public static function visitProvider(): array
     {
-        // phpcs:disable Generic.Files.LineLength.TooLong
         return [
-            'invalid validator' => [new Barcode(), [PsalmType::Int], [PsalmType::Int]],
-            'numeric'           => [new Between(['min' => 0, 'max' => 1]), [PsalmType::Int, PsalmType::Float, PsalmType::Null], [PsalmType::Int, PsalmType::Float]],
-            'numeric string'    => [new Between(['min' => 0, 'max' => 1]), [PsalmType::String, PsalmType::Null], [PsalmType::NumericString]],
-            'string'            => [new Between(['min' => 'a', 'max' => 'm']), [PsalmType::String, PsalmType::Null], [PsalmType::String]],
+            'numeric'        => [
+                new Between(['min' => 0, 'max' => 1]),
+                [new TInt(), new TFloat(), new TNull()],
+                [new TIntRange(0, 1), new TFloat()],
+            ],
+            'numeric string' => [
+                new Between(['min' => 0, 'max' => 1]),
+                [new TString()],
+                [new TNumericString()],
+            ],
+            'string'         => [
+                new Between(['min' => 'a', 'max' => 'm']),
+                [new TString()],
+                [new TString()],
+            ],
         ];
-        // phpcs:enable
+    }
+
+    protected static function getValidatorVisitor(): BetweenVisitor
+    {
+        return new BetweenVisitor();
     }
 }

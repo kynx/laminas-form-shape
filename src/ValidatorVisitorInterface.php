@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape;
 
-use Kynx\Laminas\FormShape\Type\TypeUtil;
 use Laminas\Validator\ValidatorInterface;
+use Psalm\Type\Union;
 
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 interface ValidatorVisitorInterface
 {
     /**
-     * @param VisitedArray $existing
-     * @return VisitedArray
+     * Returns union of types that would result from running given validator
+     *
+     * If implementations cannot handle the validator they _must_ return the existing union unaltered.
      */
-    public function visit(ValidatorInterface $validator, array $existing): array;
+    public function visit(ValidatorInterface $validator, Union $previous): Union;
 }

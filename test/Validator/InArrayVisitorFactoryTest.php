@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Validator\InArrayVisitorFactory;
 use Laminas\Validator\InArray;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TNever;
+use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
-
-use function range;
 
 #[CoversClass(InArrayVisitorFactory::class)]
 final class InArrayVisitorFactoryTest extends TestCase
@@ -25,26 +25,9 @@ final class InArrayVisitorFactoryTest extends TestCase
         $factory  = new InArrayVisitorFactory();
         $instance = $factory($container);
 
-        $types     = [PsalmType::String, PsalmType::Null];
+        $expected  = new Union([new TNever()]);
         $validator = new InArray(['haystack' => []]);
-        $actual    = $instance->visit($validator, $types);
-
-        self::assertSame($types, $actual);
-    }
-
-    public function testInvokeReturnsDefaultMaxLiterals(): void
-    {
-        $container = self::createStub(ContainerInterface::class);
-        $container->method('get')
-            ->willReturnMap([['config', []]]);
-
-        $factory  = new InArrayVisitorFactory();
-        $instance = $factory($container);
-
-        $expected  = [PsalmType::String];
-        $types     = [PsalmType::String, PsalmType::Null];
-        $validator = new InArray(['haystack' => range(0, 10), 'strict' => false]);
-        $actual    = $instance->visit($validator, $types);
+        $actual    = $instance->visit($validator, $expected);
 
         self::assertSame($expected, $actual);
     }
@@ -59,29 +42,15 @@ final class InArrayVisitorFactoryTest extends TestCase
         $factory  = new InArrayVisitorFactory();
         $instance = $factory($container);
 
-        $types     = [PsalmType::String, PsalmType::Null];
+        $previous = new Union([new TBool()]);
+        $builder  = $previous->getBuilder();
+        $builder->removeType('bool');
+        $expected = $builder->freeze();
+
         $validator = new InArray(['haystack' => []]);
-        $actual    = $instance->visit($validator, $types);
+        $actual    = $instance->visit($validator, $previous);
 
-        self::assertSame([], $actual);
-    }
-
-    public function testInvokeConfiguresMaxLiterals(): void
-    {
-        $config    = $this->getConfig(['max-literals' => 0]);
-        $container = self::createStub(ContainerInterface::class);
-        $container->method('get')
-            ->willReturnMap([['config', $config]]);
-
-        $factory  = new InArrayVisitorFactory();
-        $instance = $factory($container);
-
-        $expected  = [PsalmType::String];
-        $types     = [PsalmType::String, PsalmType::Null];
-        $validator = new InArray(['haystack' => ['a']]);
-        $actual    = $instance->visit($validator, $types);
-
-        self::assertSame($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     private function getConfig(array $config): array

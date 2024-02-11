@@ -4,50 +4,100 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Validator;
 
-use Kynx\Laminas\FormShape\Type\PsalmType;
-use Kynx\Laminas\FormShape\Type\TypeUtil;
+use Countable;
+use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Kynx\Laminas\FormShape\Validator\NotEmptyVisitor;
-use Laminas\Validator\Barcode;
+use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\NotEmpty;
-use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TBool;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TIntRange;
+use Psalm\Type\Atomic\TLiteralString;
+use Psalm\Type\Atomic\TNamedObject;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TObject;
+use Psalm\Type\Atomic\TString;
+use Psalm\Type\Atomic\TTrue;
+use stdClass;
+use Stringable;
 
-use function array_values;
-
-/**
- * @psalm-import-type VisitedArray from TypeUtil
- */
 #[CoversClass(NotEmptyVisitor::class)]
-final class NotEmptyVisitorTest extends TestCase
+final class NotEmptyVisitorTest extends AbstractValidatorVisitorTestCase
 {
-    /**
-     * @param VisitedArray $existing
-     */
-    #[DataProvider('visitProvider')]
-    public function testVisit(ValidatorInterface $validator, array $existing, array $expected): void
-    {
-        $visitor = new NotEmptyVisitor();
-        $actual  = $visitor->visit($validator, $existing);
-        self::assertSame($expected, array_values($actual));
-    }
-
     public static function visitProvider(): array
     {
-        // phpcs:disable Generic.Files.LineLength.TooLong
+        ConfigLoader::load();
+
         return [
-            'invalid'       => [new Barcode(), [PsalmType::Bool], [PsalmType::Bool]],
-            'object count'  => [new NotEmpty(NotEmpty::OBJECT_COUNT), [PsalmType::Object], [PsalmType::Object]],
-            'object string' => [new NotEmpty(NotEmpty::OBJECT_STRING), [PsalmType::Object], [PsalmType::Object]],
-            'object'        => [new NotEmpty(NotEmpty::OBJECT), [PsalmType::String, PsalmType::Object], [PsalmType::String]],
-            'space'         => [new NotEmpty(NotEmpty::SPACE), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'null'          => [new NotEmpty(NotEmpty::NULL), [PsalmType::String, PsalmType::Null], [PsalmType::String]],
-            'empty array'   => [new NotEmpty(NotEmpty::EMPTY_ARRAY), [PsalmType::Array], [PsalmType::NonEmptyArray]],
-            'string'        => [new NotEmpty(NotEmpty::STRING), [PsalmType::String], [PsalmType::NonEmptyString]],
-            'int'           => [new NotEmpty(NotEmpty::INTEGER), [PsalmType::Int], [PsalmType::NegativeInt, PsalmType::PositiveInt]],
-            'bool'          => [new NotEmpty(NotEmpty::BOOLEAN), [PsalmType::Bool], [PsalmType::True]],
+            'object count'   => [
+                new NotEmpty(NotEmpty::OBJECT_COUNT),
+                [new TObject(), new TNamedObject(stdClass::class)],
+                [new TNamedObject(Countable::class)],
+            ],
+            'object string'  => [
+                new NotEmpty(NotEmpty::OBJECT_STRING),
+                [new TObject()],
+                [new TNamedObject(Stringable::class)],
+            ],
+            'object'         => [
+                new NotEmpty(NotEmpty::OBJECT),
+                [new TObject()],
+                [new TObject()],
+            ],
+            'object not set' => [
+                new NotEmpty(NotEmpty::ZERO),
+                [new TObject(), new TString()],
+                [new TString()],
+            ],
+            'space'          => [
+                new NotEmpty(NotEmpty::SPACE),
+                [TLiteralString::make(' '), new TInt()],
+                [new TInt()],
+            ],
+            'null'           => [
+                new NotEmpty(NotEmpty::NULL),
+                [new TString(), new TNull()],
+                [new TString()],
+            ],
+            'empty array'    => [
+                new NotEmpty(NotEmpty::EMPTY_ARRAY),
+                [new TArray([Type::getArrayKey(), Type::getMixed()])],
+                [new TNonEmptyArray([Type::getArrayKey(), Type::getMixed()])],
+            ],
+            'zero'           => [
+                new NotEmpty(NotEmpty::ZERO),
+                [TLiteralString::make('0'), new TInt()],
+                [new TInt()],
+            ],
+            'string'         => [
+                new NotEmpty(NotEmpty::STRING),
+                [TLiteralString::make(''), TLiteralString::make('a')],
+                [TLiteralString::make('a')],
+            ],
+            'float'          => [
+                new NotEmpty(NotEmpty::FLOAT),
+                [new Type\Atomic\TLiteralFloat(0.0), new TInt()],
+                [new TInt()],
+            ],
+            'int'            => [
+                new NotEmpty(NotEmpty::INTEGER),
+                [new TInt()],
+                [new TIntRange(null, -1), new TIntRange(1, null)],
+            ],
+            'bool'           => [
+                new NotEmpty(NotEmpty::BOOLEAN),
+                [new TBool()],
+                [new TTrue()],
+            ],
         ];
-        // phpcs:enable
+    }
+
+    protected static function getValidatorVisitor(): ValidatorVisitorInterface
+    {
+        return new NotEmptyVisitor();
     }
 }
