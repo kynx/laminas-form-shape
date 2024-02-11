@@ -4,25 +4,22 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Command;
 
-use Kynx\Laminas\FormShape\Decorator\CollectionFilterShapeDecorator;
-use Kynx\Laminas\FormShape\Decorator\InputFilterShapeDecorator;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
-use Kynx\Laminas\FormShape\InputVisitorException;
-use Kynx\Laminas\FormShape\Shape\InputFilterShape;
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
+use Kynx\Laminas\FormShape\UnionDecoratorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class FormShapeCommand extends Command
+final class PsalmTypeCommand extends Command
 {
     public function __construct(
         private readonly FormReaderInterface $formReader,
         private readonly FormVisitorInterface $formVisitor,
-        private readonly InputFilterShapeDecorator $inputFilterShapeDecorator,
-        private readonly CollectionFilterShapeDecorator $collectionFilterShapeDecorator
+        private readonly UnionDecoratorInterface $decorator,
     ) {
         parent::__construct();
     }
@@ -31,7 +28,7 @@ final class FormShapeCommand extends Command
     {
         parent::configure();
 
-        $this->setDescription("Generate array shape for form")
+        $this->setDescription("Generate psalm type for form")
             ->addArgument('path', InputArgument::REQUIRED, 'Path to form');
     }
 
@@ -47,18 +44,15 @@ final class FormShapeCommand extends Command
         }
 
         try {
-            $shape = $this->formVisitor->visit($formFile->form);
+            $union = $this->formVisitor->visit($formFile->form);
         } catch (InputVisitorException $e) {
             $io->error($e->getMessage());
             return self::FAILURE;
         }
 
         $io->section("Psalm type for $path");
-        if ($shape instanceof InputFilterShape) {
-            $io->block($this->inputFilterShapeDecorator->decorate($shape));
-        } else {
-            $io->block($this->collectionFilterShapeDecorator->decorate($shape));
-        }
+        $io->block($this->decorator->decorate($union));
+
         return self::SUCCESS;
     }
 }

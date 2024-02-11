@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape;
 
-use Kynx\Laminas\FormShape\Command\FormShapeCommand;
-use Kynx\Laminas\FormShape\Command\FormShapeCommandFactory;
+use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
+use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
 use Kynx\Laminas\FormShape\Decorator\UnionDecoratorFactory;
 use Kynx\Laminas\FormShape\File\FormReader;
@@ -30,7 +30,6 @@ use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorManagerFactory;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
-use Kynx\Laminas\FormShape\Type\PsalmType;
 use Kynx\Laminas\FormShape\Validator\BetweenVisitor;
 use Kynx\Laminas\FormShape\Validator\CsrfVisitor;
 use Kynx\Laminas\FormShape\Validator\DateStepVisitor;
@@ -46,14 +45,14 @@ use Kynx\Laminas\FormShape\Validator\InArrayVisitorFactory;
 use Kynx\Laminas\FormShape\Validator\IsbnVisitor;
 use Kynx\Laminas\FormShape\Validator\IsCountableVisitor;
 use Kynx\Laminas\FormShape\Validator\IsInstanceOfVisitor;
+use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitor;
+use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitorFactory;
 use Kynx\Laminas\FormShape\Validator\NotEmptyVisitor;
 use Kynx\Laminas\FormShape\Validator\RegexVisitor;
 use Kynx\Laminas\FormShape\Validator\RegexVisitorFactory;
 use Kynx\Laminas\FormShape\Validator\Sitemap\PriorityVisitor;
 use Kynx\Laminas\FormShape\Validator\StepVisitor;
 use Kynx\Laminas\FormShape\Validator\StringLengthVisitor;
-use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitor;
-use Kynx\Laminas\FormShape\Validator\NonEmptyStringVisitorFactory;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputInterface;
@@ -103,7 +102,7 @@ final readonly class ConfigProvider
     {
         return [
             'commands' => [
-                'form:shape' => FormShapeCommand::class,
+                'form:psalm-type' => PsalmTypeCommand::class,
             ],
         ];
     }
@@ -151,7 +150,7 @@ final readonly class ConfigProvider
             ],
             'filter'             => [
                 'allow-list' => [
-                    'allow-empty-list'     => true,
+                    'allow-empty-list' => true,
                 ],
             ],
             'validator'          => [
@@ -162,7 +161,7 @@ final readonly class ConfigProvider
                     'patterns' => [
                         /* @link \Laminas\Form\Element\Color */
                         '/^#[0-9a-fA-F]{6}$/' => [
-                            TNonEmptyString::class
+                            TNonEmptyString::class,
                         ],
                         /* @link \Laminas\Form\Element\Email */
                         '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/' => [
@@ -205,21 +204,22 @@ final readonly class ConfigProvider
             'aliases'   => [
                 FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
+                UnionDecoratorInterface::class     => UnionDecorator::class,
             ],
             'factories' => [
-                AllowListVisitor::class       => AllowListVisitorFactory::class,
-                ExplodeVisitor::class         => ExplodeVisitorFactory::class,
-                FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormReader::class             => FormReaderFactory::class,
-                FormShapeCommand::class       => FormShapeCommandFactory::class,
-                FormVisitor::class            => FormVisitorFactory::class,
-                InArrayVisitor::class         => InArrayVisitorFactory::class,
-                InputFilterVisitor::class     => InputFilterVisitorFactory::class,
-                InputVisitor::class           => InputVisitorFactory::class,
-                InputVisitorManager::class    => InputVisitorManagerFactory::class,
-                NonEmptyStringVisitor::class  => NonEmptyStringVisitorFactory::class,
-                RegexVisitor::class           => RegexVisitorFactory::class,
-                UnionDecorator::class         => UnionDecoratorFactory::class,
+                AllowListVisitor::class      => AllowListVisitorFactory::class,
+                ExplodeVisitor::class        => ExplodeVisitorFactory::class,
+                FileValidatorVisitor::class  => FileValidatorVisitorFactory::class,
+                FormReader::class            => FormReaderFactory::class,
+                PsalmTypeCommand::class      => PsalmTypeCommandFactory::class,
+                FormVisitor::class           => FormVisitorFactory::class,
+                InArrayVisitor::class        => InArrayVisitorFactory::class,
+                InputFilterVisitor::class    => InputFilterVisitorFactory::class,
+                InputVisitor::class          => InputVisitorFactory::class,
+                InputVisitorManager::class   => InputVisitorManagerFactory::class,
+                NonEmptyStringVisitor::class => NonEmptyStringVisitorFactory::class,
+                RegexVisitor::class          => RegexVisitorFactory::class,
+                UnionDecorator::class        => UnionDecoratorFactory::class,
             ],
         ];
     }
