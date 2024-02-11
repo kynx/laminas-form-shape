@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
-use Kynx\Laminas\FormShape\Shape\CollectionFilterShape;
-use Kynx\Laminas\FormShape\Shape\InputFilterShape;
 use Laminas\Form\FormInterface;
+use Psalm\Type\Union;
 
 final readonly class FormVisitor implements FormVisitorInterface
 {
@@ -15,10 +14,10 @@ final readonly class FormVisitor implements FormVisitorInterface
     {
     }
 
-    public function visit(FormInterface $form): CollectionFilterShape|InputFilterShape
+    public function visit(FormInterface $form): Union
     {
         // phpcs:disable SlevomatCodingStandard.Variables.UselessVariable.UselessVariable
-        $shape = $this->inputFilterVisitor->visit($form->getInputFilter());
+        $union = $this->inputFilterVisitor->visit($form->getInputFilter());
         // phpcs:enable
 
         /**
@@ -28,6 +27,6 @@ final readonly class FormVisitor implements FormVisitorInterface
          *   * more...?
          */
 
-        return $shape;
+        return $union;
     }
 }
