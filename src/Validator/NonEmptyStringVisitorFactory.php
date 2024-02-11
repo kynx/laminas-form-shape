@@ -18,7 +18,7 @@ final readonly class NonEmptyStringVisitorFactory
         /** @var FormShapeConfigurationArray $config */
         $config = $container->get('config') ?? [];
         /** @var list<class-string<ValidatorInterface>> $validators */
-        $validators = $config['laminas-form-shape']['validator']['string']['validators']
+        $validators = $config['laminas-form-shape']['validator']['non-empty-string']['validators']
             ?? NonEmptyStringVisitor::DEFAULT_VALIDATORS;
 
         return new NonEmptyStringVisitor($validators);

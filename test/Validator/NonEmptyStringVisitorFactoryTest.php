@@ -53,7 +53,7 @@ final class NonEmptyStringVisitorFactoryTest extends TestCase
         return [
             'laminas-form-shape' => [
                 'validator' => [
-                    'string' => [
+                    'non-empty-string' => [
                         'validators' => $validators,
                     ],
                 ],

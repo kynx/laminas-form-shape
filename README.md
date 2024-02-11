@@ -18,7 +18,7 @@ composer require --dev kynx/laminas-form-shape
 ## Usage
 
 ```commandline
-vendor/bin/laminas form:shape src/Forms/MyForm.php
+vendor/bin/laminas form:psalm-type src/Forms/MyForm.php
 ```
 
 ...outputs an [array shape] something like:
@@ -35,7 +35,7 @@ array{
 To see a full list of options:
 
 ```commandline
-vendor/bin/laminas form:shape --help
+vendor/bin/laminas form:psalm-type --help
 ```
 
 ## Why?
@@ -82,6 +82,28 @@ return [
 ];
 ```
 
+### Output formatting
+
+There are three top level settings to control how the array shapes are formatted:
+
+1. `indent` - string to use for indentation when pretty-printing array shapes. Default to four spaces.
+2. `max-string-length` - maximum number of characters to include when outputting literal strings. Defaults to whatever
+   psalm is configured with (typically 1000 characters).
+3. `literal-limit` - maximum number of literals to output. If your `AllowList` filters or `InArray` validators contain
+   large number of items you may want to limit this. Defaults to 100.
+
+Changing the last two will make your array shapes less exact, but more readable.
+
+```php
+return [
+    'laminas-form-shape' => [
+        'indent'             => "\t", // use tab for indenting
+        'max-string-length'  => 50,   // don't output long literal strings
+        'literal-limit'      => 20,   // don't output too many literals
+    ],
+];
+```
+
 ### Filters
 
 Each filter defined in your form's `InputFilter` will be processed by a number of [visitors]. Each visitor takes the
@@ -94,9 +116,7 @@ tweak the following:
 #### AllowList
 
 The [AllowList] filter enables you to configure a list of terms that are "allowed" by the filter, or `null` if none
-match. We can turn this into a literal list like `'first'|'second'|1|2|null`, but if the list is large this could make
-for a massive type! By default if there are more than 10 terms we just output the possible types found in the list:
-`int|null|string` for the previous example.
+match. We turn this into a literal list like `'first'|'second'|1|2|null`.
 
 If there are no terms in the list we pass on whatever type the previous visitor output. This is so code that dynamically
 populates the list (for example, from a database query) does not barf.
@@ -109,7 +129,6 @@ return [
         'filter'             => [
             'allow-list' => [
                 'allow-empty-list' => false, // empty lists will produce "Cannot get type" error
-                'max-literals'     => 100,   // allow lots of literal terms
             ],
         ],
     ],
@@ -140,31 +159,10 @@ that will have edge cases. I don't use them much: currently they are ignored. To
 and to keep your code testable and reusable - I suggest converting them to concrete classes and creating
 visitors to describe the types they can produce.
 
-#### Explode
-
-The [Explode] validator is used by `MultiCheckbox` and `Select` elements that accept multiple values. On receiving a
-string, it `explode()`s it and validates each array element. But it can also receive an array or `Traversable` and
-validate that. We assume each element in the array will be a string, but if you've gone off-piste you can change
-the types of the items:
-
-```php
-use Kynx\Laminas\FormShape\Type\PsalmType;
-
-return [
-    'laminas-form-shape' => [
-        'validator' => [
-            'explode' => [
-                'item-types' => [PsalmType::Int, PsalmType::String], // can output `array<int>|array<string>` 
-            ],
-        ],
-    ],
-];
-```
-
 #### File
 
-The various [File] validators accept an array from the `$_FILES` super-global, a string, or an `UploadedFileInterface`.
-We have a single visitor for handling them all.
+The various [File] validators accept an array from the `$_FILES` super-global or an `UploadedFileInterface`. We have a
+single visitor for handling them all.
 
 If you've got a custom file validator that accepts the same, add it to the list of validators the visitor handles:
 
@@ -187,8 +185,7 @@ return [
 #### InArray
 
 Like the `AllowList` filter, the [InArray] validator accepts a list - or `haystack` - of values and verifies the input
-is one of them. The visitor can return a literal type (`'first'|'second'|1|2`) or, if there are over 10 items in the
-haystack, just the types (`int|string`). By default it ignores an empty haystack.
+is one of them. The visitor can return a literal type (`'first'|'second'|1|2`). By default it ignores an empty haystack.
 
 You can change the defaults:
 
@@ -198,7 +195,6 @@ return [
         'validator' => [
             'in-array' => [
                 'allow-empty-haystack' => false, // empty haystacks will produce "Cannot get type" error
-                'max-literals'         => 100,   // allow lots of literal terms
             ],
         ],
     ],
@@ -214,29 +210,20 @@ don't.
 Instead we provide a list of known regular expressions used by standard form elements in the configuration. If you've
 got your own regular expressions you'll want to add them to the list.
 
-Each regular expression configuration has three keys:
-
-* `pattern`: the regular expression, as provided to the `Regex` constructor
-* `types`:   a list of types that would pass validation - keep in mind the validator casts the input to a string, so
-             ints and floats are fine
-* `replace`: a list of `[<search>, <replace>]` types - used, for example, to convert `string` to `non-empty-string`
-
-Normally you'll either have `types` or `replace`, but having both is fine. Here's the one used by the `Number` element.
-If a `ToInt` filter has cast the value, the visitor will set the type to `int`, otherwise it will turn a `string` into a
-`numeric-string`:
+The configuration is keyed by the regular expression string, and contains a list of [Psalm types] that are used to
+narrow the type union. For instance, the `Number` element will validate a `float`, `int` or `numeric-string`. It's
+configuration looks like:
 
 ```php
-use Kynx\Laminas\FormShape\Type\PsalmType;
+use Psalm\Type\Atomic\TFloat;
+use Psalm\Type\Atomic\TInt;
+use Psalm\Type\Atomic\TString;
 
 return [
     'laminas-form-shape' => [
         'validator' => [
             'regex' => [
-                [
-                    'pattern' => '(^-?\d*(\.\d+)?$)',
-                    'types'   => [PsalmType::Int, PsalmType::Float],
-                    'replace' => [[PsalmType::String, PsalmType::NumericString]],
-                ],
+                '(^-?\d*(\.\d+)?$)' => [TFloat::class, TInt::class, TNumericString::class],
             ],
         ],
     ],
@@ -248,7 +235,7 @@ return [
 There are a large number of validators that do clever things to verify the format of strings, from [Barcode] to [Uuid].
 But all they tell us about the type is to change `string` to `non-empty-string`.
 
-If you have a custom validator that does something similar, add it to the list:
+If you have a custom validator that does the same, add it to the list:
 
 ```php
 use MyApp\Validator\MyCustomStringValidator;
@@ -256,7 +243,7 @@ use MyApp\Validator\MyCustomStringValidator;
 return [
     'laminas-form-shape' => [
         'validator' => [
-            'string' => [
+            'non-empty-string' => [
                 'validators' => [
                     MyCustomStringValidator::class,
                 ],
@@ -284,9 +271,9 @@ To come, once things settle down...
 [AllowList]: https://docs.laminas.dev/laminas-filter/v2/standard-filters/#allowlist
 [Callback filters]: https://docs.laminas.dev/laminas-filter/v2/standard-filters/#callback
 [Callback validators]: https://docs.laminas.dev/laminas-validator/validators/callback/
-[Explode]: https://docs.laminas.dev/laminas-validator/validators/explode/
 [File]: https://docs.laminas.dev/laminas-filter/v2/file/
 [InArray]: https://docs.laminas.dev/laminas-validator/validators/in-array/
 [Regex]: https://docs.laminas.dev/laminas-validator/validators/regex/
 [Barcode]: https://docs.laminas.dev/laminas-validator/validators/barcode/
 [Uuid]: https://docs.laminas.dev/laminas-validator/validators/uuid/
+[Psalm types]: https://psalm.dev/docs/running_psalm/plugins/plugins_type_system/#creating-type-object-instances-directly
