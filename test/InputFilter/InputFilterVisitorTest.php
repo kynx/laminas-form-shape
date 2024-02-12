@@ -123,6 +123,18 @@ final class InputFilterVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    public function testVisitFilterWithNoInputsReturnsMixedArray(): void
+    {
+        $expected = new Union([
+            new TArray([Type::getArrayKey(), Type::getMixed()]),
+        ]);
+
+        $inputFilter = new InputFilter();
+
+        $actual = $this->visitor->visit($inputFilter);
+        self::assertEquals($expected, $actual);
+    }
+
     public function testVisitReturnsPossiblyUndefinedUnion(): void
     {
         $expected = new Union([
