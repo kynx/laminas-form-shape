@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\InputFilter;
 
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
-use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Laminas\InputFilter\CollectionInputFilter;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
@@ -31,9 +32,8 @@ final class InputFilterVisitorTest extends TestCase
     {
         parent::setUp();
 
-        $inputVisitor        = new InputVisitor([], []);
-        $inputVisitorManager = new InputVisitorManager([Input::class => $inputVisitor]);
-        $this->visitor       = new InputFilterVisitor($inputVisitorManager);
+        $inputVisitor  = new InputVisitor([], []);
+        $this->visitor = new InputFilterVisitor([$inputVisitor]);
     }
 
     public function testVisitReturnsUnion(): void
@@ -54,7 +54,7 @@ final class InputFilterVisitorTest extends TestCase
     }
 
     #[DataProvider('collectionProvider')]
-    public function testVisitReturnsCollectionUnion(bool $required, int $count, TArray $array): void
+    public function testVisitReturnsCollectionUnion(bool $required, TArray $array): void
     {
         $expected = new Union([$array], ['possibly_undefined' => ! $required]);
 
@@ -62,7 +62,6 @@ final class InputFilterVisitorTest extends TestCase
         $collectionFilter->add(new Input('foo'));
         $inputFilter = new CollectionInputFilter();
         $inputFilter->setIsRequired($required);
-        $inputFilter->setCount($count);
         $inputFilter->setInputFilter($collectionFilter);
 
         $actual = $this->visitor->visit($inputFilter);
@@ -77,25 +76,13 @@ final class InputFilterVisitorTest extends TestCase
             ]),
         ]);
         return [
-            'required, 0 count'     => [
+            'required'     => [
                 true,
-                0,
-                new TNonEmptyArray([Type::getArrayKey(), $union], null, 1),
+                new TNonEmptyArray([Type::getArrayKey(), $union]),
             ],
-            'required, 2 count'     => [
-                true,
-                2,
-                new TNonEmptyArray([Type::getArrayKey(), $union], null, 2),
-            ],
-            'not required, 0 count' => [
+            'not required' => [
                 false,
-                0,
                 new TArray([Type::getArrayKey(), $union]),
-            ],
-            'not required, 1 count' => [
-                false,
-                1,
-                new TNonEmptyArray([Type::getArrayKey(), $union], null, 1),
             ],
         ];
     }
@@ -148,5 +135,18 @@ final class InputFilterVisitorTest extends TestCase
 
         $actual = $this->visitor->visit($inputFilter);
         self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitNoValidInputVisitorThrowsException(): void
+    {
+        $expected     = "No input visitor configured for '" . Input::class . "'";
+        $arrayVisitor = new ArrayInputVisitor(new InputVisitor([], []));
+        $visitor      = new InputFilterVisitor([$arrayVisitor]);
+        $inputFilter  = new InputFilter();
+        $inputFilter->add(new Input());
+
+        self::expectException(InputVisitorException::class);
+        self::expectExceptionMessage($expected);
+        $visitor->visit($inputFilter);
     }
 }

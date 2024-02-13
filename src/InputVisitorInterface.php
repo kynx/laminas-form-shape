@@ -9,5 +9,8 @@ use Psalm\Type\Union;
 
 interface InputVisitorInterface
 {
-    public function visit(InputInterface $input): Union;
+    /**
+     * Returns union for input if it can be processed, or `null`
+     */
+    public function visit(InputInterface $input): ?Union;
 }

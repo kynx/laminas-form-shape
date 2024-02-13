@@ -22,12 +22,14 @@ use Kynx\Laminas\FormShape\FilterVisitorInterface;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitorFactory;
+use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorFactory;
-use Kynx\Laminas\FormShape\InputFilter\InputVisitorManager;
-use Kynx\Laminas\FormShape\InputFilter\InputVisitorManagerFactory;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Kynx\Laminas\FormShape\Validator\BetweenVisitor;
@@ -54,7 +56,6 @@ use Kynx\Laminas\FormShape\Validator\Sitemap\PriorityVisitor;
 use Kynx\Laminas\FormShape\Validator\StepVisitor;
 use Kynx\Laminas\FormShape\Validator\StringLengthVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
-use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputInterface;
 use Laminas\ServiceManager\ConfigInterface;
 use Psalm\Type\Atomic\TFloat;
@@ -146,7 +147,9 @@ final readonly class ConfigProvider
                 StringLengthVisitor::class,
             ],
             'input-visitors'     => [
-                Input::class => InputVisitor::class,
+                ArrayInputVisitor::class,
+                CollectionInputVisitor::class,
+                InputVisitor::class,
             ],
             'filter'             => [
                 'allow-list' => [
@@ -207,19 +210,20 @@ final readonly class ConfigProvider
                 UnionDecoratorInterface::class     => UnionDecorator::class,
             ],
             'factories' => [
-                AllowListVisitor::class      => AllowListVisitorFactory::class,
-                ExplodeVisitor::class        => ExplodeVisitorFactory::class,
-                FileValidatorVisitor::class  => FileValidatorVisitorFactory::class,
-                FormReader::class            => FormReaderFactory::class,
-                PsalmTypeCommand::class      => PsalmTypeCommandFactory::class,
-                FormVisitor::class           => FormVisitorFactory::class,
-                InArrayVisitor::class        => InArrayVisitorFactory::class,
-                InputFilterVisitor::class    => InputFilterVisitorFactory::class,
-                InputVisitor::class          => InputVisitorFactory::class,
-                InputVisitorManager::class   => InputVisitorManagerFactory::class,
-                NonEmptyStringVisitor::class => NonEmptyStringVisitorFactory::class,
-                RegexVisitor::class          => RegexVisitorFactory::class,
-                UnionDecorator::class        => UnionDecoratorFactory::class,
+                AllowListVisitor::class       => AllowListVisitorFactory::class,
+                ArrayInputVisitor::class      => ArrayInputVisitorFactory::class,
+                CollectionInputVisitor::class => CollectionInputVisitorFactory::class,
+                ExplodeVisitor::class         => ExplodeVisitorFactory::class,
+                FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
+                FormReader::class             => FormReaderFactory::class,
+                PsalmTypeCommand::class       => PsalmTypeCommandFactory::class,
+                FormVisitor::class            => FormVisitorFactory::class,
+                InArrayVisitor::class         => InArrayVisitorFactory::class,
+                InputFilterVisitor::class     => InputFilterVisitorFactory::class,
+                InputVisitor::class           => InputVisitorFactory::class,
+                NonEmptyStringVisitor::class  => NonEmptyStringVisitorFactory::class,
+                RegexVisitor::class           => RegexVisitorFactory::class,
+                UnionDecorator::class         => UnionDecoratorFactory::class,
             ],
         ];
     }
