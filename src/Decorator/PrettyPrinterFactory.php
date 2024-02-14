@@ -11,9 +11,9 @@ use Psr\Container\ContainerInterface;
 /**
  * @psalm-import-type FormShapeConfigurationArray from ConfigProvider
  */
-final readonly class UnionDecoratorFactory
+final readonly class PrettyPrinterFactory
 {
-    public function __invoke(ContainerInterface $container): UnionDecorator
+    public function __invoke(ContainerInterface $container): PrettyPrinter
     {
         /** @var FormShapeConfigurationArray $config */
         $config      = $container->get('config') ?? [];
@@ -21,6 +21,6 @@ final readonly class UnionDecoratorFactory
 
         ConfigLoader::load($shapeConfig['max-string-length'] ?? null);
 
-        return new UnionDecorator($shapeConfig['indent'], $shapeConfig['literal-limit']);
+        return new PrettyPrinter($shapeConfig['indent'], $shapeConfig['literal-limit']);
     }
 }

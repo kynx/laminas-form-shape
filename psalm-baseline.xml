@@ -1,216 +1,216 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.21.0@04ba9358e3f7d14a9dc3edd4e814a9d51d8c637f">
+<files psalm-version="5.22.0@fe2c67ec89f358940f90db05efd2d663388b45a6">
   <file src="src/File/FormFile.php">
     <PossiblyUnusedProperty>
-      <code>$file</code>
+      <code><![CDATA[$file]]></code>
     </PossiblyUnusedProperty>
   </file>
   <file src="test/ConfigProviderTest.php">
     <PossiblyUnusedMethod>
-      <code>aliasProvider</code>
-      <code>factoryProvider</code>
-      <code>filterVisitorsProvider</code>
-      <code>regexPatternProvider</code>
-      <code>validatorVisitorsProvider</code>
+      <code><![CDATA[aliasProvider]]></code>
+      <code><![CDATA[factoryProvider]]></code>
+      <code><![CDATA[filterVisitorsProvider]]></code>
+      <code><![CDATA[regexPatternProvider]]></code>
+      <code><![CDATA[validatorVisitorsProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Decorator/KeyedArrayDecoratorTest.php">
     <PossiblyUnusedMethod>
-      <code>typeNameProvider</code>
+      <code><![CDATA[typeNameProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Decorator/UnionDecoratorTest.php">
+  <file src="test/Decorator/PrettyPrinterTest.php">
     <PossiblyUnusedMethod>
-      <code>combineTypesProvider</code>
-      <code>typeProvider</code>
+      <code><![CDATA[combineTypesProvider]]></code>
+      <code><![CDATA[typeProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/File/FormReaderTest.php">
     <PossiblyUnusedMethod>
-      <code>getFormFileProvider</code>
+      <code><![CDATA[getFormFileProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/AbstractFilterVisitorTestCase.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/AllowListVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/BooleanVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/DigitsVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/InflectorVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/ToFloatVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/ToIntVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/ToNullVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Form/FormCollectionSmokeTest.php">
     <PossiblyUnusedMethod>
-      <code>countAllowRemoveProvider</code>
-      <code>validationMatchesProvider</code>
+      <code><![CDATA[countAllowRemoveProvider]]></code>
+      <code><![CDATA[validationMatchesProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Form/FormElementSmokeTest.php">
     <PossiblyUnusedMethod>
-      <code>defaultElementProvider</code>
+      <code><![CDATA[defaultElementProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Form/FormFieldsetSmokeTest.php">
     <PossiblyUnusedMethod>
-      <code>validationMatchProvider</code>
+      <code><![CDATA[validationMatchProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/InputFilter/InputFilterVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>collectionProvider</code>
+      <code><![CDATA[collectionProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/InputFilter/InputVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>addNotEmptyProvider</code>
+      <code><![CDATA[addNotEmptyProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Psalm/ConfigLoaderTrait.php">
     <PossiblyUnusedMethod>
-      <code>reloadConfig</code>
+      <code><![CDATA[reloadConfig]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Psalm/TypeComparatorTest.php">
     <PossiblyUnusedMethod>
-      <code>isContainedByFalseProvider</code>
-      <code>isContainedByTrueProvider</code>
+      <code><![CDATA[isContainedByFalseProvider]]></code>
+      <code><![CDATA[isContainedByTrueProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Psalm/TypeUtilTest.php">
     <PossiblyUnusedMethod>
-      <code>filterProvider</code>
-      <code>narrowProvider</code>
-      <code>replaceTypeProvider</code>
-      <code>toLaxUnion</code>
-      <code>toStrictUnionProvider</code>
-      <code>widenProvider</code>
+      <code><![CDATA[filterProvider]]></code>
+      <code><![CDATA[narrowProvider]]></code>
+      <code><![CDATA[replaceTypeProvider]]></code>
+      <code><![CDATA[toLaxUnion]]></code>
+      <code><![CDATA[toStrictUnionProvider]]></code>
+      <code><![CDATA[widenProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/AbstractValidatorVisitorTestCase.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/BetweenVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/CsrfVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/DateStepVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/DateVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/DigitsVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/ExplodeVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/FileValidatorVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>defaultValidatorProvider</code>
-      <code>visitProvider</code>
+      <code><![CDATA[defaultValidatorProvider]]></code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/HexVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/InArrayVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/IsCountableVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/IsInstanceOfVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/IsbnVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/NonEmptyStringVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/NotEmptyVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/RegexVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/Sitemap/PriorityVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/StepVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/StringLengthVisitorTest.php">
     <PossiblyUnusedMethod>
-      <code>visitProvider</code>
+      <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
 </files>

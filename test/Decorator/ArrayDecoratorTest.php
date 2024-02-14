@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Decorator;
 
 use Kynx\Laminas\FormShape\Decorator\ArrayDecorator;
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type\Atomic\TArray;
@@ -25,7 +25,7 @@ final class ArrayDecoratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->decorator = new ArrayDecorator(new UnionDecorator());
+        $this->decorator = new ArrayDecorator(new PrettyPrinter());
     }
 
     public function testDecorateReturnsNonEmptyArray(): void

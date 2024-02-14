@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Form;
 
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Laminas\Form\Element\Button;
@@ -69,7 +69,7 @@ final class FormElementSmokeTest extends TestCase
         $inputFilter = $form->getInputFilter();
         $union       = $visitor->visit($inputFilter);
 
-        $decorator = new UnionDecorator();
+        $decorator = new PrettyPrinter();
         /** @psalm-suppress PossiblyInvalidArgument */
         $actualString = $decorator->decorate($union);
 

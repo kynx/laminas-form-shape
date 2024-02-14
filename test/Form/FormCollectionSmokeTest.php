@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Form;
 
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
@@ -59,7 +59,7 @@ final class FormCollectionSmokeTest extends TestCase
 
         $union = $this->visitor->visit($form);
 
-        $type = (new UnionDecorator())->decorate($union);
+        $type = (new PrettyPrinter())->decorate($union);
 
         $form->setData($data);
         $isFormValid = $form->isValid();
@@ -104,7 +104,7 @@ final class FormCollectionSmokeTest extends TestCase
 
         $union = $this->visitor->visit($form);
 
-        $type = (new UnionDecorator())->decorate($union);
+        $type = (new PrettyPrinter())->decorate($union);
         self::assertValinorValidates($isValid, $type, $data);
 
         if ($isValid) {
@@ -150,7 +150,7 @@ final class FormCollectionSmokeTest extends TestCase
         $isValid = $form->isValid();
         self::assertTrue($isValid);
 
-        $actual = (new UnionDecorator())->decorate($union);
+        $actual = (new PrettyPrinter())->decorate($union);
         self::assertValinorValidates(true, $actual, $data);
 
         self::assertSame($expected, $actual);

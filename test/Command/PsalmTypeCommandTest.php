@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Command;
 
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
@@ -34,7 +34,7 @@ final class PsalmTypeCommandTest extends TestCase
 
         $this->formReader  = self::createStub(FormReaderInterface::class);
         $this->formVisitor = self::createStub(FormVisitorInterface::class);
-        $decorator         = new UnionDecorator();
+        $decorator         = new PrettyPrinter();
 
         $command             = new PsalmTypeCommand(
             $this->formReader,

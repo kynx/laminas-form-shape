@@ -6,7 +6,7 @@ namespace Kynx\Laminas\FormShape;
 
 use Psalm\Type\Union;
 
-interface UnionDecoratorInterface
+interface DecoratorInterface
 {
     public function decorate(Union $union, int $indent = 0): string;
 }

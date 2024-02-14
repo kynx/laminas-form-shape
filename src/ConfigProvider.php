@@ -6,8 +6,8 @@ namespace Kynx\Laminas\FormShape;
 
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
-use Kynx\Laminas\FormShape\Decorator\UnionDecoratorFactory;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
 use Kynx\Laminas\FormShape\File\FormReader;
 use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
@@ -206,7 +206,7 @@ final readonly class ConfigProvider
             'aliases'   => [
                 FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
-                UnionDecoratorInterface::class     => UnionDecorator::class,
+                DecoratorInterface::class          => PrettyPrinter::class,
             ],
             'factories' => [
                 AllowListVisitor::class       => AllowListVisitorFactory::class,
@@ -222,7 +222,7 @@ final readonly class ConfigProvider
                 InputVisitor::class           => InputVisitorFactory::class,
                 NonEmptyStringVisitor::class  => NonEmptyStringVisitorFactory::class,
                 RegexVisitor::class           => RegexVisitorFactory::class,
-                UnionDecorator::class         => UnionDecoratorFactory::class,
+                PrettyPrinter::class          => PrettyPrinterFactory::class,
             ],
         ];
     }
