@@ -43,7 +43,7 @@ final class FormVisitorTest extends TestCase
             new TKeyedArray([
                 'foo' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
             ]),
-        ]);
+        ], ['possibly_undefined' => true]);
 
         $form = new Form();
         $form->add(new Text('foo'));
@@ -63,11 +63,11 @@ final class FormVisitorTest extends TestCase
                             new TKeyedArray([
                                 'baz' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
                             ]),
-                        ]),
+                        ], ['possibly_undefined' => true]),
                     ]),
                 ], ['possibly_undefined' => true]),
             ]),
-        ]);
+        ], ['possibly_undefined' => true]);
 
         $form          = new Form();
         $collection    = new Collection('foo');
@@ -129,7 +129,7 @@ final class FormVisitorTest extends TestCase
                     ]),
                 ], ['possibly_undefined' => true]),
             ]),
-        ]);
+        ], ['possibly_undefined' => true]);
 
         $form       = new Form();
         $collection = new Collection('foo');

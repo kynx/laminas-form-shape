@@ -114,7 +114,7 @@ final class InputFilterVisitorTest extends TestCase
     {
         $expected = new Union([
             new TArray([Type::getArrayKey(), Type::getMixed()]),
-        ]);
+        ], ['possibly_undefined' => true]);
 
         $inputFilter = new InputFilter();
 
@@ -130,8 +130,44 @@ final class InputFilterVisitorTest extends TestCase
             ]),
         ], ['possibly_undefined' => true]);
 
+        $input = new Input('foo');
+        $input->setRequired(true);
         $inputFilter = new OptionalInputFilter();
-        $inputFilter->add(new Input('foo'));
+        $inputFilter->add($input);
+
+        $actual = $this->visitor->visit($inputFilter);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitReturnsPossiblyUndefinedUnionWhenAllElementsUndefined(): void
+    {
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+            ]),
+        ], ['possibly_undefined' => true]);
+
+        $inputFilter = new InputFilter();
+        $inputFilter->add((new Input('foo'))->setRequired(false));
+        $inputFilter->add((new Input('bar'))->setRequired(false));
+
+        $actual = $this->visitor->visit($inputFilter);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitReturnsRequiredUnionWhenOneElementRequired(): void
+    {
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'bar' => new Union([new TString(), new TNull()]),
+            ]),
+        ]);
+
+        $inputFilter = new InputFilter();
+        $inputFilter->add((new Input('foo'))->setRequired(false));
+        $inputFilter->add(new Input('bar'));
 
         $actual = $this->visitor->visit($inputFilter);
         self::assertEquals($expected, $actual);

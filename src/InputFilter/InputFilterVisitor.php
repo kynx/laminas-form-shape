@@ -16,6 +16,7 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Union;
 
+use function array_filter;
 use function array_keys;
 
 final readonly class InputFilterVisitor implements InputFilterVisitorInterface
@@ -44,7 +45,12 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
             $elements[$childName] = $this->visit($child);
         }
 
-        $properties = ['possibly_undefined' => $inputFilter instanceof OptionalInputFilter];
+        $elementsRequired = (bool) array_filter(
+            $elements,
+            static fn (Union $element): bool => ! $element->possibly_undefined
+        );
+
+        $properties = ['possibly_undefined' => ! $elementsRequired || $inputFilter instanceof OptionalInputFilter];
 
         if ($elements === []) {
             return new Union([new TArray([Type::getArrayKey(), Type::getMixed()])], $properties);

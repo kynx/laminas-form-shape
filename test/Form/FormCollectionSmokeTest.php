@@ -6,8 +6,6 @@ namespace Form;
 
 use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
-use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInput;
 use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -21,8 +19,6 @@ use Laminas\Form\ElementInterface;
 use Laminas\Form\Exception\DomainException;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
-use Laminas\InputFilter\ArrayInput;
-use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -39,12 +35,10 @@ final class FormCollectionSmokeTest extends TestCase
         parent::setUp();
 
         $inputVisitor           = new InputVisitor([], [new NotEmptyVisitor()]);
-        $arrayInputVisitor      = new ArrayInputVisitor($inputVisitor);
         $collectionInputVisitor = new CollectionInputVisitor($inputVisitor);
         $inputFilterVisitor     = new InputFilterVisitor([
-            ArrayInput::class      => $arrayInputVisitor,
-            CollectionInput::class => $collectionInputVisitor,
-            Input::class           => $inputVisitor,
+            $collectionInputVisitor,
+            $inputVisitor,
         ]);
 
         $this->visitor = new FormVisitor($inputFilterVisitor);
