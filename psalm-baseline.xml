@@ -70,6 +70,12 @@
       <code>visitProvider</code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Form/FormCollectionSmokeTest.php">
+    <PossiblyUnusedMethod>
+      <code>countAllowRemoveProvider</code>
+      <code>validationMatchesProvider</code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/Form/FormElementSmokeTest.php">
     <PossiblyUnusedMethod>
       <code>defaultElementProvider</code>

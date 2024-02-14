@@ -56,7 +56,6 @@ use Kynx\Laminas\FormShape\Validator\Sitemap\PriorityVisitor;
 use Kynx\Laminas\FormShape\Validator\StepVisitor;
 use Kynx\Laminas\FormShape\Validator\StringLengthVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
-use Laminas\InputFilter\InputInterface;
 use Laminas\ServiceManager\ConfigInterface;
 use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
@@ -68,7 +67,7 @@ use Psalm\Type\Atomic\TString;
  * @psalm-import-type ServiceManagerConfigurationType from ConfigInterface
  * @psalm-type FilterVisitorList = list<class-string<FilterVisitorInterface>>
  * @psalm-type ValidatorVisitorList = list<class-string<ValidatorVisitorInterface>>
- * @psalm-type InputVisitorArray = array<class-string<InputInterface>, class-string<InputVisitorInterface>>
+ * @psalm-type InputVisitorArray = list<class-string<InputVisitorInterface>>
  * @psalm-type FormShapeArray = array{
  *      indent: string,
  *      max-string-length: ?int,
