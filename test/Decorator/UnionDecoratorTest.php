@@ -161,7 +161,7 @@ final class UnionDecoratorTest extends TestCase
             'string, numeric-string' => [[new TString(), new TNumericString()], 'string'],
 
             // This behaviour is inconsistent, but can only be fixed upstream: when a TNumericString is added to a union
-            // it overrides any other string type!
+            // it overrides any other string type! (Um... think TypeUtil::narrow() handles this case now :)
             'non-empty-string, string' => [[new TNonEmptyString(), new TString()], 'string'],
             'string, non-empty-string' => [[new TString(), new TNonEmptyString()], 'non-empty-string'],
         ];

@@ -23,6 +23,7 @@ use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Number;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Range;
 use Laminas\Form\Element\Search;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Submit;
@@ -74,7 +75,9 @@ final class FormElementSmokeTest extends TestCase
 
         foreach ($tests as $expectation) {
             [$data, $valid] = $expectation;
-            $inputFilter->setData(['test' => $data]);
+            $formData       = ['test' => $data];
+
+            $inputFilter->setData($formData);
             $actual = $inputFilter->isValid();
             self::assertSame($valid, $actual, sprintf(
                 "Validation expectation failed: %s is not %s",
@@ -186,47 +189,47 @@ final class FormElementSmokeTest extends TestCase
                 [[null, false], ['', false], [' ', false]],
                 "test: non-empty-string", // no haystack by default
             ],
-//            'range' => [
-//                Range::class,
-//                [[null, false], ['', false], [' ', false], ['a', false], ['1.23', true]],
-//                "test: numeric-string"
-//            ],
-            'search' => [
+            'range'         => [
+                Range::class,
+                [[null, false], ['', false], [' ', false], ['a', false], ['42', true]],
+                "test: numeric-string",
+            ],
+            'search'        => [
                 Search::class,
                 [[null, true], ['', true], ['a', true]],
                 'test?: null|string',
             ],
-            'select' => [
+            'select'        => [
                 Select::class,
                 [[null, false], ['', false], [' ', false]],
                 "test: non-empty-string", // no haystack by default
             ],
-            'submit' => [
+            'submit'        => [
                 Submit::class,
                 [[null, true], ['', true], ['a', true]],
                 'test?: null|string',
             ],
-            'tel'    => [
+            'tel'           => [
                 Tel::class,
                 [[null, false], ['', false], [' ', false], ['a', true]],
                 'test: non-empty-string',
             ],
-            'text'   => [
+            'text'          => [
                 Text::class,
                 [[null, true], ['', true], [' ', false], ['a', true]],
                 'test?: null|string',
             ],
-            'time'   => [
+            'time'          => [
                 Time::class,
-                [[null, false], ['', false], [' ', false]], /*['10:25:33', true] default does not validate :( */
+                [[null, false], ['', false], [' ', false], ['10:25:00', true]],
                 "test: non-empty-string",
             ],
-            'url'    => [
+            'url'           => [
                 Url::class,
                 [[null, false], ['', false], [' ', false], ['http://example.com', true]],
                 "test: non-empty-string",
             ],
-            'week'   => [
+            'week'          => [
                 Week::class,
                 [[null, false], ['', false], [' ', false], ['2024-W05', true]],
                 "test: non-empty-string",
