@@ -10,7 +10,7 @@ use function sprintf;
 
 final readonly class ArrayDecorator
 {
-    public function __construct(private UnionDecorator $unionDecorator)
+    public function __construct(private PrettyPrinter $unionDecorator)
     {
     }
 

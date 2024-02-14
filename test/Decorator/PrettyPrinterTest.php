@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Decorator;
 
 use Kynx\Laminas\FormShape\Decorator\DecoratorException;
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TBool;
@@ -38,16 +39,16 @@ use stdClass;
 use function array_map;
 use function range;
 
-#[CoversClass(UnionDecorator::class)]
-final class UnionDecoratorTest extends TestCase
+#[CoversClass(PrettyPrinter::class)]
+final class PrettyPrinterTest extends TestCase
 {
-    private UnionDecorator $decorator;
+    private PrettyPrinter $decorator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->decorator = new UnionDecorator();
+        $this->decorator = new PrettyPrinter();
     }
 
     public function testDecorateEmptyUnionThrowsException(): void
@@ -86,6 +87,34 @@ final class UnionDecoratorTest extends TestCase
         }
         END_OF_EXPECTED;
         $union    = new Union([new TKeyedArray(['foo' => new Union([new TInt()])])]);
+
+        $actual = $this->decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
+
+    public function testDecorateIndentsArrayWithKeyedArray(): void
+    {
+        $expected = <<<END_OF_EXPECTED
+        array{
+            foo: array<array-key, array{
+                bar: int,
+            }>,
+        }
+        END_OF_EXPECTED;
+        $union    = new Union([
+            new TKeyedArray([
+                'foo' => new Union([
+                    new TArray([
+                        Type::getArrayKey(),
+                        new Union([
+                            new TKeyedArray([
+                                'bar' => new Union([new TInt()]),
+                            ]),
+                        ]),
+                    ]),
+                ]),
+            ]),
+        ]);
 
         $actual = $this->decorator->decorate($union);
         self::assertSame($expected, $actual);
@@ -175,7 +204,7 @@ final class UnionDecoratorTest extends TestCase
             range(1, 4)
         );
         $union     = new Union($types);
-        $decorator = new UnionDecorator('', 3);
+        $decorator = new PrettyPrinter('', 3);
 
         $actual = $decorator->decorate($union);
         self::assertSame($expected, $actual);

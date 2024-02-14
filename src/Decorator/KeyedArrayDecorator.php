@@ -17,7 +17,7 @@ use function strlen;
 
 final readonly class KeyedArrayDecorator
 {
-    public function __construct(private UnionDecorator $unionDecorator)
+    public function __construct(private PrettyPrinter $unionDecorator)
     {
     }
 

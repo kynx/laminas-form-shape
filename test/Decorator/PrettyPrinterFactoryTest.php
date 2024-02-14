@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Decorator;
 
-use Kynx\Laminas\FormShape\Decorator\UnionDecoratorFactory;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type\Atomic\TInt;
@@ -15,8 +15,8 @@ use Psr\Container\ContainerInterface;
 
 use function array_merge;
 
-#[CoversClass(UnionDecoratorFactory::class)]
-final class UnionDecoratorFactoryTest extends TestCase
+#[CoversClass(PrettyPrinterFactory::class)]
+final class PrettyPrinterFactoryTest extends TestCase
 {
     public function testInvokeReturnsInstanceWithIndent(): void
     {
@@ -25,7 +25,7 @@ final class UnionDecoratorFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
-        $factory  = new UnionDecoratorFactory();
+        $factory  = new PrettyPrinterFactory();
         $instance = $factory($container);
 
         $expected = "array{\n\tfoo: int,\n}";
@@ -46,7 +46,7 @@ final class UnionDecoratorFactoryTest extends TestCase
         $container->method('get')
             ->willReturnMap([['config', $config]]);
 
-        $factory  = new UnionDecoratorFactory();
+        $factory  = new PrettyPrinterFactory();
         $instance = $factory($container);
 
         $expected = "int<0, max>"; // hrm... psalm could narrow this better ;)

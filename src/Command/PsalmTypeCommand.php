@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Command;
 
+use Kynx\Laminas\FormShape\DecoratorInterface;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
-use Kynx\Laminas\FormShape\UnionDecoratorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +19,7 @@ final class PsalmTypeCommand extends Command
     public function __construct(
         private readonly FormReaderInterface $formReader,
         private readonly FormVisitorInterface $formVisitor,
-        private readonly UnionDecoratorInterface $decorator,
+        private readonly DecoratorInterface $decorator,
     ) {
         parent::__construct();
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Decorator;
 
-use Kynx\Laminas\FormShape\UnionDecoratorInterface;
+use Kynx\Laminas\FormShape\DecoratorInterface;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
@@ -21,7 +21,7 @@ use function sort;
 
 use const SORT_STRING;
 
-final readonly class UnionDecorator implements UnionDecoratorInterface
+final readonly class PrettyPrinter implements DecoratorInterface
 {
     private ArrayDecorator $arrayDecorator;
     private KeyedArrayDecorator $keyedArrayDecorator;
@@ -42,7 +42,7 @@ final readonly class UnionDecorator implements UnionDecoratorInterface
 
         foreach ($union->getAtomicTypes() as $type) {
             if ($type instanceof TArray) {
-                $types[] = $this->arrayDecorator->decorate($type);
+                $types[] = $this->arrayDecorator->decorate($type, $indent);
             } elseif ($type instanceof TKeyedArray) {
                 $types[] = $this->keyedArrayDecorator->decorate($type, $indent);
             }

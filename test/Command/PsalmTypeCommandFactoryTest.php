@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Command;
 
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
+use Kynx\Laminas\FormShape\DecoratorInterface;
 use Kynx\Laminas\FormShape\File\FormFile;
 use Kynx\Laminas\FormShape\File\FormReader;
 use Kynx\Laminas\FormShape\File\FormReaderInterface;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
-use Kynx\Laminas\FormShape\UnionDecoratorInterface;
 use Laminas\Form\Form;
 use Nette\PhpGenerator\PhpFile;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -33,7 +33,7 @@ final class PsalmTypeCommandFactoryTest extends TestCase
             ->willReturnMap([
                 [FormReader::class, $formReader],
                 [FormVisitorInterface::class, $formVisitor],
-                [UnionDecoratorInterface::class, new UnionDecorator()],
+                [DecoratorInterface::class, new PrettyPrinter()],
             ]);
 
         $factory  = new PsalmTypeCommandFactory();
