@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Decorator;
 
 use Kynx\Laminas\FormShape\Decorator\KeyedArrayDecorator;
-use Kynx\Laminas\FormShape\Decorator\UnionDecorator;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +24,7 @@ final class KeyedArrayDecoratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->decorator = new KeyedArrayDecorator(new UnionDecorator());
+        $this->decorator = new KeyedArrayDecorator(new PrettyPrinter());
     }
 
     #[DataProvider('typeNameProvider')]
