@@ -46,6 +46,9 @@ final readonly class CollectionInput implements InputInterface, EmptyContextInte
         return $this->possiblyUndefined;
     }
 
+    /**
+     * @param bool $continueIfEmpty
+     */
     public function setContinueIfEmpty($continueIfEmpty): self
     {
         if ($this->delegate instanceof EmptyContextInterface) {
@@ -62,18 +65,27 @@ final readonly class CollectionInput implements InputInterface, EmptyContextInte
         return false;
     }
 
+    /**
+     * @param bool $allowEmpty
+     */
     public function setAllowEmpty($allowEmpty): self
     {
         $this->delegate->setAllowEmpty($allowEmpty);
         return $this;
     }
 
+    /**
+     * @param bool $breakOnFailure
+     */
     public function setBreakOnFailure($breakOnFailure): self
     {
         $this->delegate->setBreakOnFailure($breakOnFailure);
         return $this;
     }
 
+    /**
+     * @param null|string $errorMessage
+     */
     public function setErrorMessage($errorMessage): self
     {
         $this->delegate->setErrorMessage($errorMessage);
@@ -86,12 +98,18 @@ final readonly class CollectionInput implements InputInterface, EmptyContextInte
         return $this;
     }
 
+    /**
+     * @param string $name
+     */
     public function setName($name): self
     {
         $this->delegate->setName($name);
         return $this;
     }
 
+    /**
+     * @param bool $required
+     */
     public function setRequired($required): self
     {
         $this->delegate->setRequired($required);
@@ -104,6 +122,9 @@ final readonly class CollectionInput implements InputInterface, EmptyContextInte
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function setValue($value): self
     {
         assert(is_array($value));
