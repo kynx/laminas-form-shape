@@ -23,7 +23,6 @@
   },
   "extra": {
     "laminas": {
-      "component": "Kynx\\Laminas\\FormShape",
       "config-provider": "Kynx\\Laminas\\FormShape\\ConfigProvider"
     }
   },
