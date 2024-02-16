@@ -31,7 +31,7 @@ final readonly class FormVisitor implements FormVisitorInterface
         $data = $this->createData($form);
         assert($data !== null);
         $clone->setData($data)->isValid();
-        $inputFilter = $this->convertCollectionFilters($form, $clone->getInputFilter());
+        $inputFilter = $this->convertCollectionFilters($clone, $clone->getInputFilter());
 
         return $this->inputFilterVisitor->visit($inputFilter);
     }
