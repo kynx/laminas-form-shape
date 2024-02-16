@@ -139,4 +139,47 @@ final class FormVisitorTest extends TestCase
         $actual = $this->visitor->visit($form);
         self::assertEquals($expected, $actual);
     }
+
+    public function testVisitNestedCollection(): void
+    {
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([
+                    new TArray([
+                        Type::getArrayKey(),
+                        new Union([
+                            new TKeyedArray([
+                                'bar' => new Union([
+                                    new TArray([
+                                        Type::getArrayKey(),
+                                        new Union([new TString(), new TNull()]),
+                                    ]),
+                                ], ['possibly_undefined' => true]),
+                            ]),
+                        ], ['possibly_undefined' => true]),
+                    ]),
+                ], ['possibly_undefined' => true]),
+            ]),
+        ], ['possibly_undefined' => true]);
+
+        $form          = new Form();
+        $collection    = new Collection('foo');
+        $targetElement = new Fieldset();
+        $nested        = new Collection('bar');
+        $nested->setTargetElement(new Text());
+        $targetElement->add($nested);
+        $collection->setTargetElement($targetElement);
+        $form->add($collection);
+
+        $clone = clone $form;
+        $clone->setData([]);
+        self::assertTrue($clone->isValid());
+
+        $actual = $this->visitor->visit($form);
+        self::assertEquals($expected, $actual);
+
+        $inputFilter = $form->getInputFilter();
+        $inputFilter->setData([]);
+        self::assertTrue($inputFilter->isValid());
+    }
 }
