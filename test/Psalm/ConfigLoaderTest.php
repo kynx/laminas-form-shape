@@ -14,9 +14,14 @@ final class ConfigLoaderTest extends TestCase
 {
     use ConfigLoaderTrait;
 
+    protected function setUp(): void
+    {
+        self::resetConfig();
+    }
+
     protected function tearDown(): void
     {
-        self::tearDownConfig();
+        self::resetConfig();
     }
 
     public function testLoadDefaultsMaxStringLength(): void

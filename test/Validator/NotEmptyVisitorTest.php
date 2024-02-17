@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormShape\Validator;
 
 use Countable;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\NotEmptyVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Laminas\Validator\NotEmpty;
@@ -15,7 +16,6 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TIntRange;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNull;
@@ -55,7 +55,7 @@ final class NotEmptyVisitorTest extends AbstractValidatorVisitorTestCase
             ],
             'space'          => [
                 new NotEmpty(NotEmpty::SPACE),
-                [TLiteralString::make(' '), new TInt()],
+                [TypeUtil::getAtomicStringFromLiteral(' '), new TInt()],
                 [new TInt()],
             ],
             'null'           => [
@@ -70,13 +70,13 @@ final class NotEmptyVisitorTest extends AbstractValidatorVisitorTestCase
             ],
             'zero'           => [
                 new NotEmpty(NotEmpty::ZERO),
-                [TLiteralString::make('0'), new TInt()],
+                [TypeUtil::getAtomicStringFromLiteral('0'), new TInt()],
                 [new TInt()],
             ],
             'string'         => [
                 new NotEmpty(NotEmpty::STRING),
-                [TLiteralString::make(''), TLiteralString::make('a')],
-                [TLiteralString::make('a')],
+                [TypeUtil::getAtomicStringFromLiteral(''), TypeUtil::getAtomicStringFromLiteral('a')],
+                [TypeUtil::getAtomicStringFromLiteral('a')],
             ],
             'float'          => [
                 new NotEmpty(NotEmpty::FLOAT),

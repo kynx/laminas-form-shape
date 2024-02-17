@@ -7,6 +7,7 @@ namespace KynxTest\Laminas\FormShape\Psalm;
 use Iterator;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Kynx\Laminas\FormShape\Psalm\TypeComparator;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +24,6 @@ use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyArray;
@@ -65,8 +65,8 @@ final class TypeComparatorTest extends TestCase
                 new TLiteralInt(123),
             ],
             'literal string contained by literal string'                       => [
-                TLiteralString::make('abc'),
-                TLiteralString::make('abc'),
+                TypeUtil::getAtomicStringFromLiteral('abc'),
+                TypeUtil::getAtomicStringFromLiteral('abc'),
             ],
             'int range contained by int range'                                 => [
                 new TIntRange(2, 3),
@@ -81,11 +81,11 @@ final class TypeComparatorTest extends TestCase
                 new TString(),
             ],
             'literal string contained by non empty string'                     => [
-                TLiteralString::make('a'),
+                TypeUtil::getAtomicStringFromLiteral('a'),
                 new TNonEmptyString(),
             ],
             'literal string contained by numeric string'                       => [
-                TLiteralString::make('123'),
+                TypeUtil::getAtomicStringFromLiteral('123'),
                 new TNumericString(),
             ],
             'numeric string contained by non empty string'                     => [
@@ -105,7 +105,7 @@ final class TypeComparatorTest extends TestCase
                 new TArrayKey(),
             ],
             'literal string contained by non empty scalar'                     => [
-                TLiteralString::make('a'),
+                TypeUtil::getAtomicStringFromLiteral('a'),
                 new TNonEmptyScalar(),
             ],
             'negative int contained by non empty scalar'                       => [
@@ -251,7 +251,7 @@ final class TypeComparatorTest extends TestCase
             ],
             'string contained by literal string'                          => [
                 new TString(),
-                TLiteralString::make('abc'),
+                TypeUtil::getAtomicStringFromLiteral('abc'),
             ],
             'int range contained by min bound'                            => [
                 new TIntRange(1, 4),
@@ -262,11 +262,11 @@ final class TypeComparatorTest extends TestCase
                 new TIntRange(null, 3),
             ],
             'empty literal string contained by non empty string'          => [
-                TLiteralString::make(''),
+                TypeUtil::getAtomicStringFromLiteral(''),
                 new TNonEmptyString(),
             ],
             'alpha literal string contained by numeric string'            => [
-                TLiteralString::make('abc'),
+                TypeUtil::getAtomicStringFromLiteral('abc'),
                 new TNumericString(),
             ],
             'string contained by non empty string'                        => [
@@ -278,7 +278,7 @@ final class TypeComparatorTest extends TestCase
                 new TNumericString(),
             ],
             'empty literal string contained by non empty scalar'          => [
-                TLiteralString::make(''),
+                TypeUtil::getAtomicStringFromLiteral(''),
                 new TNonEmptyScalar(),
             ],
             'int range contained by non empty scalar'                     => [

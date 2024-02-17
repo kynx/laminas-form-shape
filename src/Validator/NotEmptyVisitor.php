@@ -14,7 +14,6 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNonEmptyString;
@@ -54,7 +53,7 @@ final readonly class NotEmptyVisitor implements ValidatorVisitorInterface
             $remove[] = new TObject();
         }
         if ($type & NotEmpty::SPACE) {
-            $remove[] = TLiteralString::make(' ');
+            $remove[] = TypeUtil::getAtomicStringFromLiteral(' ');
         }
         if ($type & NotEmpty::NULL) {
             $remove[] = new TNull();
@@ -63,7 +62,7 @@ final readonly class NotEmptyVisitor implements ValidatorVisitorInterface
             $narrow[] = new TNonEmptyArray([Type::getArrayKey(), Type::getMixed()]);
         }
         if ($type & NotEmpty::ZERO) {
-            $remove[] = TLiteralString::make('0');
+            $remove[] = TypeUtil::getAtomicStringFromLiteral('0');
         }
         if ($type & NotEmpty::STRING) {
             $narrow[] = new TNonEmptyString();

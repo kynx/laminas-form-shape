@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 trait ConfigLoaderTrait
 {
-    protected static function tearDownConfig(): void
+    protected static function resetConfig(): void
     {
         ConfigLoader::load(ConfigLoader::DEFAULT_STRING_LENGTH);
     }
