@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Laminas\Filter\AllowList;
 use Laminas\Filter\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -14,7 +15,6 @@ use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TString;
 
@@ -38,7 +38,7 @@ final class BooleanVisitorTest extends AbstractFilterVisitorTestCase
             ],
             'false string'   => [
                 new Boolean(['casting' => false, 'type' => Boolean::TYPE_FALSE_STRING]),
-                [TLiteralString::make('false'), TLiteralString::make('true')],
+                [TypeUtil::getAtomicStringFromLiteral('false'), TypeUtil::getAtomicStringFromLiteral('true')],
                 [new TBool()],
             ],
             'null'           => [
@@ -53,7 +53,7 @@ final class BooleanVisitorTest extends AbstractFilterVisitorTestCase
             ],
             'zero string'    => [
                 new Boolean(['casting' => false, 'type' => Boolean::TYPE_ZERO_STRING]),
-                [TLiteralString::make('0'), TLiteralString::make('1')],
+                [TypeUtil::getAtomicStringFromLiteral('0'), TypeUtil::getAtomicStringFromLiteral('1')],
                 [new TBool()],
             ],
             'float'          => [

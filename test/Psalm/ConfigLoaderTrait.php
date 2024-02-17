@@ -6,22 +6,14 @@ namespace KynxTest\Laminas\FormShape\Psalm;
 
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 /**
  * @psalm-require-extends TestCase
  */
 trait ConfigLoaderTrait
 {
-    protected static function reloadConfig(int $maxStringLength = 500): void
+    protected static function resetConfig(): void
     {
-        self::tearDownConfig();
-        ConfigLoader::load($maxStringLength);
-    }
-
-    protected static function tearDownConfig(): void
-    {
-        $loaderReflection = new ReflectionClass(ConfigLoader::class);
-        $loaderReflection->setStaticPropertyValue('loaded', false);
+        ConfigLoader::load(ConfigLoader::DEFAULT_STRING_LENGTH);
     }
 }

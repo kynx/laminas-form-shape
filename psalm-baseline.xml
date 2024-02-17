@@ -96,11 +96,6 @@
       <code><![CDATA[addNotEmptyProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Psalm/ConfigLoaderTrait.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[reloadConfig]]></code>
-    </PossiblyUnusedMethod>
-  </file>
   <file src="test/Psalm/TypeComparatorTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[isContainedByFalseProvider]]></code>
@@ -112,7 +107,7 @@
       <code><![CDATA[filterProvider]]></code>
       <code><![CDATA[narrowProvider]]></code>
       <code><![CDATA[replaceTypeProvider]]></code>
-      <code><![CDATA[toLaxUnion]]></code>
+      <code><![CDATA[toLooseUnionProvider]]></code>
       <code><![CDATA[toStrictUnionProvider]]></code>
       <code><![CDATA[widenProvider]]></code>
     </PossiblyUnusedMethod>

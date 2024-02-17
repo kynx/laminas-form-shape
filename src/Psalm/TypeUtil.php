@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Psalm;
 
+use Psalm\Config;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
@@ -19,6 +20,7 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNonFalsyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TResource;
@@ -41,6 +43,7 @@ use function is_object;
 use function is_resource;
 use function is_string;
 use function str_contains;
+use function strlen;
 
 final readonly class TypeUtil
 {
@@ -157,7 +160,7 @@ final readonly class TypeUtil
             is_float($value)    => new Union([new TLiteralFloat($value)]),
             is_int($value)      => new Union([new TLiteralInt($value)]),
             is_object($value)   => new Union([new TNamedObject($value::class)]),
-            is_string($value)   => new Union([TLiteralString::make($value)]),
+            is_string($value)   => new Union([self::getAtomicStringFromLiteral($value)]),
             is_resource($value) => new Union([new TResource()]),
             $value === null     => new Union([new TNull()]),
             default             => new Union([new TMixed()]),
@@ -187,6 +190,24 @@ final readonly class TypeUtil
         $builder = new MutableUnion([new TString()]);
         $builder->removeType('string');
         return $builder->freeze();
+    }
+
+    /**
+     * Safely return a string atomic
+     *
+     * @see Type::getAtomicStringFromLiteral() - does the same but without involving (internal) ProjectAnalyzer
+     */
+    public static function getAtomicStringFromLiteral(string $value, bool $fromDocblock = false): TString
+    {
+        $config = Config::getInstance();
+
+        if ($value === '' || strlen($value) < $config->max_string_length) {
+            return TLiteralString::make($value, $fromDocblock);
+        } elseif ($value === '0') {
+            return new TNonEmptyString($fromDocblock);
+        }
+
+        return new TNonFalsyString($fromDocblock);
     }
 
     /**
@@ -280,7 +301,7 @@ final readonly class TypeUtil
 
         return Type::combineUnionTypes(self::toStrictUnion($value), new Union([
             new TEmptyNumeric(),
-            TLiteralString::make(""),
+            self::getAtomicStringFromLiteral(""),
             new TNull(),
         ]));
     }
@@ -293,7 +314,7 @@ final readonly class TypeUtil
 
         $types = [
             new TLiteralFloat($value),
-            TLiteralString::make("$value"),
+            self::getAtomicStringFromLiteral("$value"),
         ];
         if ((string) $value === (int) $value . "") {
             $types[] = new TLiteralInt((int) $value);
@@ -311,7 +332,7 @@ final readonly class TypeUtil
         return new Union([
             new TLiteralInt($value),
             // new TLiteralFloat($value), // this would output 'float'
-            TLiteralString::make("$value"),
+            self::getAtomicStringFromLiteral("$value"),
         ]);
     }
 
@@ -322,7 +343,7 @@ final readonly class TypeUtil
         }
 
         $types = [
-            TLiteralString::make($value),
+            self::getAtomicStringFromLiteral($value),
         ];
         if ($value === (int) $value . "") {
             $types[] = new TLiteralInt((int) $value);

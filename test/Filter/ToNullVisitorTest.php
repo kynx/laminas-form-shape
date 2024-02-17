@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\Filter\ToNullVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\ToNull;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -15,7 +16,6 @@ use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
@@ -52,7 +52,7 @@ final class ToNullVisitorTest extends AbstractFilterVisitorTestCase
             ],
             'zero string' => [
                 new ToNull(['type' => ToNull::TYPE_ZERO_STRING]),
-                [TLiteralString::make('0')],
+                [TypeUtil::getAtomicStringFromLiteral('0')],
                 [new TString(), new TNull()],
             ],
             'string'      => [
