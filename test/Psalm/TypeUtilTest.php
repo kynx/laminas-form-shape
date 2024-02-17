@@ -42,6 +42,15 @@ use function fopen;
 #[CoversClass(TypeUtil::class)]
 final class TypeUtilTest extends TestCase
 {
+    use ConfigLoaderTrait;
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->tearDownConfig();
+    }
+
     #[DataProvider('filterProvider')]
     public function testFilter(Union $union, Union $filter, Union $expected): void
     {
@@ -94,7 +103,7 @@ final class TypeUtilTest extends TestCase
 
     public static function narrowProvider(): array
     {
-        ConfigLoader::load(500);
+        ConfigLoader::load();
 
         return [
             'uses replace type'                          => [
@@ -213,15 +222,15 @@ final class TypeUtilTest extends TestCase
         ];
     }
 
-    #[DataProvider('toLaxUnion')]
-    public function testToLaxUnion(mixed $value, array $expected): void
+    #[DataProvider('toLooseUnionProvider')]
+    public function testToLooseUnion(mixed $value, array $expected): void
     {
         $union  = TypeUtil::toLooseUnion($value);
         $actual = array_values($union->getAtomicTypes());
         self::assertEquals($expected, $actual);
     }
 
-    public static function toLaxUnion(): array
+    public static function toLooseUnionProvider(): array
     {
         ConfigLoader::load(500);
 
@@ -292,6 +301,15 @@ final class TypeUtilTest extends TestCase
                 [TLiteralString::make('abc')],
             ],
         ];
+    }
+
+    public function testToLooseUnionWithLongLiteralStringReturnsNonEmptyString(): void
+    {
+        $expected = [new TNonEmptyString()];
+        ConfigLoader::load(1);
+        $union  = TypeUtil::toLooseUnion('abc');
+        $actual = array_values($union->getAtomicTypes());
+        self::assertEquals($expected, $actual);
     }
 
     #[DataProvider('toStrictUnionProvider')]
