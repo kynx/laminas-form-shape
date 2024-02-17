@@ -21,6 +21,11 @@ final class ConfigLoaderTest extends TestCase
         self::tearDownConfig();
     }
 
+    protected function tearDown(): void
+    {
+        self::tearDownConfig();
+    }
+
     public function testLoadDefaultsMaxStringLength(): void
     {
         $expected = 1000;

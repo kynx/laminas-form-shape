@@ -8,8 +8,6 @@ use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
-use Kynx\Laminas\FormShape\File\FormReader;
-use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
@@ -32,6 +30,9 @@ use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
+use Kynx\Laminas\FormShape\Locator\FormLocator;
+use Kynx\Laminas\FormShape\Locator\FormLocatorFactory;
+use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
 use Kynx\Laminas\FormShape\Validator\BetweenVisitor;
 use Kynx\Laminas\FormShape\Validator\CsrfVisitor;
 use Kynx\Laminas\FormShape\Validator\DateStepVisitor;
@@ -204,6 +205,7 @@ final readonly class ConfigProvider
     {
         return [
             'aliases'   => [
+                FormLocatorInterface::class        => FormLocator::class,
                 FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
                 DecoratorInterface::class          => PrettyPrinter::class,
@@ -214,7 +216,7 @@ final readonly class ConfigProvider
                 CollectionInputVisitor::class => CollectionInputVisitorFactory::class,
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormReader::class             => FormReaderFactory::class,
+                FormLocator::class            => FormLocatorFactory::class,
                 PsalmTypeCommand::class       => PsalmTypeCommandFactory::class,
                 FormVisitor::class            => FormVisitorFactory::class,
                 InArrayVisitor::class         => InArrayVisitorFactory::class,

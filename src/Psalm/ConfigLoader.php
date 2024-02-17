@@ -20,18 +20,18 @@ final class ConfigLoader
     public static function load(?int $maxStringLength = null): void
     {
         if (self::$loaded) {
-            return;
+            $config = Config::getInstance();
+        } else {
+            self::hackPsalmCli();
+            self::setPsalmVersion();
+
+            $config       = Config::getConfigForPath(__DIR__, getcwd());
+            self::$loaded = true;
         }
 
-        self::hackPsalmCli();
-        self::setPsalmVersion();
-
-        $config = Config::getConfigForPath(__DIR__, getcwd());
         if ($maxStringLength !== null) {
             $config->max_string_length = $maxStringLength;
         }
-
-        self::$loaded = true;
     }
 
     /**
@@ -39,10 +39,9 @@ final class ConfigLoader
      */
     private static function hackPsalmCli(): void
     {
-        // phpcs:disable Squiz.PHP.GlobalKeyword.NotAllowed
+        // phpcs:ignore Squiz.PHP.GlobalKeyword.NotAllowed
         global $argv;
         $argv = [];
-        // phpcs:enable
     }
 
     private static function setPsalmVersion(): void

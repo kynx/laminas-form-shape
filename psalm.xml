@@ -19,9 +19,14 @@
     <issueHandlers>
         <MissingTemplateParam>
             <errorLevel type="suppress">
-                <directory name="test/File/Asset"/>
+                <directory name="test/Locator/Asset"/>
             </errorLevel>
         </MissingTemplateParam>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="test/Locator/Asset"/>
+            </errorLevel>
+        </UnusedClass>
     </issueHandlers>
 
     <stubs>

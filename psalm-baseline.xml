@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.22.0@fe2c67ec89f358940f90db05efd2d663388b45a6">
-  <file src="src/File/FormFile.php">
-    <PossiblyUnusedProperty>
-      <code><![CDATA[$file]]></code>
-    </PossiblyUnusedProperty>
-  </file>
   <file src="test/ConfigProviderTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[aliasProvider]]></code>
@@ -23,11 +18,6 @@
     <PossiblyUnusedMethod>
       <code><![CDATA[combineTypesProvider]]></code>
       <code><![CDATA[typeProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/File/FormReaderTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[getFormFileProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Filter/AbstractFilterVisitorTestCase.php">
