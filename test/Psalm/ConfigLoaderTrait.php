@@ -13,14 +13,9 @@ use ReflectionClass;
  */
 trait ConfigLoaderTrait
 {
-    protected static function reloadConfig(int $maxStringLength = 500): void
-    {
-        self::tearDownConfig();
-        ConfigLoader::load($maxStringLength);
-    }
-
     protected static function tearDownConfig(): void
     {
+        ConfigLoader::load(ConfigLoader::DEFAULT_STRING_LENGTH);
         $loaderReflection = new ReflectionClass(ConfigLoader::class);
         $loaderReflection->setStaticPropertyValue('loaded', false);
     }
