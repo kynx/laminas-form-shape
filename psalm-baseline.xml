@@ -198,4 +198,32 @@
       <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Writer/Tag/MethodTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[isBeforeProvider]]></code>
+      <code><![CDATA[matchProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Writer/Tag/PsalmImportTypeTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[matchProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Writer/Tag/PsalmTemplateExtendsTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[isBeforeProvider]]></code>
+      <code><![CDATA[matchProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Writer/Tag/PsalmTypeTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[isBeforeProvider]]></code>
+      <code><![CDATA[matchProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Writer/Tag/ReturnTypeTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[matchProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
 </files>
