@@ -20,11 +20,11 @@ use ReflectionClass;
 
 use function array_filter;
 use function array_map;
-use function array_values;
 use function is_dir;
 use function is_file;
 use function is_readable;
 use function iterator_to_array;
+use function usort;
 
 final readonly class FormLocator implements FormLocatorInterface
 {
@@ -43,12 +43,18 @@ final readonly class FormLocator implements FormLocatorInterface
             $iterator->append($located);
         }
 
-        $reflections = iterator_to_array($iterator);
-        return array_values(array_filter(array_map(
+        $formFiles = array_filter(array_map(
             /** @param ReflectionClass<FormInterface> $reflection */
             fn (ReflectionClass $reflection): ?FormFile => $this->getFormFile($reflection),
-            $reflections
-        )));
+            iterator_to_array($iterator)
+        ));
+
+        usort(
+            $formFiles,
+            static fn (FormFile $a, FormFile $b): int => $a->reflection->getName() <=> $b->reflection->getName()
+        );
+
+        return $formFiles;
     }
 
     private function locateFormsAtPath(string $path): Iterator

@@ -47,8 +47,8 @@ final class FormLocatorTest extends TestCase
     public function testLocateReturnsFormsFromPaths(): void
     {
         $expected = [
-            new FormFile(new ReflectionClass(TestForm::class), $this->formElementManager->get(TestForm::class)),
             new FormFile(new ReflectionClass(SubForm::class), $this->formElementManager->get(SubForm::class)),
+            new FormFile(new ReflectionClass(TestForm::class), $this->formElementManager->get(TestForm::class)),
         ];
 
         $actual = $this->locator->locate([__DIR__ . '/Asset/TestForm.php', __DIR__ . '/Asset/Sub/SubForm.php']);
@@ -58,8 +58,8 @@ final class FormLocatorTest extends TestCase
     public function testLocateReturnsFormsFromDirectory(): void
     {
         $expected = [
-            new FormFile(new ReflectionClass(TestForm::class), $this->formElementManager->get(TestForm::class)),
             new FormFile(new ReflectionClass(SubForm::class), $this->formElementManager->get(SubForm::class)),
+            new FormFile(new ReflectionClass(TestForm::class), $this->formElementManager->get(TestForm::class)),
         ];
 
         $actual = $this->locator->locate([__DIR__ . '/Asset']);
