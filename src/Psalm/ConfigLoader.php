@@ -15,6 +15,8 @@ use function getcwd;
 
 final class ConfigLoader
 {
+    public const DEFAULT_STRING_LENGTH = 1000;
+
     private static bool $loaded = false;
 
     public static function load(?int $maxStringLength = null): void

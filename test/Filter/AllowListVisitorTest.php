@@ -6,13 +6,13 @@ namespace KynxTest\Laminas\FormShape\Filter;
 
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Laminas\Filter\AllowList;
 use Laminas\Filter\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TNumericString;
@@ -46,7 +46,7 @@ final class AllowListVisitorTest extends AbstractFilterVisitorTestCase
             'lax list'                => [
                 new AllowList(['list' => [123], 'strict' => false]),
                 [new TString()],
-                [TLiteralString::make('123'), new TNull()],
+                [TypeUtil::getAtomicStringFromLiteral('123'), new TNull()],
             ],
             'strict narrows previous' => [
                 new AllowList(['list' => ['foo', 123], 'strict' => true]),

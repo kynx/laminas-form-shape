@@ -12,7 +12,6 @@ use Psalm\Type;
 use Psalm\Type\Atomic\TBool;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Union;
 
@@ -32,8 +31,8 @@ final readonly class BooleanVisitor implements FilterVisitorInterface
         $remove = [];
 
         if ($type & Boolean::TYPE_FALSE_STRING) {
-            $remove[] = TLiteralString::make('false');
-            $remove[] = TLiteralString::make('true');
+            $remove[] = TypeUtil::getAtomicStringFromLiteral('false');
+            $remove[] = TypeUtil::getAtomicStringFromLiteral('true');
         }
 
         if ($type & Boolean::TYPE_NULL) {
@@ -45,8 +44,8 @@ final readonly class BooleanVisitor implements FilterVisitorInterface
         }
 
         if ($type & Boolean::TYPE_ZERO_STRING) {
-            $remove[] = TLiteralString::make('0');
-            $remove[] = TLiteralString::make('1');
+            $remove[] = TypeUtil::getAtomicStringFromLiteral('0');
+            $remove[] = TypeUtil::getAtomicStringFromLiteral('1');
         }
 
         if ($type & Boolean::TYPE_FLOAT) {

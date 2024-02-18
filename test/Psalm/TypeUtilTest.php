@@ -21,10 +21,10 @@ use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyString;
+use Psalm\Type\Atomic\TNonFalsyString;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TNumeric;
 use Psalm\Type\Atomic\TNumericString;
@@ -42,6 +42,15 @@ use function fopen;
 #[CoversClass(TypeUtil::class)]
 final class TypeUtilTest extends TestCase
 {
+    use ConfigLoaderTrait;
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->resetConfig();
+    }
+
     #[DataProvider('filterProvider')]
     public function testFilter(Union $union, Union $filter, Union $expected): void
     {
@@ -94,7 +103,7 @@ final class TypeUtilTest extends TestCase
 
     public static function narrowProvider(): array
     {
-        ConfigLoader::load(500);
+        ConfigLoader::load();
 
         return [
             'uses replace type'                          => [
@@ -119,8 +128,8 @@ final class TypeUtilTest extends TestCase
             ],
             'replaces narrowest'                         => [
                 new Union([new TString()]),
-                new Union([new TNonEmptyString(), TLiteralString::make('a')]),
-                new Union([TLiteralString::make('a')]),
+                new Union([new TNonEmptyString(), TypeUtil::getAtomicStringFromLiteral('a')]),
+                new Union([TypeUtil::getAtomicStringFromLiteral('a')]),
             ],
             'replaces multiple'                          => [
                 new Union([new TScalar()]),
@@ -149,8 +158,8 @@ final class TypeUtilTest extends TestCase
             ],
             'replaces string literals order independent' => [
                 new Union([new TString()]),
-                new Union([TLiteralString::make('a'), new TNonEmptyString()]),
-                new Union([TLiteralString::make('a')]),
+                new Union([TypeUtil::getAtomicStringFromLiteral('a'), new TNonEmptyString()]),
+                new Union([TypeUtil::getAtomicStringFromLiteral('a')]),
             ],
         ];
     }
@@ -213,15 +222,15 @@ final class TypeUtilTest extends TestCase
         ];
     }
 
-    #[DataProvider('toLaxUnion')]
-    public function testToLaxUnion(mixed $value, array $expected): void
+    #[DataProvider('toLooseUnionProvider')]
+    public function testToLooseUnion(mixed $value, array $expected): void
     {
         $union  = TypeUtil::toLooseUnion($value);
         $actual = array_values($union->getAtomicTypes());
         self::assertEquals($expected, $actual);
     }
 
-    public static function toLaxUnion(): array
+    public static function toLooseUnionProvider(): array
     {
         ConfigLoader::load(500);
 
@@ -229,7 +238,11 @@ final class TypeUtilTest extends TestCase
         return [
             'array'            => [
                 ['a' => 123],
-                [new TKeyedArray(['a' => new Union([new TLiteralInt(123), TLiteralString::make('123')])])],
+                [
+                    new TKeyedArray([
+                        'a' => new Union([new TLiteralInt(123), TypeUtil::getAtomicStringFromLiteral('123')]),
+                    ]),
+                ],
             ],
             'empty array'      => [
                 [],
@@ -237,11 +250,16 @@ final class TypeUtilTest extends TestCase
             ],
             'list'             => [
                 ['a', 'b'],
-                [Type::getNonEmptyListAtomic(new Union([TLiteralString::make('a'), TLiteralString::make('b')]))],
+                [
+                    Type::getNonEmptyListAtomic(new Union([
+                        TypeUtil::getAtomicStringFromLiteral('a'),
+                        TypeUtil::getAtomicStringFromLiteral('b'),
+                    ])),
+                ],
             ],
             'false'            => [
                 false,
-                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
             ],
             'true'             => [
                 true,
@@ -249,27 +267,27 @@ final class TypeUtilTest extends TestCase
             ],
             'zero float'       => [
                 0.0,
-                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
             ],
             'float'            => [
                 1.23,
-                [new TLiteralFloat(1.23), TLiteralString::make('1.23')],
+                [new TLiteralFloat(1.23), TypeUtil::getAtomicStringFromLiteral('1.23')],
             ],
             'int float'        => [
                 1.0,
-                [new TLiteralFloat(1.0), TLiteralString::make('1'), new TLiteralInt(1)],
+                [new TLiteralFloat(1.0), TypeUtil::getAtomicStringFromLiteral('1'), new TLiteralInt(1)],
             ],
             'zero int'         => [
                 0,
-                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
             ],
             'int'              => [
                 123,
-                [new TLiteralInt(123), TLiteralString::make('123')],
+                [new TLiteralInt(123), TypeUtil::getAtomicStringFromLiteral('123')],
             ],
             'null'             => [
                 null,
-                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
             ],
             'object'           => [
                 new stdClass(),
@@ -281,17 +299,26 @@ final class TypeUtilTest extends TestCase
             ],
             'empty string'     => [
                 '',
-                [TLiteralString::make(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
             ],
             'int string'       => [
                 '123',
-                [TLiteralString::make('123'), new TLiteralInt(123)],
+                [TypeUtil::getAtomicStringFromLiteral('123'), new TLiteralInt(123)],
             ],
             'non-empty-string' => [
                 'abc',
-                [TLiteralString::make('abc')],
+                [TypeUtil::getAtomicStringFromLiteral('abc')],
             ],
         ];
+    }
+
+    public function testToLooseUnionWithLongLiteralStringReturnsNonFalsyString(): void
+    {
+        $expected = [new TNonFalsyString()];
+        ConfigLoader::load(1);
+        $union  = TypeUtil::toLooseUnion('abc');
+        $actual = array_values($union->getAtomicTypes());
+        self::assertEquals($expected, $actual);
     }
 
     #[DataProvider('toStrictUnionProvider')]
@@ -352,7 +379,7 @@ final class TypeUtilTest extends TestCase
             ],
             'string'      => [
                 'abc',
-                TLiteralString::make('abc'),
+                TypeUtil::getAtomicStringFromLiteral('abc'),
             ],
         ];
     }

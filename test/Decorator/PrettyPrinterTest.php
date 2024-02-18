@@ -25,7 +25,6 @@ use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
@@ -127,8 +126,8 @@ final class PrettyPrinterTest extends TestCase
             new TNull(),
             new TLiteralFloat(1.23),
             new TLiteralInt(1),
-            TLiteralString::make('b'),
-            TLiteralString::make('1'),
+            TypeUtil::getAtomicStringFromLiteral('b'),
+            TypeUtil::getAtomicStringFromLiteral('1'),
         ]);
 
         $actual = $this->decorator->decorate($union);
@@ -184,8 +183,8 @@ final class PrettyPrinterTest extends TestCase
             'int, int range'         => [[new TInt(), new TIntRange(1, null)], 'int'],
             'literal float, float'   => [[new TLiteralFloat(1.23), new TFloat()], 'float'],
             'float, literal float'   => [[new TFloat(), new TLiteralFloat(1.23)], 'float'],
-            'literal string, string' => [[TLiteralString::make('foo'), new TString()], 'string'],
-            'string, literal string' => [[new TString(), TLiteralString::make('foo')], 'string'],
+            'literal string, string' => [[TypeUtil::getAtomicStringFromLiteral('foo'), new TString()], 'string'],
+            'string, literal string' => [[new TString(), TypeUtil::getAtomicStringFromLiteral('foo')], 'string'],
             'numeric-string, string' => [[new TNumericString(), new TString()], 'string'],
             'string, numeric-string' => [[new TString(), new TNumericString()], 'string'],
 
@@ -200,7 +199,7 @@ final class PrettyPrinterTest extends TestCase
     {
         $expected  = 'string';
         $types     = array_map(
-            static fn (int $i): TLiteralString => TLiteralString::make((string) $i),
+            static fn (int $i): TString => TypeUtil::getAtomicStringFromLiteral((string) $i),
             range(1, 4)
         );
         $union     = new Union($types);

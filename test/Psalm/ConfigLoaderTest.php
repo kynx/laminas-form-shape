@@ -16,19 +16,17 @@ final class ConfigLoaderTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
-        self::tearDownConfig();
+        self::resetConfig();
     }
 
     protected function tearDown(): void
     {
-        self::tearDownConfig();
+        self::resetConfig();
     }
 
     public function testLoadDefaultsMaxStringLength(): void
     {
-        $expected = 1000;
+        $expected = ConfigLoader::DEFAULT_STRING_LENGTH;
         ConfigLoader::load();
 
         $actual = Config::getInstance()->max_string_length;

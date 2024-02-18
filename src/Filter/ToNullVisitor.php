@@ -14,7 +14,6 @@ use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TLiteralFloat;
 use Psalm\Type\Atomic\TLiteralInt;
-use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNonEmptyString;
 use Psalm\Type\Atomic\TNull;
@@ -39,15 +38,27 @@ final readonly class ToNullVisitor implements FilterVisitorInterface
         $visited = $previous;
 
         if ($type & ToNull::TYPE_FLOAT) {
-            $visited = TypeUtil::replaceType($visited, new TLiteralFloat(0.0), new Union([new TFloat()]));
+            $visited = TypeUtil::replaceType(
+                $visited,
+                new TLiteralFloat(0.0),
+                new Union([new TFloat()])
+            );
         }
 
         if ($type & ToNull::TYPE_ZERO_STRING) {
-            $visited = TypeUtil::replaceType($visited, TLiteralString::make('0'), new Union([new TString()]));
+            $visited = TypeUtil::replaceType(
+                $visited,
+                TypeUtil::getAtomicStringFromLiteral('0'),
+                new Union([new TString()])
+            );
         }
 
         if ($type & ToNull::TYPE_STRING) {
-            $visited = TypeUtil::replaceType($visited, new TString(), new Union([new TNonEmptyString()]));
+            $visited = TypeUtil::replaceType(
+                $visited,
+                new TString(),
+                new Union([new TNonEmptyString()])
+            );
         }
 
         if ($type & ToNull::TYPE_EMPTY_ARRAY) {
@@ -59,11 +70,19 @@ final readonly class ToNullVisitor implements FilterVisitorInterface
         }
 
         if ($type & ToNull::TYPE_INTEGER) {
-            $visited = TypeUtil::replaceType($visited, new TLiteralInt(0), new Union([new TInt()]));
+            $visited = TypeUtil::replaceType(
+                $visited,
+                new TLiteralInt(0),
+                new Union([new TInt()])
+            );
         }
 
         if ($type & ToNull::TYPE_BOOLEAN) {
-            $visited = TypeUtil::replaceType($visited, new TBool(), new Union([new TTrue()]));
+            $visited = TypeUtil::replaceType(
+                $visited,
+                new TBool(),
+                new Union([new TTrue()])
+            );
         }
 
         return $visited === $previous ? $previous : TypeUtil::widen($visited, new Union([new TNull()]));
