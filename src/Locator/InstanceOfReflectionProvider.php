@@ -85,6 +85,7 @@ final readonly class InstanceOfReflectionProvider
         }
 
         if ($reflection->isSubclassOf($this->instanceOf)) {
+            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
             /** @var ReflectionClass<T> $reflection */
             return $reflection;
         }
