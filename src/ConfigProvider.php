@@ -209,10 +209,10 @@ final readonly class ConfigProvider
     {
         return [
             'aliases'   => [
+                DecoratorInterface::class          => PrettyPrinter::class,
                 FormLocatorInterface::class        => FormLocator::class,
                 FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
-                DecoratorInterface::class          => PrettyPrinter::class,
                 TypeNamerInterface::class          => TypeNamer::class,
             ],
             'factories' => [

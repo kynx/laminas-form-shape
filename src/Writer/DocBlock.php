@@ -20,8 +20,6 @@ use function strpos;
 use function substr;
 use function trim;
 
-use const PHP_EOL;
-
 /**
  * @internal
  *
@@ -33,7 +31,7 @@ final readonly class DocBlock implements Stringable
     /**
      * @param list<string|TagInterface> $sections
      */
-    private function __construct(private string $indent, private array $sections)
+    private function __construct(private array $sections)
     {
     }
 
@@ -41,26 +39,24 @@ final readonly class DocBlock implements Stringable
     {
         /** @psalm-suppress RiskyTruthyFalsyComparison  */
         $docComment = $docComment ?: <<<EOD
-            /**
-             */
+        /**
+         */
         EOD;
 
-        $lines  = explode("\n", $docComment);
-        $first  = $lines[0] ?? '';
-        $indent = substr($lines[0], 0, (int) strpos($first, '/'));
+        $lines = explode(Eol::detectEol($docComment), trim($docComment));
 
         $sections = $section = [];
         $inTag    = false;
         foreach (array_slice($lines, 1, -1) as $line) {
             $line = trim(substr($line, (int) strpos($line, '*') + 1));
             if ($inTag && self::isEndOfTag($line)) {
-                $sections[] = new GenericTag(implode(PHP_EOL, $section));
+                $sections[] = new GenericTag(implode("\n", $section));
                 $section    = [];
                 $inTag      = false;
             }
             if (self::isStartOfTag($line)) {
                 if ($section !== []) {
-                    $sections[] = implode(PHP_EOL, $section);
+                    $sections[] = implode("\n", $section);
                 }
                 $section = [];
                 $inTag   = true;
@@ -69,22 +65,19 @@ final readonly class DocBlock implements Stringable
         }
 
         if ($inTag) {
-            $sections[] = new GenericTag(implode(PHP_EOL, $section));
+            $sections[] = new GenericTag(implode("\n", $section));
         } elseif ($section !== []) {
-            $sections[] = implode(PHP_EOL, $section);
+            $sections[] = implode("\n", $section);
         }
 
-        return new self(
-            $indent,
-            $sections
-        );
+        return new self($sections);
     }
 
     public function withTag(TagInterface $tag): self
     {
         $sections = $this->sections;
         if ($sections === []) {
-            return new self($this->indent, [$tag]);
+            return new self([$tag]);
         }
 
         foreach ($sections as $i => $section) {
@@ -94,7 +87,7 @@ final readonly class DocBlock implements Stringable
 
             if ($tag->matches($section)) {
                 $sections[$i] = $tag;
-                return new self($this->indent, $sections);
+                return new self($sections);
             }
         }
 
@@ -111,7 +104,7 @@ final readonly class DocBlock implements Stringable
         }
 
         array_splice($sections, $before, 0, [$tag]);
-        return new self($this->indent, $sections);
+        return new self($sections);
     }
 
     public function withoutTag(TagInterface $tag): self
@@ -127,7 +120,7 @@ final readonly class DocBlock implements Stringable
             }
         }
 
-        return new self($this->indent, array_values($sections));
+        return new self(array_values($sections));
     }
 
     public function __toString(): string
@@ -136,9 +129,9 @@ final readonly class DocBlock implements Stringable
             return '';
         }
 
-        return $this->indent . "/**" . PHP_EOL
-            . $this->formatSections() . PHP_EOL
-            . $this->indent . ' */';
+        return "/**\n"
+            . $this->formatSections() . "\n"
+            . " */";
     }
 
     private static function isStartOfTag(string $line): bool
@@ -153,8 +146,8 @@ final readonly class DocBlock implements Stringable
 
     private function formatSections(): string
     {
-        return $this->indent . ' * ' . $this->implode(array_map(
-            fn (string|TagInterface $s): string => $this->implode(explode(PHP_EOL, (string) $s)),
+        return ' * ' . $this->implode(array_map(
+            fn (string|TagInterface $s): string => $this->implode(explode("\n", (string) $s)),
             $this->sections
         ));
     }
@@ -164,6 +157,6 @@ final readonly class DocBlock implements Stringable
      */
     private function implode(array $parts): string
     {
-        return implode(PHP_EOL . $this->indent . ' * ', $parts);
+        return implode("\n * ", $parts);
     }
 }

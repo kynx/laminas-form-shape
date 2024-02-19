@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Psalm;
 
 use Kynx\Laminas\FormShape\Psalm\TypeNamerFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
-/**
- * @covers \Kynx\Laminas\FormShape\Psalm\TypeNamerFactory
- */
+#[CoversClass(TypeNamerFactory::class)]
 final class TypeNamerFactoryTest extends TestCase
 {
     public function testInvokeReturnsConfiguredInstance(): void

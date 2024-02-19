@@ -198,6 +198,16 @@
       <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Writer/EolTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[eolProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Writer/FileWriterTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[writeProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/Writer/Tag/MethodTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[isBeforeProvider]]></code>

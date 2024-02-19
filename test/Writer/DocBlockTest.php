@@ -22,12 +22,12 @@ final class DocBlockTest extends TestCase
     public function testToStringReturnsDocblockUnaltered(): void
     {
         $expected = <<<DOCBLOCK
-            /**
-             * In Xanadu did Kablia Khan a stately pleasure dome decree
-             * 
-             * @param River \$river
-             * @param int|null \$depth
-             */
+        /**
+         * In Xanadu did Kablia Khan a stately pleasure dome decree
+         * 
+         * @param River \$river
+         * @param int|null \$depth
+         */
         DOCBLOCK;
 
         $actual = (string) DocBlock::fromDocComment($expected);
@@ -37,9 +37,9 @@ final class DocBlockTest extends TestCase
     public function testWithTagAddsToEmptyDocBlock(): void
     {
         $expected = <<<DOCBLOCK
-            /**
-             * @psalm-type TFoo = array<int>
-             */
+        /**
+         * @psalm-type TFoo = array<int>
+         */
         DOCBLOCK;
 
         $actual = (string) DocBlock::fromDocComment(false)
@@ -50,12 +50,12 @@ final class DocBlockTest extends TestCase
     public function testWithTagAddsMultilineTag(): void
     {
         $expected   = <<<DOCBLOCK
-            /**
-             * @psalm-type TFoo = array{array-key, array{
-             *     id:   int,
-             *     name: string,
-             * }
-             */
+        /**
+         * @psalm-type TFoo = array{array-key, array{
+         *     id:   int,
+         *     name: string,
+         * }
+         */
         DOCBLOCK;
         $definition = <<<DEFINITION
         array{array-key, array{
@@ -72,12 +72,12 @@ final class DocBlockTest extends TestCase
     public function testWithTagPrependsTagToExistingDocBlock(): void
     {
         $expected = <<<DOCBLOCK
-            /**
-             * Foo
-             * 
-             * @psalm-type TFoo = array<int>
-             * @internal
-             */
+        /**
+         * Foo
+         * 
+         * @psalm-type TFoo = array<int>
+         * @internal
+         */
         DOCBLOCK;
         $existing = <<<DOCBLOCK
             /**
@@ -95,12 +95,12 @@ final class DocBlockTest extends TestCase
     public function testWithTagReplacesExisting(): void
     {
         $expected = <<<DOCBLOCK
-            /**
-             * Foo
-             * 
-             * @psalm-type TFoo = array<int>
-             * @internal
-             */
+        /**
+         * Foo
+         * 
+         * @psalm-type TFoo = array<int>
+         * @internal
+         */
         DOCBLOCK;
         $existing = <<<DOCBLOCK
             /**
@@ -119,12 +119,12 @@ final class DocBlockTest extends TestCase
     public function testWithoutTagReturnsUnaltered(): void
     {
         $expected = <<<DOCBLOCK
-            /**
-             * Foo
-             * 
-             * @psalm-type TFoo = array<int>
-             * @internal
-             */
+        /**
+         * Foo
+         * 
+         * @psalm-type TFoo = array<int>
+         * @internal
+         */
         DOCBLOCK;
 
         $actual = (string) DocBlock::fromDocComment($expected)
@@ -135,11 +135,11 @@ final class DocBlockTest extends TestCase
     public function testWithoutTagRemovesMatching(): void
     {
         $expected = <<<DOCBLOCK
-            /**
-             * Foo
-             * 
-             * @internal
-             */
+        /**
+         * Foo
+         * 
+         * @internal
+         */
         DOCBLOCK;
         $existing = <<<DOCBLOCK
             /**
