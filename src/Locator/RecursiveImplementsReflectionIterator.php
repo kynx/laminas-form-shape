@@ -18,14 +18,14 @@ use function is_string;
  * @psalm-internal Kynx\Laminas\FormShape
  * @psalm-internal KynxTest\Laminas\FormShape
  */
-final class RecursiveInstanceOfReflectionIterator implements RecursiveIterator
+final class RecursiveImplementsReflectionIterator implements RecursiveIterator
 {
     /**
-     * @param InstanceOfReflectionProvider<T> $reflectionProvider
+     * @param ImplementsReflectionProvider<T> $reflectionProvider
      */
     public function __construct(
         private RecursiveIterator $iterator,
-        private InstanceOfReflectionProvider $reflectionProvider
+        private ImplementsReflectionProvider $reflectionProvider
     ) {
     }
 

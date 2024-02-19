@@ -6,8 +6,8 @@ namespace KynxTest\Laminas\FormShape\Locator;
 
 use Composer\Autoload\ClassLoader;
 use FilesystemIterator;
-use Kynx\Laminas\FormShape\Locator\InstanceOfReflectionProvider;
-use Kynx\Laminas\FormShape\Locator\RecursiveInstanceOfReflectionIterator;
+use Kynx\Laminas\FormShape\Locator\ImplementsReflectionProvider;
+use Kynx\Laminas\FormShape\Locator\RecursiveImplementsReflectionIterator;
 use KynxTest\Laminas\FormShape\Locator\Asset\Sub\SubForm;
 use KynxTest\Laminas\FormShape\Locator\Asset\TestForm;
 use Laminas\Form\FormInterface;
@@ -20,8 +20,8 @@ use ReflectionClass;
 use function array_filter;
 use function iterator_to_array;
 
-#[CoversClass(RecursiveInstanceOfReflectionIterator::class)]
-final class RecursiveInstanceOfReflectionIteratorTest extends TestCase
+#[CoversClass(RecursiveImplementsReflectionIterator::class)]
+final class RecursiveImplementsReflectionIteratorTest extends TestCase
 {
     private ClassLoader $loader;
 
@@ -39,9 +39,9 @@ final class RecursiveInstanceOfReflectionIteratorTest extends TestCase
             __DIR__ . '/Asset/Sub/SubForm.php' => new ReflectionClass(SubForm::class),
         ];
         $flags              = FilesystemIterator::SKIP_DOTS;
-        $reflectionProvider = new InstanceOfReflectionProvider($this->loader, FormInterface::class);
+        $reflectionProvider = new ImplementsReflectionProvider($this->loader, FormInterface::class);
         $directoryIterator  = new RecursiveDirectoryIterator(__DIR__ . '/Asset', $flags);
-        $instanceOfIterator = new RecursiveInstanceOfReflectionIterator($directoryIterator, $reflectionProvider);
+        $instanceOfIterator = new RecursiveImplementsReflectionIterator($directoryIterator, $reflectionProvider);
 
         $actual = array_filter(iterator_to_array(new RecursiveIteratorIterator($instanceOfIterator)));
         self::assertEquals($expected, $actual);
@@ -54,9 +54,9 @@ final class RecursiveInstanceOfReflectionIteratorTest extends TestCase
             __DIR__ . '/Asset/Sub/SubForm.php' => new ReflectionClass(SubForm::class),
         ];
         $flags              = FilesystemIterator::SKIP_DOTS | FilesystemIterator::CURRENT_AS_PATHNAME;
-        $reflectionProvider = new InstanceOfReflectionProvider($this->loader, FormInterface::class);
+        $reflectionProvider = new ImplementsReflectionProvider($this->loader, FormInterface::class);
         $directoryIterator  = new RecursiveDirectoryIterator(__DIR__ . '/Asset', $flags);
-        $instanceOfIterator = new RecursiveInstanceOfReflectionIterator($directoryIterator, $reflectionProvider);
+        $instanceOfIterator = new RecursiveImplementsReflectionIterator($directoryIterator, $reflectionProvider);
 
         $actual = array_filter(iterator_to_array(new RecursiveIteratorIterator($instanceOfIterator)));
         self::assertEquals($expected, $actual);

@@ -10,6 +10,7 @@ use ReflectionException;
 
 use function array_keys;
 use function array_reduce;
+use function is_a;
 use function realpath;
 use function str_ends_with;
 use function str_replace;
@@ -26,18 +27,18 @@ use const DIRECTORY_SEPARATOR;
  * @psalm-internal Kynx\Laminas\FormShape
  * @psalm-internal KynxTest\Laminas\FormShape
  */
-final readonly class InstanceOfReflectionProvider
+final readonly class ImplementsReflectionProvider
 {
     /** @var array<string, string> */
     private array $psr4Namespaces;
 
     /**
-     * @param class-string<T> $instanceOf
+     * @param class-string<T> $implements
      * @param class-string $notInstanceOf
      */
     public function __construct(
         ClassLoader $loader,
-        private string $instanceOf,
+        private string $implements,
         private ?string $notInstanceOf = null
     ) {
         $psr4Namespaces = [];
@@ -80,11 +81,11 @@ final readonly class InstanceOfReflectionProvider
             return null;
         }
 
-        if ($this->notInstanceOf !== null && $reflection->isSubclassOf($this->notInstanceOf)) {
+        if ($this->notInstanceOf !== null && is_a($reflection->getName(), $this->notInstanceOf, true)) {
             return null;
         }
 
-        if ($reflection->isSubclassOf($this->instanceOf)) {
+        if ($reflection->implementsInterface($this->implements)) {
             // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
             /** @var ReflectionClass<T> $reflection */
             return $reflection;

@@ -10,6 +10,12 @@ use Psr\Container\ContainerInterface;
 
 use function assert;
 
+/**
+ * @internal
+ *
+ * @psalm-internal Kynx\Laminas\FormShape
+ * @psalm-internal KynxTest\Laminas\FormShape
+ */
 final readonly class FormLocatorFactory
 {
     public function __invoke(ContainerInterface $container): FormLocator

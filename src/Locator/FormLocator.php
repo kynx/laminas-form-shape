@@ -11,6 +11,7 @@ use Composer\Autoload\ClassLoader;
 use EmptyIterator;
 use FilesystemIterator;
 use Iterator;
+use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
 use Laminas\Form\Exception\InvalidElementException;
 use Laminas\Form\FormInterface;
 use Laminas\ServiceManager\PluginManagerInterface;
@@ -26,13 +27,19 @@ use function is_readable;
 use function iterator_to_array;
 use function usort;
 
+/**
+ * @internal
+ *
+ * @psalm-internal Kynx\Laminas\FormShape
+ * @psalm-internal KynxTest\Laminas\FormShape
+ */
 final readonly class FormLocator implements FormLocatorInterface
 {
-    private InstanceOfReflectionProvider $reflectionProvider;
+    private ImplementsReflectionProvider $reflectionProvider;
 
     public function __construct(ClassLoader $loader, private PluginManagerInterface $formElementManager)
     {
-        $this->reflectionProvider = new InstanceOfReflectionProvider($loader, FormInterface::class);
+        $this->reflectionProvider = new ImplementsReflectionProvider($loader, FormInterface::class);
     }
 
     public function locate(array $paths): array
@@ -70,8 +77,8 @@ final readonly class FormLocator implements FormLocatorInterface
         }
 
         $directoryIterator = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
-        /** @var RecursiveInstanceOfReflectionIterator<FormInterface> $reflectionIterator */
-        $reflectionIterator = new RecursiveInstanceOfReflectionIterator($directoryIterator, $this->reflectionProvider);
+        /** @var RecursiveImplementsReflectionIterator<FormInterface> $reflectionIterator */
+        $reflectionIterator = new RecursiveImplementsReflectionIterator($directoryIterator, $this->reflectionProvider);
 
         return new CallbackFilterIterator(
             new RecursiveIteratorIterator($reflectionIterator),
