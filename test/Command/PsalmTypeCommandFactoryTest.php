@@ -10,6 +10,8 @@ use Kynx\Laminas\FormShape\DecoratorInterface;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
 use Kynx\Laminas\FormShape\Locator\FormFile;
 use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
+use Kynx\Laminas\FormShape\Psalm\TypeNamer;
+use Kynx\Laminas\FormShape\TypeNamerInterface;
 use Laminas\Form\Form;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +35,7 @@ final class PsalmTypeCommandFactoryTest extends TestCase
                 [FormLocatorInterface::class, $formLocator],
                 [FormVisitorInterface::class, $formVisitor],
                 [DecoratorInterface::class, new PrettyPrinter()],
+                [TypeNamerInterface::class, new TypeNamer('T{shortName}Type')],
             ]);
 
         $factory  = new PsalmTypeCommandFactory();
@@ -46,7 +49,11 @@ final class PsalmTypeCommandFactoryTest extends TestCase
             ->willReturn($shape);
 
         $commandTester = new CommandTester($instance);
-        $actual        = $commandTester->execute(['path' => [$formFile->reflection->getFileName()]]);
+        $actual        = $commandTester->execute([
+            '--output' => true,
+            'path'     => [$formFile->reflection->getFileName()],
+        ]);
         self::assertSame(Command::SUCCESS, $actual);
+        self::assertStringContainsString('TFormType = int', $commandTester->getDisplay());
     }
 }

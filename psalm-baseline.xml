@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.22.0@fe2c67ec89f358940f90db05efd2d663388b45a6">
+<files psalm-version="5.22.1@e9dad66e11274315dac27e08349c628c7d6a1a43">
   <file src="test/ConfigProviderTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[aliasProvider]]></code>
@@ -216,6 +216,7 @@
   </file>
   <file src="test/Writer/Tag/PsalmImportTypeTest.php">
     <PossiblyUnusedMethod>
+      <code><![CDATA[isBeforeProvider]]></code>
       <code><![CDATA[matchProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
