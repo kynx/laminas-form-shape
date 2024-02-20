@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Writer;
 
 use function str_contains;
+use function substr;
 use function substr_count;
 
 use const PHP_EOL;
@@ -17,17 +18,23 @@ use const PHP_EOL;
  */
 final readonly class Eol
 {
+    /** @psalm-suppress UnusedConstructor */
+    private function __construct()
+    {
+    }
+
     /**
      * @return non-empty-string
      */
-    public static function detectEol(string $contents): string
+    public static function detect(string $contents): string
     {
-        if (! str_contains($contents, "\n")) {
+        $test = substr($contents, 0, 4096);
+        if (! str_contains($test, "\n")) {
             return PHP_EOL;
         }
 
-        return substr_count($contents, "\r\n") >= substr_count($contents, "\n")
-            ? "\r\n"
-            : "\n";
+        return substr_count($test, "\n") > substr_count($test, "\r\n")
+            ? "\n"
+            : "\r\n";
     }
 }

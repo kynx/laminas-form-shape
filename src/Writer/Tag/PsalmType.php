@@ -28,7 +28,8 @@ final readonly class PsalmType implements TagInterface
 
     public function isBefore(TagInterface $tag): bool
     {
-        return ! str_starts_with(trim((string) $tag), '@psalm-import-type ');
+        return str_starts_with(trim((string) $tag), '@psalm')
+            && ! str_starts_with(trim((string) $tag), '@psalm-import-type ');
     }
 
     public function matches(TagInterface $tag): bool

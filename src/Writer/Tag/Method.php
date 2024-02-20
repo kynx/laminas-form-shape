@@ -7,7 +7,8 @@ namespace Kynx\Laminas\FormShape\Writer\Tag;
 use function implode;
 use function preg_match;
 use function sprintf;
-use function str_contains;
+use function str_starts_with;
+use function trim;
 
 /**
  * @internal
@@ -33,7 +34,10 @@ final readonly class Method implements TagInterface
 
     public function isBefore(TagInterface $tag): bool
     {
-        return str_contains((string) $tag, '@param') || str_contains((string) $tag, '@return');
+        $trimmed = trim((string) $tag);
+        return str_starts_with($trimmed, '@param')
+            || str_starts_with($trimmed, '@return')
+            || str_starts_with($trimmed, '@psalm');
     }
 
     public function matches(TagInterface $tag): bool

@@ -6,6 +6,8 @@ namespace Kynx\Laminas\FormShape\Writer\Tag;
 
 use function preg_match;
 use function sprintf;
+use function str_starts_with;
+use function trim;
 
 /**
  * @internal
@@ -26,7 +28,7 @@ final readonly class PsalmImportType implements TagInterface
 
     public function isBefore(TagInterface $tag): bool
     {
-        return true;
+        return str_starts_with(trim((string) $tag), '@psalm');
     }
 
     public function matches(TagInterface $tag): bool

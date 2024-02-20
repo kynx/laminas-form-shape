@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormShape\Writer\Tag;
 
 use Kynx\Laminas\FormShape\Writer\Tag\GenericTag;
 use Kynx\Laminas\FormShape\Writer\Tag\PsalmImportType;
+use Kynx\Laminas\FormShape\Writer\Tag\PsalmType;
 use Kynx\Laminas\FormShape\Writer\Tag\TagInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -22,11 +23,20 @@ final class PsalmImportTypeTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function testIsBefore(): void
+    #[DataProvider('isBeforeProvider')]
+    public function testIsBefore(TagInterface $match, bool $expected): void
     {
         $tag    = new PsalmImportType('TFoo', 'Bar');
-        $actual = $tag->isBefore(new GenericTag('@psalm-type TBar = array<TFoo>'));
-        self::assertTrue($actual);
+        $actual = $tag->isBefore($match);
+        self::assertSame($expected, $actual);
+    }
+
+    public static function isBeforeProvider(): array
+    {
+        return [
+            'psalm-type' => [new PsalmType('TFoo', 'array{foo: int}'), true],
+            'other'      => [new GenericTag('@internal'), false],
+        ];
     }
 
     #[DataProvider('matchProvider')]

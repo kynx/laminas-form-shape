@@ -25,29 +25,40 @@ use function trim;
  */
 final readonly class FileWriter
 {
-    public function write(ReflectionClass $reflection, DocBlock $classDocBlock, ?DocBlock $getDataDocBlock): void
+    /** @psalm-suppress UnusedConstructor */
+    private function __construct()
+    {
+    }
+
+    public static function write(ReflectionClass $reflection, DocBlock $classDocBlock, ?DocBlock $getDataDocBlock): void
     {
         $contents = file_get_contents($reflection->getFileName());
 
-        $contents = $this->updateClassDocBlock($reflection, $contents, $classDocBlock);
         if ($getDataDocBlock !== null) {
-            $contents = $this->updateGetDataDocBlock($reflection, $contents, $getDataDocBlock);
+            $contents = self::updateGetDataDocBlock($reflection, $contents, $getDataDocBlock);
         }
+        $contents = self::updateClassDocBlock($reflection, $contents, $classDocBlock);
 
         file_put_contents($reflection->getFileName(), $contents);
     }
 
-    private function updateClassDocBlock(ReflectionClass $reflection, string $contents, DocBlock $docBlock): string
-    {
+    private static function updateClassDocBlock(
+        ReflectionClass $reflection,
+        string $contents,
+        DocBlock $docBlock
+    ): string {
         if ($reflection->getDocComment() === false) {
-            return $this->addDocBlock($reflection, $contents, $docBlock);
+            return self::addDocBlock($reflection, $contents, $docBlock);
         }
 
-        return $this->replaceDocBlock($reflection, $contents, $docBlock);
+        return self::replaceDocBlock($reflection, $contents, $docBlock);
     }
 
-    private function updateGetDataDocBlock(ReflectionClass $reflection, string $contents, DocBlock $docBlock): string
-    {
+    private static function updateGetDataDocBlock(
+        ReflectionClass $reflection,
+        string $contents,
+        DocBlock $docBlock
+    ): string {
         if (! $reflection->hasMethod('getData')) {
             return $contents;
         }
@@ -57,22 +68,22 @@ final readonly class FileWriter
         }
 
         if ($method->getDocComment() === false) {
-            return $this->addDocBlock($method, $contents, $docBlock);
+            return self::addDocBlock($method, $contents, $docBlock);
         }
 
-        return $this->replaceDocBlock($method, $contents, $docBlock);
+        return self::replaceDocBlock($method, $contents, $docBlock);
     }
 
-    private function addDocBlock(
+    private static function addDocBlock(
         ReflectionClass|ReflectionMethod $reflection,
         string $contents,
         DocBlock $docBlock
     ): string {
         $startLine = $reflection->getStartLine() - 1;
 
-        $eol    = Eol::detectEol($contents);
+        $eol    = Eol::detect($contents);
         $lines  = explode($eol, $contents);
-        $indent = $this->getIndent($lines[$startLine]);
+        $indent = self::getIndent($lines[$startLine]);
 
         for ($start = $startLine; $start > 0; $start--) {
             $line = trim($lines[$start - 1]);
@@ -81,21 +92,21 @@ final readonly class FileWriter
             }
         }
 
-        array_splice($lines, $start, 0, $this->formatDocBlock($docBlock, $indent));
+        array_splice($lines, $start, 0, self::formatDocBlock($docBlock, $indent));
 
         return implode($eol, $lines);
     }
 
-    private function replaceDocBlock(
+    private static function replaceDocBlock(
         ReflectionClass|ReflectionMethod $reflection,
         string $contents,
         DocBlock $docBlock
     ): string {
         $startLine = $reflection->getStartLine() - 1;
 
-        $eol    = Eol::detectEol($contents);
+        $eol    = Eol::detect($contents);
         $lines  = explode($eol, $contents);
-        $indent = $this->getIndent($lines[$startLine]);
+        $indent = self::getIndent($lines[$startLine]);
 
         $end = $startLine;
         for ($start = $startLine; $start > 0; $start--) {
@@ -108,7 +119,7 @@ final readonly class FileWriter
             }
         }
 
-        array_splice($lines, $start, $end - $start, $this->formatDocBlock($docBlock, $indent));
+        array_splice($lines, $start, $end - $start, self::formatDocBlock($docBlock, $indent));
 
         return implode($eol, $lines);
     }
@@ -116,7 +127,7 @@ final readonly class FileWriter
     /**
      * @return list<string>
      */
-    private function formatDocBlock(DocBlock $docBlock, string $indent): array
+    private static function formatDocBlock(DocBlock $docBlock, string $indent): array
     {
         $lines = (string) $docBlock;
         if ($lines === '') {
@@ -129,7 +140,7 @@ final readonly class FileWriter
         );
     }
 
-    private function getIndent(string $line): string
+    private static function getIndent(string $line): string
     {
         preg_match('/^\s*/', $line, $matches);
         return $matches[0] ?? '';

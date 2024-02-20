@@ -27,7 +27,7 @@ final readonly class PsalmTemplateExtends implements TagInterface
 
     public function isBefore(TagInterface $tag): bool
     {
-        return ! str_starts_with(trim((string) $tag), '@psalm');
+        return false;
     }
 
     public function matches(TagInterface $tag): bool

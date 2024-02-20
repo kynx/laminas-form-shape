@@ -33,7 +33,7 @@ final class PsalmTemplateExtendsTest extends TestCase
     public static function isBeforeProvider(): array
     {
         return [
-            'internal'   => [new GenericTag('@internal'), true],
+            'internal'   => [new GenericTag('@internal'), false],
             'psalm-type' => [new GenericTag('@psalm-type TFoo = array<int>'), false],
         ];
     }

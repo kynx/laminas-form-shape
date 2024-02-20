@@ -43,7 +43,7 @@ final readonly class DocBlock implements Stringable
          */
         EOD;
 
-        $lines = explode(Eol::detectEol($docComment), trim($docComment));
+        $lines = explode(Eol::detect($docComment), trim($docComment));
 
         $sections = $section = [];
         $inTag    = false;

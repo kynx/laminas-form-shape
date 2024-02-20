@@ -33,7 +33,7 @@ final class PsalmTypeTest extends TestCase
     public static function isBeforeProvider(): array
     {
         return [
-            'param'             => [new GenericTag('@param int $foo'), true],
+            'param'             => [new GenericTag('@param int $foo'), false],
             'psalm-type'        => [new GenericTag('@psalm-type TBar = object'), true],
             'psalm-import-type' => [new GenericTag('@psalm-import-type TBar from Bar'), false],
         ];

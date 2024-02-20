@@ -23,14 +23,12 @@ use function unlink;
 final class FileWriterTest extends TestCase
 {
     private string $tempFile;
-    private FileWriter $writer;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->tempFile = tempnam(sys_get_temp_dir(), 'phpunit_');
-        $this->writer   = new FileWriter();
     }
 
     protected function tearDown(): void
@@ -52,7 +50,7 @@ final class FileWriterTest extends TestCase
         $classDocBlock   = DocBlock::fromDocComment($classDocBlock);
         $getDataDocBlock = $getDataDocBlock === null ? null : DocBlock::fromDocComment($getDataDocBlock);
 
-        $this->writer->write($reflection, $classDocBlock, $getDataDocBlock);
+        FileWriter::write($reflection, $classDocBlock, $getDataDocBlock);
         $actual = file_get_contents($this->tempFile);
         self::assertSame($expected, $actual);
     }
@@ -388,7 +386,7 @@ final class FileWriterTest extends TestCase
         $reflection    = $this->getReflection('PreserveLineEndings', $original);
         $classDocBlock = DocBlock::fromDocComment($docBlock);
 
-        $this->writer->write($reflection, $classDocBlock, null);
+        FileWriter::write($reflection, $classDocBlock, null);
         $actual = file_get_contents($this->tempFile);
         self::assertSame($expected, $actual);
     }

@@ -36,7 +36,8 @@ final class MethodTest extends TestCase
         return [
             'param'  => [new GenericTag('@param int $foo'), true],
             'return' => [new GenericTag('@return int'), true],
-            'other'  => [new PsalmType('TFoo', 'array'), false],
+            'psalm'  => [new PsalmType('TFoo', 'array'), true],
+            'other'  => [new GenericTag('@internal'), false],
         ];
     }
 

@@ -69,14 +69,14 @@ final class DocBlockTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function testWithTagPrependsTagToExistingDocBlock(): void
+    public function testWithTagAppendsTagToExistingDocBlock(): void
     {
         $expected = <<<DOCBLOCK
         /**
          * Foo
          * 
-         * @psalm-type TFoo = array<int>
          * @internal
+         * @psalm-type TFoo = array<int>
          */
         DOCBLOCK;
         $existing = <<<DOCBLOCK
