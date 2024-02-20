@@ -8,8 +8,6 @@ use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
-use Kynx\Laminas\FormShape\File\FormReader;
-use Kynx\Laminas\FormShape\File\FormReaderFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
@@ -32,6 +30,11 @@ use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
+use Kynx\Laminas\FormShape\Locator\FormLocator;
+use Kynx\Laminas\FormShape\Locator\FormLocatorFactory;
+use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
+use Kynx\Laminas\FormShape\Psalm\TypeNamer;
+use Kynx\Laminas\FormShape\Psalm\TypeNamerFactory;
 use Kynx\Laminas\FormShape\Validator\BetweenVisitor;
 use Kynx\Laminas\FormShape\Validator\CsrfVisitor;
 use Kynx\Laminas\FormShape\Validator\DateStepVisitor;
@@ -72,6 +75,7 @@ use Psalm\Type\Atomic\TString;
  *      indent: string,
  *      max-string-length: ?int,
  *      literal-limit: ?int,
+ *      type-name-template: string,
  *      filter-visitors: FilterVisitorList,
  *      validator-visitors: ValidatorVisitorList,
  *      input-visitors: InputVisitorArray,
@@ -116,6 +120,7 @@ final readonly class ConfigProvider
             'indent'             => '    ',
             'max-string-length'  => null,
             'literal-limit'      => null,
+            'type-name-template' => 'T{shortName}Data',
             'filter-visitors'    => [
                 AllowListVisitor::class,
                 BooleanVisitor::class,
@@ -204,9 +209,11 @@ final readonly class ConfigProvider
     {
         return [
             'aliases'   => [
+                DecoratorInterface::class          => PrettyPrinter::class,
+                FormLocatorInterface::class        => FormLocator::class,
                 FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
-                DecoratorInterface::class          => PrettyPrinter::class,
+                TypeNamerInterface::class          => TypeNamer::class,
             ],
             'factories' => [
                 AllowListVisitor::class       => AllowListVisitorFactory::class,
@@ -214,7 +221,8 @@ final readonly class ConfigProvider
                 CollectionInputVisitor::class => CollectionInputVisitorFactory::class,
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormReader::class             => FormReaderFactory::class,
+                FormLocator::class            => FormLocatorFactory::class,
+                PrettyPrinter::class          => PrettyPrinterFactory::class,
                 PsalmTypeCommand::class       => PsalmTypeCommandFactory::class,
                 FormVisitor::class            => FormVisitorFactory::class,
                 InArrayVisitor::class         => InArrayVisitorFactory::class,
@@ -222,7 +230,7 @@ final readonly class ConfigProvider
                 InputVisitor::class           => InputVisitorFactory::class,
                 NonEmptyStringVisitor::class  => NonEmptyStringVisitorFactory::class,
                 RegexVisitor::class           => RegexVisitorFactory::class,
-                PrettyPrinter::class          => PrettyPrinterFactory::class,
+                TypeNamer::class              => TypeNamerFactory::class,
             ],
         ];
     }
