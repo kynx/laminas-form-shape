@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Form;
+namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ImportTypes;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
@@ -57,7 +58,7 @@ final class FormCollectionSmokeTest extends TestCase
         $form = new Form();
         $form->add($collection);
 
-        $union = $this->visitor->visit($form);
+        $union = $this->visitor->visit($form, []);
 
         $type = (new PrettyPrinter())->decorate($union);
 
@@ -102,7 +103,7 @@ final class FormCollectionSmokeTest extends TestCase
         $form = new Form();
         $form->add($collection);
 
-        $union = $this->visitor->visit($form);
+        $union = $this->visitor->visit($form, []);
 
         $type = (new PrettyPrinter())->decorate($union);
         self::assertValinorValidates($isValid, $type, $data);
@@ -144,7 +145,7 @@ final class FormCollectionSmokeTest extends TestCase
         $form = new Form();
         $form->add($collection);
 
-        $union = $this->visitor->visit($form);
+        $union = $this->visitor->visit($form, []);
 
         $form->setData($data);
         $isValid = $form->isValid();

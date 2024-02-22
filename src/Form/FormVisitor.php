@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\InputFilter\CollectionInput;
+use Kynx\Laminas\FormShape\InputFilter\ImportTypes;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Laminas\Form\Element\Collection;
 use Laminas\Form\ElementInterface;
@@ -18,13 +19,19 @@ use Psalm\Type\Union;
 use function array_keys;
 use function assert;
 
-final readonly class FormVisitor implements FormVisitorInterface
+/**
+ * @internal
+ *
+ * @psalm-internal Kynx\Laminas\FormShape
+ * @psalm-internal KynxTest\Laminas\FormShape
+ */
+final readonly class FormVisitor
 {
     public function __construct(private InputFilterVisitorInterface $inputFilterVisitor)
     {
     }
 
-    public function visit(FormInterface $form): Union
+    public function visit(FormInterface $form, array $importTypes): Union
     {
         $clone = clone $form;
 
@@ -33,7 +40,7 @@ final readonly class FormVisitor implements FormVisitorInterface
         $clone->setData($data)->isValid();
         $inputFilter = $this->convertCollectionFilters($clone, $clone->getInputFilter());
 
-        return $this->inputFilterVisitor->visit($inputFilter);
+        return $this->inputFilterVisitor->visit($inputFilter, $this->getImportTypes($clone, $importTypes));
     }
 
     /**
@@ -116,5 +123,28 @@ final readonly class FormVisitor implements FormVisitorInterface
         }
 
         return $inputFilter;
+    }
+
+    private function getImportTypes(FormInterface $form, array $importTypes): ImportTypes
+    {
+        return new ImportTypes($this->keyTypes($form, $importTypes));
+    }
+
+    private function keyTypes(FieldsetInterface $fieldset, array $importTypes): array
+    {
+        $keyed = [];
+        foreach ($fieldset->getFieldsets() as $childFieldset) {
+            $name = (string) $childFieldset->getName();
+            if ($childFieldset instanceof Collection) {
+                $childFieldset = $childFieldset->getTargetElement() instanceof FieldsetInterface
+                    ? $childFieldset->getTargetElement()
+                    : $childFieldset;
+            }
+
+            $keyed[$name] = $importTypes[$childFieldset::class]
+                ?? $this->keyTypes($childFieldset, $importTypes);
+        }
+
+        return $keyed;
     }
 }

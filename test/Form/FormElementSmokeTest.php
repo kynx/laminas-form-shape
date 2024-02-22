@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
+use Kynx\Laminas\FormShape\InputFilter\ImportTypes;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Laminas\Form\Element\Button;
@@ -65,9 +66,10 @@ final class FormElementSmokeTest extends TestCase
 
         /** @var ContainerInterface $container */
         $container   = include __DIR__ . '/../container.php';
+        /** @var InputFilterVisitorInterface $visitor */
         $visitor     = $container->get(InputFilterVisitorInterface::class);
         $inputFilter = $form->getInputFilter();
-        $union       = $visitor->visit($inputFilter);
+        $union       = $visitor->visit($inputFilter, new ImportTypes([]));
 
         $decorator = new PrettyPrinter();
         /** @psalm-suppress PossiblyInvalidArgument */

@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TKeyedArray;
+use Psalm\Type\Atomic\TString;
 use Psalm\Type\Atomic\TTypeAlias;
 use Psalm\Type\Union;
 use ReflectionClass;
@@ -409,12 +410,16 @@ final class FileWriterTest extends TestCase
     {
         $reflection  = $this->getReflection($className, $original);
         $typeAlias   = new TTypeAlias(__NAMESPACE__ . '\\FooFieldset', 'TFoo');
+        $unusedAlias = new TTypeAlias(__NAMESPACE__ . '\\Unused', 'TBar');
         $type        = new Union([
             new TKeyedArray([
                 'foo' => new Union([$typeAlias]),
             ]),
         ]);
-        $importTypes = [new ImportType($typeAlias, new Union([new TInt()]))];
+        $importTypes = [
+            new ImportType($typeAlias, new Union([new TInt()])),
+            new ImportType($unusedAlias, new Union([new TString()])),
+        ];
 
         $this->writer->write($reflection, $type, $importTypes);
         $actual = file_get_contents($this->tempFile);

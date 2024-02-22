@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Form;
+namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ImportTypes;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
@@ -55,7 +56,7 @@ final class FormFieldsetSmokeTest extends TestCase
         $form = new Form();
         $form->add($fieldset);
 
-        $union = $this->visitor->visit($form);
+        $union = $this->visitor->visit($form, []);
         $type  = (new PrettyPrinter())->decorate($union);
 
         $form->setData($data);
