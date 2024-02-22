@@ -17,10 +17,7 @@ use Laminas\Form\FormInterface;
 use Laminas\ServiceManager\PluginManagerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use ReflectionClass;
 
-use function array_filter;
-use function array_map;
 use function is_dir;
 use function is_file;
 use function is_readable;
@@ -35,11 +32,11 @@ use function usort;
  */
 final readonly class FormLocator implements FormLocatorInterface
 {
-    private ImplementsReflectionProvider $reflectionProvider;
+    private ReflectionProvider $reflectionProvider;
 
     public function __construct(ClassLoader $loader, private PluginManagerInterface $formElementManager)
     {
-        $this->reflectionProvider = new ImplementsReflectionProvider($loader, FormInterface::class);
+        $this->reflectionProvider = new ReflectionProvider($loader, FormInterface::class);
     }
 
     public function locate(array $paths): array
@@ -50,12 +47,8 @@ final readonly class FormLocator implements FormLocatorInterface
             $iterator->append($located);
         }
 
-        $formFiles = array_filter(array_map(
-            /** @param ReflectionClass<FormInterface> $reflection */
-            fn (ReflectionClass $reflection): ?FormFile => $this->getFormFile($reflection),
-            iterator_to_array($iterator)
-        ));
-
+        /** @var array<FormFile> $formFiles */
+        $formFiles = iterator_to_array($iterator);
         usort(
             $formFiles,
             static fn (FormFile $a, FormFile $b): int => $a->reflection->getName() <=> $b->reflection->getName()
@@ -70,28 +63,33 @@ final readonly class FormLocator implements FormLocatorInterface
             return new EmptyIterator();
         }
         if (is_file($path)) {
-            return (new ArrayObject([$path => $this->reflectionProvider->getReflection($path)]))->getIterator();
+            $formFile = $this->locateFormFromFile($path);
+            return $formFile instanceof FormFile
+                ? (new ArrayObject([$path => $formFile]))->getIterator()
+                : new EmptyIterator();
         }
         if (! is_dir($path)) {
             return new EmptyIterator();
         }
 
         $directoryIterator = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
-        /** @var RecursiveImplementsReflectionIterator<FormInterface> $reflectionIterator */
-        $reflectionIterator = new RecursiveImplementsReflectionIterator($directoryIterator, $this->reflectionProvider);
+        /** @var RecursiveReflectionIterator<FormInterface> $reflectionIterator */
+        $reflectionIterator = new RecursiveReflectionIterator($directoryIterator, $this->reflectionProvider);
+        $formFileIterator   = new RecursiveFormFileIterator($reflectionIterator, $this->formElementManager);
 
         return new CallbackFilterIterator(
-            new RecursiveIteratorIterator($reflectionIterator),
-            /** @param ReflectionClass<FormInterface>|null $reflection */
-            static fn (?ReflectionClass $reflection): bool => $reflection !== null
+            new RecursiveIteratorIterator($formFileIterator),
+            static fn (?FormFile $formFile): bool => $formFile !== null
         );
     }
 
-    /**
-     * @param ReflectionClass<FormInterface> $reflection
-     */
-    private function getFormFile(ReflectionClass $reflection): ?FormFile
+    private function locateFormFromFile(string $path): ?FormFile
     {
+        $reflection = $this->reflectionProvider->getReflection($path);
+        if ($reflection == null) {
+            return null;
+        }
+
         try {
             $form = $this->formElementManager->get($reflection->getName());
         } catch (InvalidElementException) {
