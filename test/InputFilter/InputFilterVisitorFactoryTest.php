@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\InputFilter;
 
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ImportTypes;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Laminas\InputFilter\ArrayInput;
@@ -43,7 +44,7 @@ final class InputFilterVisitorFactoryTest extends TestCase
         $inputFilter = new InputFilter();
         $inputFilter->add(new Input('foo'));
 
-        $actual = $instance->visit($inputFilter);
+        $actual = $instance->visit($inputFilter, new ImportTypes([]));
         self::assertEquals($expected, $actual);
     }
 
@@ -64,7 +65,7 @@ final class InputFilterVisitorFactoryTest extends TestCase
         $filter   = new InputFilter();
         $filter->add(new ArrayInput(), 'foo');
 
-        $keyedArray = $instance->visit($filter)->getSingleAtomic();
+        $keyedArray = $instance->visit($filter, new ImportTypes([]))->getSingleAtomic();
         self::assertInstanceOf(TKeyedArray::class, $keyedArray);
         $property = $keyedArray->properties['foo'] ?? null;
         self::assertInstanceOf(Union::class, $property);
