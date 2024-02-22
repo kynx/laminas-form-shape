@@ -20,6 +20,8 @@ use function strpos;
 use function substr;
 use function trim;
 
+use const PHP_EOL;
+
 /**
  * @internal
  *
@@ -43,7 +45,7 @@ final readonly class DocBlock implements Stringable
          */
         EOD;
 
-        $lines = explode(Eol::detect($docComment), trim($docComment));
+        $lines = explode(PHP_EOL, trim($docComment));
 
         $sections = $section = [];
         $inTag    = false;
@@ -121,6 +123,14 @@ final readonly class DocBlock implements Stringable
         }
 
         return new self(array_values($sections));
+    }
+
+    public function getContents(string $eol = "\n"): string
+    {
+        return implode($eol, array_map(
+            fn (string|TagInterface $s): string => implode($eol, explode("\n", (string) $s)),
+            $this->sections
+        ));
     }
 
     public function __toString(): string

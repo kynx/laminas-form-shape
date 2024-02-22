@@ -38,6 +38,9 @@ final class UseCollector extends TypeVisitor
         return null;
     }
 
+    /**
+     * @return list<string>
+     */
     public function getUses(): array
     {
         return array_unique($this->uses);

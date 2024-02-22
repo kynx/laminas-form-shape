@@ -154,4 +154,26 @@ final class DocBlockTest extends TestCase
             ->withoutTag(new PsalmType('TFoo', 'array<string>'));
         self::assertSame($expected, $actual);
     }
+
+    public function testGetContentsReturnsRawString(): void
+    {
+        $expected = <<<DOCBLOCK
+        Foo
+        
+        @internal
+        @psalm-type TFoo = array<int>
+        DOCBLOCK;
+        $existing = <<<DOCBLOCK
+            /**
+             * Foo
+             * 
+             * @internal
+             */
+        DOCBLOCK;
+
+        $actual = DocBlock::fromDocComment($existing)
+            ->withTag(new PsalmType('TFoo', 'array<int>'))
+            ->getContents("\n");
+        self::assertSame($expected, $actual);
+    }
 }

@@ -59,6 +59,8 @@ use Kynx\Laminas\FormShape\Validator\Sitemap\PriorityVisitor;
 use Kynx\Laminas\FormShape\Validator\StepVisitor;
 use Kynx\Laminas\FormShape\Validator\StringLengthVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
+use Kynx\Laminas\FormShape\Writer\FileWriter;
+use Kynx\Laminas\FormShape\Writer\FileWriterFactory;
 use Laminas\ServiceManager\ConfigInterface;
 use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
@@ -224,6 +226,7 @@ final readonly class ConfigProvider
                 FormLocator::class            => FormLocatorFactory::class,
                 PrettyPrinter::class          => PrettyPrinterFactory::class,
                 PsalmTypeCommand::class       => PsalmTypeCommandFactory::class,
+                FileWriter::class             => FileWriterFactory::class,
                 FormVisitor::class            => FormVisitorFactory::class,
                 InArrayVisitor::class         => InArrayVisitorFactory::class,
                 InputFilterVisitor::class     => InputFilterVisitorFactory::class,
