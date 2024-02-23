@@ -8,6 +8,7 @@ use Composer\Autoload\ClassLoader;
 use FilesystemIterator;
 use Kynx\Laminas\FormShape\Locator\RecursiveReflectionIterator;
 use Kynx\Laminas\FormShape\Locator\ReflectionProvider;
+use KynxTest\Laminas\FormShape\Locator\Asset\AbstractForm;
 use KynxTest\Laminas\FormShape\Locator\Asset\Sub\SubForm;
 use KynxTest\Laminas\FormShape\Locator\Asset\TestForm;
 use Laminas\Form\FormInterface;
@@ -35,8 +36,9 @@ final class RecursiveReflectionIteratorTest extends TestCase
     public function testIteratorRecursesFileInfo(): void
     {
         $expected           = [
-            __DIR__ . '/Asset/TestForm.php'    => new ReflectionClass(TestForm::class),
-            __DIR__ . '/Asset/Sub/SubForm.php' => new ReflectionClass(SubForm::class),
+            __DIR__ . '/Asset/AbstractForm.php' => new ReflectionClass(AbstractForm::class),
+            __DIR__ . '/Asset/TestForm.php'     => new ReflectionClass(TestForm::class),
+            __DIR__ . '/Asset/Sub/SubForm.php'  => new ReflectionClass(SubForm::class),
         ];
         $flags              = FilesystemIterator::SKIP_DOTS;
         $reflectionProvider = new ReflectionProvider($this->loader, FormInterface::class);
@@ -50,8 +52,9 @@ final class RecursiveReflectionIteratorTest extends TestCase
     public function testIteratorRecursesStrings(): void
     {
         $expected           = [
-            __DIR__ . '/Asset/TestForm.php'    => new ReflectionClass(TestForm::class),
-            __DIR__ . '/Asset/Sub/SubForm.php' => new ReflectionClass(SubForm::class),
+            __DIR__ . '/Asset/AbstractForm.php' => new ReflectionClass(AbstractForm::class),
+            __DIR__ . '/Asset/TestForm.php'     => new ReflectionClass(TestForm::class),
+            __DIR__ . '/Asset/Sub/SubForm.php'  => new ReflectionClass(SubForm::class),
         ];
         $flags              = FilesystemIterator::SKIP_DOTS | FilesystemIterator::CURRENT_AS_PATHNAME;
         $reflectionProvider = new ReflectionProvider($this->loader, FormInterface::class);
