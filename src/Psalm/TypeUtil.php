@@ -180,7 +180,7 @@ final readonly class TypeUtil
             is_object($value)   => new Union([new TNamedObject($value::class)]),
             is_string($value)   => self::toLooseString($value),
             is_resource($value) => self::toLooseResource(),
-            $value === null     => self::toLooseBool(false),
+            $value === null     => self::toLooseNull(),
             default             => new Union([new TMixed()]),
         };
     }
@@ -302,6 +302,7 @@ final readonly class TypeUtil
         return Type::combineUnionTypes(self::toStrictUnion($value), new Union([
             new TEmptyNumeric(),
             self::getAtomicStringFromLiteral(""),
+            self::getAtomicStringFromLiteral("0"),
             new TNull(),
         ]));
     }
@@ -336,10 +337,20 @@ final readonly class TypeUtil
         ]);
     }
 
+    private static function toLooseNull(): Union
+    {
+        return new Union([
+            self::getAtomicStringFromLiteral(""),
+            new TFalse(),
+            new TEmptyNumeric(),
+            new TNull(),
+        ]);
+    }
+
     private static function toLooseString(string $value): Union
     {
         if ($value === '') {
-            return self::toLooseBool(false);
+            return self::toLooseNull();
         }
 
         $types = [
