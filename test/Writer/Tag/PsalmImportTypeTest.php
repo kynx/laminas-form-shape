@@ -23,6 +23,14 @@ final class PsalmImportTypeTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    public function testToStringReturnsTagWithAlias(): void
+    {
+        $expected = '@psalm-import-type TFoo from Bar as TFooBar';
+        $tag      = new PsalmImportType('TFoo', 'Bar', 'TFooBar');
+        $actual   = (string) $tag;
+        self::assertSame($expected, $actual);
+    }
+
     #[DataProvider('isBeforeProvider')]
     public function testIsBefore(TagInterface $match, bool $expected): void
     {

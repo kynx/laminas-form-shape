@@ -28,10 +28,10 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
     {
     }
 
-    public function visit(InputFilterInterface $inputFilter): Union
+    public function visit(InputFilterInterface $inputFilter, ImportType|ImportTypes $importTypes): Union
     {
         if ($inputFilter instanceof CollectionInputFilter) {
-            return $this->visitCollectionInputFilter($inputFilter);
+            return $this->visitCollectionInputFilter($inputFilter, $importTypes);
         }
 
         $elements = [];
@@ -42,7 +42,10 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
                 continue;
             }
 
-            $elements[$childName] = $this->visit($child);
+            $childTypes           = $importTypes instanceof ImportTypes
+                ? $importTypes->get($childName)
+                : new ImportTypes([]);
+            $elements[$childName] = $this->visit($child, $childTypes);
         }
 
         $elementsRequired = (bool) array_filter(
@@ -56,12 +59,19 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
             return new Union([new TArray([Type::getArrayKey(), Type::getMixed()])], $properties);
         }
 
-        return new Union([new TKeyedArray($elements)], $properties);
+        $union = new Union([new TKeyedArray($elements)], $properties);
+        if ($importTypes instanceof ImportType) {
+            return $this->getTypeAliasUnion($union, $importTypes);
+        }
+
+        return $union;
     }
 
-    private function visitCollectionInputFilter(CollectionInputFilter $inputFilter): Union
-    {
-        $collection = $this->visit($inputFilter->getInputFilter());
+    private function visitCollectionInputFilter(
+        CollectionInputFilter $inputFilter,
+        ImportType|ImportTypes $importTypes
+    ): Union {
+        $collection = $this->visit($inputFilter->getInputFilter(), $importTypes);
 
         if ($inputFilter->getIsRequired()) {
             return new Union([new TNonEmptyArray([Type::getArrayKey(), $collection])]);
@@ -80,5 +90,14 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
         }
 
         throw InputVisitorException::noVisitorForInput($input);
+    }
+
+    private function getTypeAliasUnion(Union $filterUnion, ImportType $importType): Union
+    {
+        if ($filterUnion->equals($importType->union, false, false)) {
+            return new Union([$importType->type], ['possibly_undefined' => $filterUnion->possibly_undefined]);
+        }
+
+        return $filterUnion;
     }
 }

@@ -27,7 +27,7 @@ use const DIRECTORY_SEPARATOR;
  * @psalm-internal Kynx\Laminas\FormShape
  * @psalm-internal KynxTest\Laminas\FormShape
  */
-final readonly class ImplementsReflectionProvider
+final readonly class ReflectionProvider
 {
     /** @var array<string, string> */
     private array $psr4Namespaces;

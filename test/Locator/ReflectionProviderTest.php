@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Locator;
 
 use Composer\Autoload\ClassLoader;
-use Kynx\Laminas\FormShape\Locator\ImplementsReflectionProvider;
+use Kynx\Laminas\FormShape\Locator\ReflectionProvider;
 use KynxTest\Laminas\FormShape\Locator\Asset\TestForm;
 use Laminas\Form\FieldsetInterface;
 use Laminas\Form\FormInterface;
@@ -17,8 +17,8 @@ use function dirname;
 use function file_exists;
 use function str_replace;
 
-#[CoversClass(ImplementsReflectionProvider::class)]
-final class ImplementsReflectionProviderTest extends TestCase
+#[CoversClass(ReflectionProvider::class)]
+final class ReflectionProviderTest extends TestCase
 {
     private ClassLoader $loader;
 
@@ -34,7 +34,7 @@ final class ImplementsReflectionProviderTest extends TestCase
     public function testGetReflectionNonPhpFileReturnsNull(): void
     {
         $path     = __DIR__ . '/composer.json';
-        $provider = new ImplementsReflectionProvider($this->loader, FormInterface::class);
+        $provider = new ReflectionProvider($this->loader, FormInterface::class);
 
         $actual = $provider->getReflection($path);
         self::assertNull($actual);
@@ -44,7 +44,7 @@ final class ImplementsReflectionProviderTest extends TestCase
     {
         $projectRoot = $this->getProjectRoot();
         $path        = dirname($projectRoot) . '/nonexistent/Foo.php';
-        $provider    = new ImplementsReflectionProvider($this->loader, FormInterface::class);
+        $provider    = new ReflectionProvider($this->loader, FormInterface::class);
 
         $actual = $provider->getReflection($path);
         self::assertNull($actual);
@@ -53,7 +53,7 @@ final class ImplementsReflectionProviderTest extends TestCase
     public function testGetReflectionNotClassReturnsNull(): void
     {
         $path     = __DIR__ . '/Asset/NoClass.php';
-        $provider = new ImplementsReflectionProvider($this->loader, FormInterface::class);
+        $provider = new ReflectionProvider($this->loader, FormInterface::class);
 
         $actual = $provider->getReflection($path);
         self::assertNull($actual);
@@ -62,7 +62,7 @@ final class ImplementsReflectionProviderTest extends TestCase
     public function testGetReflectionNotInstanceOfReturnsNull(): void
     {
         $path     = __DIR__ . '/Asset/TestForm.php';
-        $provider = new ImplementsReflectionProvider($this->loader, FieldsetInterface::class, FormInterface::class);
+        $provider = new ReflectionProvider($this->loader, FieldsetInterface::class, FormInterface::class);
 
         $actual = $provider->getReflection($path);
         self::assertNull($actual);
@@ -72,7 +72,7 @@ final class ImplementsReflectionProviderTest extends TestCase
     {
         $expected = new ReflectionClass(TestForm::class);
         $path     = __DIR__ . '/Asset/TestForm.php';
-        $provider = new ImplementsReflectionProvider($this->loader, FieldsetInterface::class);
+        $provider = new ReflectionProvider($this->loader, FieldsetInterface::class);
 
         $actual = $provider->getReflection($path);
         self::assertEquals($expected, $actual);
@@ -82,7 +82,7 @@ final class ImplementsReflectionProviderTest extends TestCase
     {
         $expected = new ReflectionClass(TestForm::class);
         $path     = str_replace($this->getProjectRoot(), '.', __DIR__ . '/Asset/TestForm.php');
-        $provider = new ImplementsReflectionProvider($this->loader, FieldsetInterface::class);
+        $provider = new ReflectionProvider($this->loader, FieldsetInterface::class);
 
         $actual = $provider->getReflection($path);
         self::assertEquals($expected, $actual);

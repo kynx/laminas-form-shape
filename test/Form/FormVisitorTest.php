@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Laminas\Form\Element\Collection;
@@ -17,10 +18,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TString;
+use Psalm\Type\Atomic\TTypeAlias;
 use Psalm\Type\Union;
 
 #[CoversClass(FormVisitor::class)]
@@ -48,7 +51,7 @@ final class FormVisitorTest extends TestCase
         $form = new Form();
         $form->add(new Text('foo'));
 
-        $actual = $this->visitor->visit($form);
+        $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
     }
 
@@ -80,7 +83,7 @@ final class FormVisitorTest extends TestCase
         $clone->setData([]);
         self::assertTrue($clone->isValid());
 
-        $actual = $this->visitor->visit($form);
+        $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
 
         $inputFilter = $form->getInputFilter();
@@ -114,7 +117,7 @@ final class FormVisitorTest extends TestCase
         $collection->setTargetElement($targetElement);
         $form->add($collection);
 
-        $actual = $this->visitor->visit($form);
+        $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
     }
 
@@ -136,7 +139,7 @@ final class FormVisitorTest extends TestCase
         $collection->setTargetElement(new Text());
         $form->add($collection);
 
-        $actual = $this->visitor->visit($form);
+        $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
     }
 
@@ -175,11 +178,68 @@ final class FormVisitorTest extends TestCase
         $clone->setData([]);
         self::assertTrue($clone->isValid());
 
-        $actual = $this->visitor->visit($form);
+        $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
 
         $inputFilter = $form->getInputFilter();
         $inputFilter->setData([]);
         self::assertTrue($inputFilter->isValid());
+    }
+
+    public function testVisitWithImportTypes(): void
+    {
+        $typeAlias   = new TTypeAlias(Fieldset::class, 'TFoo');
+        $unusedAlias = new TTypeAlias(self::class, 'TUnused');
+        $expected    = new Union([
+            new TKeyedArray([
+                'foo' => new Union([$typeAlias], ['possibly_undefined' => true]),
+            ]),
+        ], ['possibly_undefined' => true]);
+
+        $form     = new Form();
+        $fieldset = new Fieldset('foo');
+        $fieldset->add(new Text('bar'));
+        $form->add($fieldset);
+
+        $importType = new ImportType($typeAlias, new Union([
+            new TKeyedArray([
+                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+            ]),
+        ], ['possibly_undefined' => true]));
+        $unusedType = new ImportType($unusedAlias, new Union([new TInt()]));
+
+        $actual = $this->visitor->visit($form, [
+            Fieldset::class => $importType,
+            self::class     => $unusedType,
+        ]);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitCollectionWithImportTypes(): void
+    {
+        $typeAlias = new TTypeAlias(Fieldset::class, 'TFoo');
+        $expected  = new Union([
+            new TKeyedArray([
+                'foo' => new Union([
+                    new TArray([Type::getArrayKey(), new Union([$typeAlias], ['possibly_undefined' => true])]),
+                ], ['possibly_undefined' => true]),
+            ]),
+        ], ['possibly_undefined' => true]);
+
+        $form       = new Form();
+        $collection = new Collection('foo');
+        $fieldset   = new Fieldset();
+        $fieldset->add(new Text('bar'));
+        $collection->setTargetElement($fieldset);
+        $form->add($collection);
+
+        $importType = new ImportType($typeAlias, new Union([
+            new TKeyedArray([
+                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+            ]),
+        ], ['possibly_undefined' => true]));
+
+        $actual = $this->visitor->visit($form, [Fieldset::class => $importType]);
+        self::assertEquals($expected, $actual);
     }
 }

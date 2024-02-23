@@ -17,13 +17,17 @@ use function trim;
  */
 final readonly class PsalmImportType implements TagInterface
 {
-    public function __construct(private string $type, private string $from)
+    public function __construct(public string $type, public string $from, public string $alias = '')
     {
     }
 
     public function __toString(): string
     {
-        return sprintf('@psalm-import-type %s from %s', $this->type, $this->from);
+        if ($this->alias === '') {
+            return sprintf('@psalm-import-type %s from %s', $this->type, $this->from);
+        }
+
+        return sprintf('@psalm-import-type %s from %s as %s', $this->type, $this->from, $this->alias);
     }
 
     public function isBefore(TagInterface $tag): bool

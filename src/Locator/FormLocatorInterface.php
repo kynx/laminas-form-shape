@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Locator;
 
+/**
+ * @internal
+ *
+ * @psalm-internal Kynx\Laminas\FormShape
+ * @psalm-internal KynxTest\Laminas\FormShape
+ */
 interface FormLocatorInterface
 {
     /**
-     * Returns an array of `FormFile` instances found in given `$paths`
-     *
      * @param array<string> $paths
-     * @return list<FormFile>
+     * @return array<FormFile>
      */
     public function locate(array $paths): array;
 }
