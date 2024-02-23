@@ -67,15 +67,15 @@ final class FormProcessorTest extends TestCase
     {
         $fieldsetUnion  = new Union([
             new TKeyedArray([
-                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'bar' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
         $typeAlias      = new TTypeAlias(TestFieldset::class, 'TTestFieldsetArray');
         $formUnion      = new Union([
             new TKeyedArray([
-                'foo' => new Union([$typeAlias], ['possibly_undefined' => true]),
+                'foo' => new Union([$typeAlias]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
         $expectedImport = new ImportType($typeAlias, $fieldsetUnion);
 
         $form     = new Form();
@@ -114,9 +114,9 @@ final class FormProcessorTest extends TestCase
     {
         $fieldsetUnion = new Union([
             new TKeyedArray([
-                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'bar' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
         $typeAlias     = new TTypeAlias(TestFieldset::class, 'TTestFieldsetArray');
         $expected      = new ImportType($typeAlias, $fieldsetUnion);
 
@@ -146,11 +146,11 @@ final class FormProcessorTest extends TestCase
             new TKeyedArray([
                 'foo' => new Union([
                     new TKeyedArray([
-                        'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                        'bar' => new Union([new TString(), new TNull()]),
                     ]),
-                ], ['possibly_undefined' => true]),
+                ]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form     = new Form();
         $fieldset = new Fieldset('foo');
@@ -173,15 +173,15 @@ final class FormProcessorTest extends TestCase
     {
         $childUnion    = new Union([
             new TKeyedArray([
-                'baz' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'baz' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
         $typeAlias     = new TTypeAlias(ChildFieldset::class, 'TChildFieldsetArray');
         $fieldsetUnion = new Union([
             new TKeyedArray([
-                'bar' => new Union([$typeAlias], ['possibly_undefined' => true]),
+                'bar' => new Union([$typeAlias]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form     = new Form();
         $fieldset = new TestFieldset('foo');

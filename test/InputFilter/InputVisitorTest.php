@@ -76,7 +76,7 @@ final class InputVisitorTest extends TestCase
         bool $required,
         array $expected
     ): void {
-        $expected = new Union($expected, ['possibly_undefined' => ! $required]);
+        $expected = new Union($expected);
         $input    = new Input('foo');
         $input->setContinueIfEmpty($continueIfEmpty);
         $input->setAllowEmpty($allowEmpty);
@@ -108,7 +108,7 @@ final class InputVisitorTest extends TestCase
 
     public function testVisitAllowEmptyReplacesNotEmptyString(): void
     {
-        $expected         = new Union([new TString(), new TNull()], ['possibly_undefined' => true]);
+        $expected         = new Union([new TString(), new TNull()]);
         $validatorVisitor = $this->createMock(ValidatorVisitorInterface::class);
         $validatorVisitor->expects(self::once())
             ->method('visit')
@@ -125,7 +125,7 @@ final class InputVisitorTest extends TestCase
 
     public function testVisitAddsFallback(): void
     {
-        $expected = new Union([new TLiteralFloat(1.23)], ['possibly_undefined' => true]);
+        $expected = new Union([new TLiteralFloat(1.23)]);
         $input    = new Input('foo');
         $input->setFallbackValue(1.23);
         $input->getFilterChain()->attach(new Boolean());

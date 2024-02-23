@@ -44,9 +44,9 @@ final class FormVisitorTest extends TestCase
     {
         $expected = new Union([
             new TKeyedArray([
-                'foo' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'foo' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form = new Form();
         $form->add(new Text('foo'));
@@ -64,13 +64,13 @@ final class FormVisitorTest extends TestCase
                         Type::getArrayKey(),
                         new Union([
                             new TKeyedArray([
-                                'baz' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                                'baz' => new Union([new TString(), new TNull()]),
                             ]),
-                        ], ['possibly_undefined' => true]),
+                        ]),
                     ]),
                 ], ['possibly_undefined' => true]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form          = new Form();
         $collection    = new Collection('foo');
@@ -132,7 +132,7 @@ final class FormVisitorTest extends TestCase
                     ]),
                 ], ['possibly_undefined' => true]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form       = new Form();
         $collection = new Collection('foo');
@@ -159,11 +159,11 @@ final class FormVisitorTest extends TestCase
                                     ]),
                                 ], ['possibly_undefined' => true]),
                             ]),
-                        ], ['possibly_undefined' => true]),
+                        ]),
                     ]),
                 ], ['possibly_undefined' => true]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form          = new Form();
         $collection    = new Collection('foo');
@@ -192,9 +192,9 @@ final class FormVisitorTest extends TestCase
         $unusedAlias = new TTypeAlias(self::class, 'TUnused');
         $expected    = new Union([
             new TKeyedArray([
-                'foo' => new Union([$typeAlias], ['possibly_undefined' => true]),
+                'foo' => new Union([$typeAlias]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form     = new Form();
         $fieldset = new Fieldset('foo');
@@ -203,9 +203,9 @@ final class FormVisitorTest extends TestCase
 
         $importType = new ImportType($typeAlias, new Union([
             new TKeyedArray([
-                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'bar' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]));
+        ]));
         $unusedType = new ImportType($unusedAlias, new Union([new TInt()]));
 
         $actual = $this->visitor->visit($form, [
@@ -221,10 +221,10 @@ final class FormVisitorTest extends TestCase
         $expected  = new Union([
             new TKeyedArray([
                 'foo' => new Union([
-                    new TArray([Type::getArrayKey(), new Union([$typeAlias], ['possibly_undefined' => true])]),
+                    new TArray([Type::getArrayKey(), new Union([$typeAlias])]),
                 ], ['possibly_undefined' => true]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
 
         $form       = new Form();
         $collection = new Collection('foo');
@@ -235,9 +235,9 @@ final class FormVisitorTest extends TestCase
 
         $importType = new ImportType($typeAlias, new Union([
             new TKeyedArray([
-                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'bar' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]));
+        ]));
 
         $actual = $this->visitor->visit($form, [Fieldset::class => $importType]);
         self::assertEquals($expected, $actual);

@@ -59,7 +59,7 @@ final class InputVisitorFactoryTest extends TestCase
         $factory  = new InputVisitorFactory();
         $instance = $factory($container);
 
-        $expected = new Union([new TInt(), new TString(), new TNull()], ['possibly_undefined' => true]);
+        $expected = new Union([new TInt(), new TString(), new TNull()]);
         $input    = new Input('foo');
         $input->setRequired(false); // so we don't attach NotEmpty
         $input->getValidatorChain()->attach($this->createStub(ValidatorInterface::class));

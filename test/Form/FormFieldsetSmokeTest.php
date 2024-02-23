@@ -60,9 +60,11 @@ final class FormFieldsetSmokeTest extends TestCase
 
         $form->setData($data);
         $formValid = $form->isValid();
+        /** @var array $formData */
+        $formData = $form->getData();
 
         self::assertSame($isValid, $formValid, "Form::isValid() returned " . ($isValid ? 'false' : 'true'));
-        self::assertValinorValidates($isValid, $type, $data);
+        self::assertValinorValidates($isValid, $type, $formData);
     }
 
     public static function validationMatchProvider(): array
