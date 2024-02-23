@@ -225,13 +225,19 @@
       <code><![CDATA[matchProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Writer/Tag/PsalmImportTypeTest.php">
+  <file src="test/Writer/Tag/PsalmExtendsTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[isBeforeProvider]]></code>
       <code><![CDATA[matchProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Writer/Tag/PsalmTemplateExtendsTest.php">
+  <file src="test/Writer/Tag/PsalmImplementsTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[isBeforeProvider]]></code>
+      <code><![CDATA[matchProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Writer/Tag/PsalmImportTypeTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[isBeforeProvider]]></code>
       <code><![CDATA[matchProvider]]></code>
