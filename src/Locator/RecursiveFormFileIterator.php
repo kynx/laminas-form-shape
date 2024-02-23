@@ -30,6 +30,9 @@ final readonly class RecursiveFormFileIterator implements RecursiveIterator
         if (! $current instanceof ReflectionClass) {
             return null;
         }
+        if ($current->isAbstract()) {
+            return null;
+        }
 
         try {
             $form = $this->formElementManager->get($current->getName());

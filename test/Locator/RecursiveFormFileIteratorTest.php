@@ -6,6 +6,7 @@ namespace KynxTest\Laminas\FormShape\Locator;
 
 use Kynx\Laminas\FormShape\Locator\FormFile;
 use Kynx\Laminas\FormShape\Locator\RecursiveFormFileIterator;
+use KynxTest\Laminas\FormShape\Locator\Asset\AbstractForm;
 use KynxTest\Laminas\FormShape\Locator\Asset\TestForm;
 use Laminas\Form\Exception\InvalidElementException;
 use Laminas\Form\Fieldset;
@@ -36,6 +37,16 @@ final class RecursiveFormFileIteratorTest extends TestCase
     public function testCurrentReturnsNullForNonReflectionEntry(): void
     {
         $this->innerIterator->offsetSet(0, null);
+        $this->innerIterator->rewind();
+
+        $actual = $this->iterator->current();
+        self::assertNull($actual);
+    }
+
+    public function testCurrentReturnsNullForAbstractForm(): void
+    {
+        $reflection = new ReflectionClass(AbstractForm::class);
+        $this->innerIterator->offsetSet(0, $reflection);
         $this->innerIterator->rewind();
 
         $actual = $this->iterator->current();
