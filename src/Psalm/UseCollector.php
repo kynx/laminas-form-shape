@@ -9,6 +9,7 @@ use Psalm\Type\TypeNode;
 use Psalm\Type\TypeVisitor;
 
 use function array_unique;
+use function array_values;
 
 /**
  * @internal
@@ -20,6 +21,7 @@ final class UseCollector extends TypeVisitor
 {
     use IsFqcnTypeTrait;
 
+    /** @var list<string> */
     private array $uses = [];
 
     protected function enterNode(TypeNode $type): ?int
@@ -39,6 +41,6 @@ final class UseCollector extends TypeVisitor
      */
     public function getUses(): array
     {
-        return array_unique($this->uses);
+        return array_values(array_unique($this->uses));
     }
 }

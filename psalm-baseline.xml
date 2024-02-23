@@ -86,6 +86,16 @@
       <code><![CDATA[addNotEmptyProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Psalm/IsFqcnTypeTraitTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[isFqcnTypeProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Psalm/ShortNameReplacerTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[enterNodeProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/Psalm/TypeComparatorTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[isContainedByFalseProvider]]></code>
@@ -100,6 +110,11 @@
       <code><![CDATA[toLooseUnionProvider]]></code>
       <code><![CDATA[toStrictUnionProvider]]></code>
       <code><![CDATA[widenProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/Psalm/UseCollectorTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[enterNodeProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
   <file src="test/Validator/AbstractValidatorVisitorTestCase.php">
@@ -198,13 +213,9 @@
       <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Writer/EolTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[eolProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
   <file src="test/Writer/FileWriterTest.php">
     <PossiblyUnusedMethod>
+      <code><![CDATA[importTypesProvider]]></code>
       <code><![CDATA[writeProvider]]></code>
     </PossiblyUnusedMethod>
   </file>

@@ -17,6 +17,7 @@ use Laminas\Form\FormInterface;
 use Laminas\ServiceManager\PluginManagerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionClass;
 
 use function is_dir;
 use function is_file;
@@ -85,6 +86,7 @@ final readonly class FormLocator implements FormLocatorInterface
 
     private function locateFormFromFile(string $path): ?FormFile
     {
+        /** @var ReflectionClass<FormInterface>|null $reflection */
         $reflection = $this->reflectionProvider->getReflection($path);
         if ($reflection == null) {
             return null;

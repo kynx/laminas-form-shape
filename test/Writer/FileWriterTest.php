@@ -103,9 +103,10 @@ final class FileWriterTest extends TestCase
             ]),
         ]);
 
-        $this->writer->write($reflection, $type, [], true);
+        $type   = $this->writer->write($reflection, $type, [], true);
         $actual = file_get_contents($this->tempFile);
         self::assertSame($expected, $actual);
+        self::assertSame("T{$className}Array", $type);
     }
 
     public static function writeProvider(): array

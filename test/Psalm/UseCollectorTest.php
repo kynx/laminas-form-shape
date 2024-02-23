@@ -24,7 +24,7 @@ final class UseCollectorTest extends TestCase
         $union     = new Union([$type]);
         $collector = new UseCollector();
 
-        $union->visit($collector);
+        $collector->traverse($union);
         $actual = $collector->getUses();
         self::assertEquals($expected, $actual);
     }

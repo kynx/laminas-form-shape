@@ -17,7 +17,7 @@ use Psalm\Type\Atomic\TNamedObject;
 final class IsFqcnTypeTraitTest extends TestCase
 {
     #[DataProvider('isFqcnTypeProvider')]
-    public function testIsFqcnType(Atomic $type, bool $expected)
+    public function testIsFqcnType(Atomic $type, bool $expected): void
     {
         $trait  = new class {
             use IsFqcnTypeTrait;

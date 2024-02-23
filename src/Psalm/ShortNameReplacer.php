@@ -23,6 +23,9 @@ final class ShortNameReplacer extends MutableTypeVisitor
 {
     use IsFqcnTypeTrait;
 
+    /**
+     * @param array<string, string> $aliases
+     */
     public function __construct(private readonly array $aliases)
     {
     }
@@ -41,7 +44,7 @@ final class ShortNameReplacer extends MutableTypeVisitor
 
     private function getNamedObject(TNamedObject $type): TNamedObject
     {
-        $shortName = $this->aliases[$type->value] ?? substr($type->value, strrpos($type->value, '\\'));
+        $shortName = $this->aliases[$type->value] ?? substr($type->value, (int) strrpos($type->value, '\\'));
 
         return match ($type::class) {
             TGenericObject::class => new TGenericObject($shortName, $type->type_params),

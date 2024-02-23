@@ -14,7 +14,7 @@ use ReflectionClass;
  *      reflection:      ReflectionClass,
  *      type:            Union,
  *      imports:         array<ImportType>,
- *      replace-getdata: bool
+ *      remove-getdata: bool
  * }
  */
 final class MockWriter implements FileWriterInterface

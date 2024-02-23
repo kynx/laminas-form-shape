@@ -69,9 +69,13 @@ final readonly class RecursiveFormFileIterator implements RecursiveIterator
         return $this->iterator->hasChildren();
     }
 
-    public function getChildren(): ?RecursiveFormFileIterator
+    /**
+     * @psalm-suppress InvalidNullableReturnType Just don't understand why psalm chokes on this
+     */
+    public function getChildren(): ?self
     {
         if (! $this->iterator->hasChildren()) {
+            /** @psalm-suppress NullableReturnStatement Yes I _can_ return null!! */
             return null;
         }
 

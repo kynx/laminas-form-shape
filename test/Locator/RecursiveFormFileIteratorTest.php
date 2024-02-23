@@ -20,7 +20,7 @@ use ReflectionClass;
 #[CoversClass(RecursiveFormFileIterator::class)]
 final class RecursiveFormFileIteratorTest extends TestCase
 {
-    private PluginManagerInterface|MockObject $formElementManager;
+    private PluginManagerInterface&MockObject $formElementManager;
     private RecursiveArrayIterator $innerIterator;
     private RecursiveFormFileIterator $iterator;
 
@@ -85,6 +85,7 @@ final class RecursiveFormFileIteratorTest extends TestCase
     public function testGetChildrenReturnsNull(): void
     {
         $actual = $this->iterator->getChildren();
+        /** @psalm-suppress TypeDoesNotContainNull Well, it most certainly does */
         self::assertNull($actual);
     }
 

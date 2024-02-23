@@ -21,7 +21,6 @@ use Kynx\Laminas\FormShape\Form\FormProcessor;
 use Kynx\Laminas\FormShape\Form\FormProcessorFactory;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
-use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
