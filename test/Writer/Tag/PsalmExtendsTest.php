@@ -49,8 +49,8 @@ final class PsalmExtendsTest extends TestCase
     public static function matchProvider(): array
     {
         return [
-            'extends' => [new GenericTag('@extends Foo<Bar>'), true],
-            'psalm-type'             => [new GenericTag('@psalm-type TFoo = array<int>'), false],
+            'extends'    => [new GenericTag('@extends Foo<Bar>'), true],
+            'psalm-type' => [new GenericTag('@psalm-type TFoo = array<int>'), false],
         ];
     }
 }

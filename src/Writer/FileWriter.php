@@ -10,12 +10,11 @@ use Kynx\Laminas\FormShape\Psalm\ShortNameReplacer;
 use Kynx\Laminas\FormShape\Psalm\UseCollector;
 use Kynx\Laminas\FormShape\TypeNamerInterface;
 use Kynx\Laminas\FormShape\Writer\Tag\Method;
+use Kynx\Laminas\FormShape\Writer\Tag\PsalmExtends;
 use Kynx\Laminas\FormShape\Writer\Tag\PsalmImplements;
 use Kynx\Laminas\FormShape\Writer\Tag\PsalmImportType;
-use Kynx\Laminas\FormShape\Writer\Tag\PsalmExtends;
 use Kynx\Laminas\FormShape\Writer\Tag\PsalmType;
 use Kynx\Laminas\FormShape\Writer\Tag\ReturnType;
-use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
@@ -99,7 +98,7 @@ final readonly class FileWriter implements FileWriterInterface
         }
 
         if ($reflection->implementsInterface(FormInterface::class)) {
-            $tag = $reflection->getParentClass() === false
+            $tag           = $reflection->getParentClass() === false
                 ? new PsalmImplements('FormInterface', $typeName)
                 : new PsalmExtends($reflection->getParentClass()->getShortName(), $typeName);
             $classDocBlock = $classDocBlock->withTag($tag);

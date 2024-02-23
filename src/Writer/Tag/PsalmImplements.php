@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kynx\Laminas\FormShape\Writer\Tag;
 
 use function sprintf;
+use function str_starts_with;
 use function trim;
 
 final readonly class PsalmImplements implements TagInterface

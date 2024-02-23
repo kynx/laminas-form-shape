@@ -49,8 +49,8 @@ final class PsalmImplementsTest extends TestCase
     public static function matchProvider(): array
     {
         return [
-            'extends' => [new GenericTag('@implements Foo<Bar>'), true],
-            'psalm-type'             => [new GenericTag('@psalm-type TFoo = array<int>'), false],
+            'extends'    => [new GenericTag('@implements Foo<Bar>'), true],
+            'psalm-type' => [new GenericTag('@psalm-type TFoo = array<int>'), false],
         ];
     }
 }

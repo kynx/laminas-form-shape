@@ -88,7 +88,7 @@ final readonly class FormLocator implements FormLocatorInterface
     {
         /** @var ReflectionClass<FormInterface>|null $reflection */
         $reflection = $this->reflectionProvider->getReflection($path);
-        if ($reflection == null) {
+        if ($reflection === null) {
             return null;
         }
 
