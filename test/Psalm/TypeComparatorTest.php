@@ -241,6 +241,10 @@ final class TypeComparatorTest extends TestCase
                 new TFloat(),
                 new TLiteralFloat(1.23),
             ],
+            'literal float contained by literal float'                    => [
+                new TLiteralFloat(1.23),
+                new TLiteralFloat(4.56),
+            ],
             'int contained by literal float'                              => [
                 new TInt(),
                 new TLiteralFloat(1.23),
@@ -248,6 +252,10 @@ final class TypeComparatorTest extends TestCase
             'int contained by literal int'                                => [
                 new TInt(),
                 new TLiteralInt(123),
+            ],
+            'literal int contained by literal int'                        => [
+                new TLiteralInt(123),
+                new TLiteralInt(456),
             ],
             'string contained by literal string'                          => [
                 new TString(),
@@ -268,6 +276,10 @@ final class TypeComparatorTest extends TestCase
             'alpha literal string contained by numeric string'            => [
                 TypeUtil::getAtomicStringFromLiteral('abc'),
                 new TNumericString(),
+            ],
+            'zero literal string contained by literal string'             => [
+                TypeUtil::getAtomicStringFromLiteral('0'),
+                TypeUtil::getAtomicStringFromLiteral(' '),
             ],
             'string contained by non empty string'                        => [
                 new TString(),
