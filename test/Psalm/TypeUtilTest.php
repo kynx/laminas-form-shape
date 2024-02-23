@@ -259,7 +259,13 @@ final class TypeUtilTest extends TestCase
             ],
             'false'            => [
                 false,
-                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [
+                    TypeUtil::getAtomicStringFromLiteral(''),
+                    TypeUtil::getAtomicStringFromLiteral('0'),
+                    new TFalse(),
+                    new TEmptyNumeric(),
+                    new TNull(),
+                ],
             ],
             'true'             => [
                 true,
@@ -267,7 +273,13 @@ final class TypeUtilTest extends TestCase
             ],
             'zero float'       => [
                 0.0,
-                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [
+                    TypeUtil::getAtomicStringFromLiteral(''),
+                    TypeUtil::getAtomicStringFromLiteral('0'),
+                    new TFalse(),
+                    new TEmptyNumeric(),
+                    new TNull(),
+                ],
             ],
             'float'            => [
                 1.23,
@@ -279,7 +291,13 @@ final class TypeUtilTest extends TestCase
             ],
             'zero int'         => [
                 0,
-                [TypeUtil::getAtomicStringFromLiteral(''), new TFalse(), new TEmptyNumeric(), new TNull()],
+                [
+                    TypeUtil::getAtomicStringFromLiteral(''),
+                    TypeUtil::getAtomicStringFromLiteral('0'),
+                    new TFalse(),
+                    new TEmptyNumeric(),
+                    new TNull(),
+                ],
             ],
             'int'              => [
                 123,
