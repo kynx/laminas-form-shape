@@ -29,7 +29,7 @@ final class UseCollectorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function enterNodeProvider(): array
+    public static function enterNodeProvider(): array
     {
         return [
             'TTypeAlias'              => [new TTypeAlias(self::class, 'TFoo'), [self::class]],
