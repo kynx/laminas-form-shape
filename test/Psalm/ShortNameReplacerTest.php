@@ -22,7 +22,7 @@ final class ShortNameReplacerTest extends TestCase
     public function testEnterNodeReplacesType(Atomic $type, Atomic $expected): void
     {
         $expected = new Union([$expected]);
-        $actual = new Union([$type]);
+        $actual   = new Union([$type]);
         $replacer = new ShortNameReplacer([]);
 
         $replacer->traverse($actual);
@@ -32,25 +32,25 @@ final class ShortNameReplacerTest extends TestCase
     public static function enterNodeProvider(): array
     {
         return [
-            'TTypeAlias' => [
+            'TTypeAlias'     => [
                 new TTypeAlias(self::class, 'TFoo'),
-                new TNamedObject('TFoo')
+                new TNamedObject('TFoo'),
             ],
             'TGenericObject' => [
                 new TGenericObject(self::class, [new Union([new TInt()])]),
                 new TGenericObject('ShortNameReplacerTest', [new Union([new TInt()])]),
             ],
-            'TNamedObject' => [
+            'TNamedObject'   => [
                 new TNamedObject(self::class),
                 new TNamedObject('ShortNameReplacerTest'),
-            ]
+            ],
         ];
     }
 
     public function testEnterNodeReplacesAlias(): void
     {
         $expected = new Union([new TNamedObject('FooAlias')]);
-        $actual = new Union([new TNamedObject('Foo')]);
+        $actual   = new Union([new TNamedObject('Foo')]);
         $replacer = new ShortNameReplacer(['Foo' => 'FooAlias']);
 
         $replacer->traverse($actual);

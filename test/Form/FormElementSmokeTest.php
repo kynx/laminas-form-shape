@@ -66,7 +66,6 @@ final class FormElementSmokeTest extends TestCase
 
         /** @var ContainerInterface $container */
         $container   = include __DIR__ . '/../container.php';
-        /** @var InputFilterVisitorInterface $visitor */
         $visitor     = $container->get(InputFilterVisitorInterface::class);
         $inputFilter = $form->getInputFilter();
         $union       = $visitor->visit($inputFilter, new ImportTypes([]));

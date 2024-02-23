@@ -188,15 +188,15 @@ final class FormVisitorTest extends TestCase
 
     public function testVisitWithImportTypes(): void
     {
-        $typeAlias = new TTypeAlias(Fieldset::class, 'TFoo');
+        $typeAlias   = new TTypeAlias(Fieldset::class, 'TFoo');
         $unusedAlias = new TTypeAlias(self::class, 'TUnused');
-        $expected = new Union([
+        $expected    = new Union([
             new TKeyedArray([
-                'foo' => new Union([$typeAlias], ['possibly_undefined' => true])
-            ])
+                'foo' => new Union([$typeAlias], ['possibly_undefined' => true]),
+            ]),
         ], ['possibly_undefined' => true]);
 
-        $form = new Form();
+        $form     = new Form();
         $fieldset = new Fieldset('foo');
         $fieldset->add(new Text('bar'));
         $form->add($fieldset);
@@ -218,17 +218,17 @@ final class FormVisitorTest extends TestCase
     public function testVisitCollectionWithImportTypes(): void
     {
         $typeAlias = new TTypeAlias(Fieldset::class, 'TFoo');
-        $expected = new Union([
+        $expected  = new Union([
             new TKeyedArray([
                 'foo' => new Union([
-                    new TArray([Type::getArrayKey(), new Union([$typeAlias], ['possibly_undefined' => true])])
+                    new TArray([Type::getArrayKey(), new Union([$typeAlias], ['possibly_undefined' => true])]),
                 ], ['possibly_undefined' => true]),
-            ])
+            ]),
         ], ['possibly_undefined' => true]);
 
-        $form = new Form();
+        $form       = new Form();
         $collection = new Collection('foo');
-        $fieldset = new Fieldset();
+        $fieldset   = new Fieldset();
         $fieldset->add(new Text('bar'));
         $collection->setTargetElement($fieldset);
         $form->add($collection);

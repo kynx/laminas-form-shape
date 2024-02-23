@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Psalm;
 
-use Psalm\Type\Atomic\TAnonymousClassInstance;
-use Psalm\Type\Atomic\TClassConstant;
-use Psalm\Type\Atomic\TClosure;
-use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Atomic\TTypeAlias;
 use Psalm\Type\TypeNode;
 use Psalm\Type\TypeVisitor;

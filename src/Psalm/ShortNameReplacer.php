@@ -43,7 +43,7 @@ final class ShortNameReplacer extends MutableTypeVisitor
     {
         $shortName = $this->aliases[$type->value] ?? substr($type->value, strrpos($type->value, '\\'));
 
-        return match($type::class) {
+        return match ($type::class) {
             TGenericObject::class => new TGenericObject($shortName, $type->type_params),
             TNamedObject::class   => new TNamedObject($shortName)
         };

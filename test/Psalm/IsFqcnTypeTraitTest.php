@@ -19,7 +19,7 @@ final class IsFqcnTypeTraitTest extends TestCase
     #[DataProvider('isFqcnTypeProvider')]
     public function testIsFqcnType(Atomic $type, bool $expected)
     {
-        $trait = new class {
+        $trait  = new class {
             use IsFqcnTypeTrait;
 
             public function test(Atomic $type): bool
@@ -34,9 +34,9 @@ final class IsFqcnTypeTraitTest extends TestCase
     public static function isFqcnTypeProvider(): array
     {
         return [
-            'TClosure' => [new TClosure('callable'), false],
+            'TClosure'                => [new TClosure('callable'), false],
             'TAnonymousClassInstance' => [new TAnonymousClassInstance('new class {}'), false],
-            'TNamedObject' => [new TNamedObject(self::class), true],
+            'TNamedObject'            => [new TNamedObject(self::class), true],
         ];
     }
 }

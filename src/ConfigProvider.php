@@ -17,6 +17,8 @@ use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
 use Kynx\Laminas\FormShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormShape\Filter\ToNullVisitor;
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
+use Kynx\Laminas\FormShape\Form\FormProcessor;
+use Kynx\Laminas\FormShape\Form\FormProcessorFactory;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
 use Kynx\Laminas\FormShape\Form\FormVisitorInterface;
@@ -213,7 +215,6 @@ final readonly class ConfigProvider
             'aliases'   => [
                 DecoratorInterface::class          => PrettyPrinter::class,
                 FormLocatorInterface::class        => FormLocator::class,
-                FormVisitorInterface::class        => FormVisitor::class,
                 InputFilterVisitorInterface::class => InputFilterVisitor::class,
                 TypeNamerInterface::class          => TypeNamer::class,
             ],
@@ -224,6 +225,7 @@ final readonly class ConfigProvider
                 ExplodeVisitor::class         => ExplodeVisitorFactory::class,
                 FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
                 FormLocator::class            => FormLocatorFactory::class,
+                FormProcessor::class          => FormProcessorFactory::class,
                 PrettyPrinter::class          => PrettyPrinterFactory::class,
                 PsalmTypeCommand::class       => PsalmTypeCommandFactory::class,
                 FileWriter::class             => FileWriterFactory::class,

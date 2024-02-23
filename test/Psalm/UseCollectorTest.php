@@ -21,7 +21,7 @@ final class UseCollectorTest extends TestCase
     #[DataProvider('enterNodeProvider')]
     public function testEnterNode(Atomic $type, array $expected): void
     {
-        $union = new Union([$type]);
+        $union     = new Union([$type]);
         $collector = new UseCollector();
 
         $union->visit($collector);
@@ -32,10 +32,10 @@ final class UseCollectorTest extends TestCase
     public function enterNodeProvider(): array
     {
         return [
-            'TTypeAlias' => [new TTypeAlias(self::class, 'TFoo'), [self::class]],
-            'TClosure' => [new TClosure(), []],
+            'TTypeAlias'              => [new TTypeAlias(self::class, 'TFoo'), [self::class]],
+            'TClosure'                => [new TClosure(), []],
             'TAnonymousClassInstance' => [new TAnonymousClassInstance('class {}'), []],
-            'TNamedObject' => [new TNamedObject(self::class), [self::class]],
+            'TNamedObject'            => [new TNamedObject(self::class), [self::class]],
         ];
     }
 }
