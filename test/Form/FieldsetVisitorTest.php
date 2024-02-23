@@ -24,10 +24,10 @@ final class FieldsetVisitorTest extends TestCase
     {
         $expected        = new Union([
             new TKeyedArray([
-                'foo' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
-                'bar' => new Union([new TString(), new TNull()], ['possibly_undefined' => true]),
+                'foo' => new Union([new TString(), new TNull()]),
+                'bar' => new Union([new TString(), new TNull()]),
             ]),
-        ], ['possibly_undefined' => true]);
+        ]);
         $formVisitor     = new FormVisitor(new InputFilterVisitor([new InputVisitor([], [])]));
         $fieldsetVisitor = new FieldsetVisitor($formVisitor);
 

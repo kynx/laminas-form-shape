@@ -11,7 +11,6 @@ use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type;
-use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TString;
@@ -40,18 +39,6 @@ final class ArrayInputVisitorTest extends TestCase
         ]);
         $input    = new ArrayInput();
         $input->setRequired(true);
-
-        $actual = $this->visitor->visit($input);
-        self::assertEquals($expected, $actual);
-    }
-
-    public function testVisitReturnsPossiblyUndefined(): void
-    {
-        $expected = new Union([
-            new TArray([Type::getArrayKey(), new Union([new TString(), new TNull()])]),
-        ], ['possibly_undefined' => true]);
-        $input    = new ArrayInput();
-        $input->setRequired(false);
 
         $actual = $this->visitor->visit($input);
         self::assertEquals($expected, $actual);

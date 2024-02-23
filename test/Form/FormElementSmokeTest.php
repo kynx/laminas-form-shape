@@ -40,6 +40,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
+use function is_array;
+use function json_encode;
 use function sprintf;
 
 #[CoversNothing]
@@ -47,7 +49,7 @@ final class FormElementSmokeTest extends TestCase
 {
     /**
      * @param class-string<ElementInterface> $element
-     * @param list<list{scalar|null, bool}> $tests
+     * @param list<list{array|scalar|null, bool}> $tests
      */
     #[DataProvider('defaultElementProvider')]
     public function testDefaultElements(string $element, array $tests, string $expected): void
@@ -76,13 +78,13 @@ final class FormElementSmokeTest extends TestCase
 
         foreach ($tests as $expectation) {
             [$data, $valid] = $expectation;
-            $formData       = ['test' => $data];
+            $formData       = is_array($data) ? $data : ['test' => $data];
 
             $inputFilter->setData($formData);
             $actual = $inputFilter->isValid();
             self::assertSame($valid, $actual, sprintf(
                 "Validation expectation failed: %s is not %s",
-                $data === null ? 'null' : "'$data'",
+                $data === null ? 'null' : json_encode($data),
                 $valid ? 'valid' : 'invalid'
             ));
         }
@@ -97,22 +99,22 @@ final class FormElementSmokeTest extends TestCase
         return [
             'button'   => [
                 Button::class,
-                [[null, true], ['', true], [' ', false], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], [' ', false], ['a', true]],
+                'test: null|string',
             ],
             'captcha'  => [
                 Captcha::class,
-                [[null, false], ['', false], [' ', false], ['a', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['a', true]],
                 'test: non-empty-string',
             ],
             'checkbox' => [
                 Checkbox::class,
-                [[null, false], ['', false], [' ', false], ['0', true], ['1', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['0', true], ['1', true]],
                 "test: '0'|'1'",
             ],
             'color'    => [
                 Color::class,
-                [[null, false], ['', false], [' ', false], ['a', false], ['#ffffff', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['a', false], ['#ffffff', true]],
                 "test: non-empty-string",
             ],
 //            'csrf' => [
@@ -122,27 +124,27 @@ final class FormElementSmokeTest extends TestCase
 //            ],
             'date'           => [
                 Date::class,
-                [[null, false], ['', false], [' ', false], ['2024-01-28', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['2024-01-28', true]],
                 "test: non-empty-string",
             ],
             'dateselect'     => [
                 DateSelect::class,
-                [[null, true], ['', true], [' ', false], ['2024-01-28', true]],
-                "test?: null|string",
+                [[[], true], [null, true], ['', true], [' ', false], ['2024-01-28', true]],
+                "test: null|string",
             ],
             'datetimelocal'  => [
                 DateTimeLocal::class,
-                [[null, false], ['', false], [' ', false], ['2024-01-28T12:53', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['2024-01-28T12:53', true]],
                 "test: non-empty-string",
             ],
             'datetimeselect' => [
                 DateTimeLocal::class,
-                [[null, false], ['', false], [' ', false], ['2024-01-28T12:54', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['2024-01-28T12:54', true]],
                 "test: non-empty-string",
             ],
             'email'          => [
                 Email::class,
-                [[null, false], ['', false], [' ', false], ['foo@example.com', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['foo@example.com', true]],
                 'test: non-empty-string',
             ],
 //            'file' => [
@@ -152,87 +154,87 @@ final class FormElementSmokeTest extends TestCase
 //            ],
             'hidden'        => [
                 Hidden::class,
-                [[null, true], ['', true], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], ['a', true]],
+                'test: null|string',
             ],
             'image'         => [
                 Image::class,
-                [[null, true], ['', true], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], ['a', true]],
+                'test: null|string',
             ],
             'month'         => [
                 Month::class,
-                [[null, false], ['', false], [' ', false], ['2024-01', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['2024-01', true]],
                 "test: non-empty-string",
             ],
             'monthselect'   => [
                 MonthSelect::class,
-                [[null, true], ['', true], [' ', false], ['2024-01', true]],
-                "test?: null|string",
+                [[[], true], [null, true], ['', true], [' ', false], ['2024-01', true]],
+                "test: null|string",
             ],
             'multicheckbox' => [
                 MultiCheckbox::class,
-                [[null, false], ['', false], [' ', false]],
+                [[[], false], [null, false], ['', false], [' ', false]],
                 "test: non-empty-string", // no haystack by default
             ],
             'number'        => [
                 Number::class,
-                [[null, false], ['', false], [' ', false], ['a', false], ['123', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['a', false], ['123', true]],
                 "test: numeric-string",
             ],
             'password'      => [
                 Password::class,
-                [[null, true], ['', true], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], ['a', true]],
+                'test: null|string',
             ],
             'radio'         => [
                 Radio::class,
-                [[null, false], ['', false], [' ', false]],
+                [[[], false], [null, false], ['', false], [' ', false]],
                 "test: non-empty-string", // no haystack by default
             ],
             'range'         => [
                 Range::class,
-                [[null, false], ['', false], [' ', false], ['a', false], ['42', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['a', false], ['42', true]],
                 "test: numeric-string",
             ],
             'search'        => [
                 Search::class,
-                [[null, true], ['', true], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], ['a', true]],
+                'test: null|string',
             ],
             'select'        => [
                 Select::class,
-                [[null, false], ['', false], [' ', false]],
+                [[[], false], [null, false], ['', false], [' ', false]],
                 "test: non-empty-string", // no haystack by default
             ],
             'submit'        => [
                 Submit::class,
-                [[null, true], ['', true], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], ['a', true]],
+                'test: null|string',
             ],
             'tel'           => [
                 Tel::class,
-                [[null, false], ['', false], [' ', false], ['a', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['a', true]],
                 'test: non-empty-string',
             ],
             'text'          => [
                 Text::class,
-                [[null, true], ['', true], [' ', false], ['a', true]],
-                'test?: null|string',
+                [[[], true], [null, true], ['', true], [' ', false], ['a', true]],
+                'test: null|string',
             ],
             'time'          => [
                 Time::class,
-                [[null, false], ['', false], [' ', false], ['10:25:00', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['10:25:00', true]],
                 "test: non-empty-string",
             ],
             'url'           => [
                 Url::class,
-                [[null, false], ['', false], [' ', false], ['http://example.com', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['http://example.com', true]],
                 "test: non-empty-string",
             ],
             'week'          => [
                 Week::class,
-                [[null, false], ['', false], [' ', false], ['2024-W05', true]],
+                [[[], false], [null, false], ['', false], [' ', false], ['2024-W05', true]],
                 "test: non-empty-string",
             ],
         ];

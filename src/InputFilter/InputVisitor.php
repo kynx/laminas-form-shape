@@ -35,9 +35,8 @@ final readonly class InputVisitor implements InputVisitorInterface
 
     public function visit(InputInterface $input): Union
     {
-        $hasFallback       = $input instanceof Input && $input->hasFallback();
-        $possiblyUndefined = $hasFallback || ! $input->isRequired();
-        $union             = new Union([new TNull(), new TString()]);
+        $hasFallback = $input instanceof Input && $input->hasFallback();
+        $union       = new Union([new TNull(), new TString()]);
 
         foreach ($input->getFilterChain()->getIterator() as $filter) {
             if (! $filter instanceof FilterInterface) {
@@ -77,7 +76,7 @@ final readonly class InputVisitor implements InputVisitorInterface
             throw InputVisitorException::cannotGetInputType($input);
         }
 
-        return $union->setPossiblyUndefined($possiblyUndefined);
+        return $union;
     }
 
     private function visitFilters(FilterInterface $filter, Union $union): Union
