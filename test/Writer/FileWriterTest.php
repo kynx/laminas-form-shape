@@ -167,7 +167,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TNoClassDocBlockArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TNoClassDocBlockArray>
+                 * @extends Form<TNoClassDocBlockArray>
                  */
                 final class NoClassDocBlock extends Form
                 {
@@ -200,7 +200,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TNoClassDocBlockWithAttributeArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TNoClassDocBlockWithAttributeArray>
+                 * @extends Form<TNoClassDocBlockWithAttributeArray>
                  */
                 #[TestAttribute]
                 final class NoClassDocBlockWithAttribute extends Form
@@ -241,7 +241,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TExistingClassDocBlockArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TExistingClassDocBlockArray>
+                 * @extends Form<TExistingClassDocBlockArray>
                  */
                 final class ExistingClassDocBlock extends Form
                 {
@@ -282,7 +282,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TExistingClassDocBlockWithAttributeArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TExistingClassDocBlockWithAttributeArray>
+                 * @extends Form<TExistingClassDocBlockWithAttributeArray>
                  */
                 #[TestAttribute]
                 final class ExistingClassDocBlockWithAttribute extends Form
@@ -315,7 +315,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TGetDataNotOverriddenArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TGetDataNotOverriddenArray>
+                 * @extends Form<TGetDataNotOverriddenArray>
                  */
                 final class GetDataNotOverridden extends Form
                 {
@@ -355,7 +355,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TGetDataReturnTypeArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TGetDataReturnTypeArray>
+                 * @extends Form<TGetDataReturnTypeArray>
                  */
                 final class GetDataReturnType extends Form
                 {
@@ -395,7 +395,7 @@ final class FileWriterTest extends TestCase
                  * @psalm-type TGetDataMethodArray = array{
                  *     foo: int,
                  * }
-                 * @psalm-template-extends Form<TGetDataMethodArray>
+                 * @extends Form<TGetDataMethodArray>
                  */
                 final class GetDataMethod extends Form
                 {
