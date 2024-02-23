@@ -27,54 +27,71 @@ final class InArrayVisitorTest extends AbstractValidatorVisitorTestCase
         ConfigLoader::load();
 
         return [
-            'empty haystack' => [
+            'empty haystack'      => [
                 new InArray(['haystack' => []]),
                 [new TBool()],
                 [new TBool()],
             ],
-            'strict null'    => [
+            'strict null'         => [
                 new InArray(['haystack' => [null], 'strict' => true]),
                 [new TString(), new TNull()],
                 [new TNull()],
             ],
-            'loose null'     => [
+            'loose null'          => [
                 new InArray(['haystack' => [null], 'strict' => false]),
                 [new TString(), new TNull()],
                 [TypeUtil::getAtomicStringFromLiteral(''), new TNull()],
             ],
-            'literal string' => [
+            'literal string'      => [
                 new InArray(['haystack' => ['foo'], 'strict' => true]),
                 [new TString()],
                 [TypeUtil::getAtomicStringFromLiteral("foo")],
             ],
-            'loose string'
-                => [
-                    new InArray(['haystack' => ['foo'], 'strict' => false]),
-                    [new TString()],
-                    [TypeUtil::getAtomicStringFromLiteral('foo')],
-                ],
-            'strict int' => [
+            'loose string'        => [
+                new InArray(['haystack' => ['foo'], 'strict' => false]),
+                [new TString()],
+                [TypeUtil::getAtomicStringFromLiteral('foo')],
+            ],
+            'strict int'          => [
                 new InArray(['haystack' => [123], 'strict' => true]),
                 [new TInt(), new TString()],
                 [new TLiteralInt(123)],
             ],
-            'loose int'
-                => [
-                    new InArray(['haystack' => [123], 'strict' => false]),
-                    [new TInt(), new TString()],
-                    [new TLiteralInt(123), TypeUtil::getAtomicStringFromLiteral("123")],
-                ],
-            'strict float' => [
+            'loose int'           => [
+                new InArray(['haystack' => [123], 'strict' => false]),
+                [new TInt(), new TString()],
+                [new TLiteralInt(123), TypeUtil::getAtomicStringFromLiteral("123")],
+            ],
+            'strict float'        => [
                 new InArray(['haystack' => [1.23], 'strict' => true]),
                 [new TFloat()],
                 [new TLiteralFloat(1.23)],
             ],
-            'loose float'
-                => [
-                    new InArray(['haystack' => [1.23], 'strict' => false]),
-                    [new TFloat(), new TString()],
-                    [new TLiteralFloat(1.23), TypeUtil::getAtomicStringFromLiteral('1.23')],
+            'loose float'         => [
+                new InArray(['haystack' => [1.23], 'strict' => false]),
+                [new TFloat(), new TString()],
+                [new TLiteralFloat(1.23), TypeUtil::getAtomicStringFromLiteral('1.23')],
+            ],
+            'strict zero int'     => [
+                new InArray(['haystack' => [0, 2], 'strict' => true]),
+                [new TInt()],
+                [new TLiteralInt(0), new TLiteralInt(2)],
+            ],
+            'strict empty string' => [
+                new InArray(['haystack' => ['', 'b'], 'strict' => true]),
+                [new TString()],
+                [TypeUtil::getAtomicStringFromLiteral(''), TypeUtil::getAtomicStringFromLiteral('b')],
+            ],
+            'loose zero int'      => [
+                new InArray(['haystack' => [0, 2], 'strict' => false]),
+                [new TString(), new TNull()],
+                [
+                    TypeUtil::getAtomicStringFromLiteral(''),
+                    TypeUtil::getAtomicStringFromLiteral('0'),
+                    TypeUtil::getAtomicStringFromLiteral('2'),
+                    new TNull(),
                 ],
+            ],
         ];
     }
 
