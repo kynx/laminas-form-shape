@@ -125,6 +125,10 @@ final readonly class TypeComparator
             return false;
         }
 
+        if ($type instanceof TFloat && $container instanceof TLiteralFloat) {
+            return false;
+        }
+
         if ($type instanceof TInt && $container instanceof TInt) {
             return self::isContainedByInt($type, $container);
         }
@@ -171,6 +175,9 @@ final readonly class TypeComparator
     {
         if (! ($type instanceof TString && $container instanceof TString)) {
             return false;
+        }
+        if ($type instanceof TLiteralString && $container instanceof TLiteralString) {
+            return $type->value === $container->value;
         }
 
         if ($type::class === $container::class) {
