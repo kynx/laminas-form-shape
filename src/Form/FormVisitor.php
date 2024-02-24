@@ -13,6 +13,7 @@ use Laminas\Form\ElementInterface;
 use Laminas\Form\FieldsetInterface;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\CollectionInputFilter;
+use Laminas\InputFilter\InputFilter;
 use Laminas\InputFilter\InputFilterInterface;
 use Laminas\InputFilter\InputInterface;
 use Psalm\Type\Union;
@@ -88,29 +89,34 @@ final readonly class FormVisitor
         FieldsetInterface $fieldset,
         InputFilterInterface $inputFilter
     ): InputFilterInterface {
-        foreach ($fieldset->getFieldsets() as $childFieldset) {
-            $name = (string) $childFieldset->getName();
+        $newFilter = new InputFilter();
+
+        foreach ($fieldset->getIterator() as $elementOrFieldset) {
+            $name = (string) $elementOrFieldset->getName();
             if (! $inputFilter->has($name)) {
                 continue;
             }
 
             $inputOrFilter = $inputFilter->get($name);
-            if (! $inputOrFilter instanceof InputFilterInterface) {
+            if (! ($inputOrFilter instanceof InputFilterInterface && $elementOrFieldset instanceof FieldsetInterface)) {
+                $newFilter->add($inputOrFilter, $name);
                 continue;
             }
 
-            $childFilter = $this->convertCollectionFilters($childFieldset, $inputOrFilter);
-            if (! $childFieldset instanceof Collection || $childFilter instanceof CollectionInputFilter) {
+            $childFilter = $this->convertCollectionFilters($elementOrFieldset, $inputOrFilter);
+            if (! $elementOrFieldset instanceof Collection || $childFilter instanceof CollectionInputFilter) {
+                $newFilter->add($childFilter, $name);
                 continue;
             }
 
             if (! $childFilter->has(0)) {
+                $newFilter->add($childFilter, $name);
                 continue;
             }
 
             $target   = $childFilter->get(0);
-            $required = ! $childFieldset->allowRemove();
-            $count    = $required ? $childFieldset->getCount() : 0;
+            $required = ! $elementOrFieldset->allowRemove();
+            $count    = $required ? $elementOrFieldset->getCount() : 0;
 
             if ($target instanceof InputInterface) {
                 $inputOrFilter = CollectionInput::fromInput($target, $count, ! $required);
@@ -122,11 +128,11 @@ final readonly class FormVisitor
                 }
             }
 
-            $inputFilter->remove($name);
-            $inputFilter->add($inputOrFilter, $name);
+            $newFilter->add($inputOrFilter, $name);
         }
 
-        return $inputFilter;
+        $newFilter->setData($inputFilter->getRawValues());
+        return $newFilter;
     }
 
     /**
