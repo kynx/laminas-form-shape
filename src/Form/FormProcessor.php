@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Form;
 
+use Kynx\Laminas\FormShape\Attribute\PsalmTypeCustomised;
+use Kynx\Laminas\FormShape\Attribute\PsalmTypeIgnore;
 use Kynx\Laminas\FormShape\ExceptionInterface;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\Locator\FormFile;
@@ -17,7 +19,6 @@ use Psalm\Type\Atomic\TTypeAlias;
 use ReflectionClass;
 
 use function array_merge;
-use function count;
 use function sprintf;
 
 /**
@@ -55,8 +56,8 @@ final readonly class FormProcessor implements FormProcessorInterface
             $types = $this->processFieldsets($formFiles, $listener);
         }
 
-        $this->processForms($formFiles, $types, $listener, $removeGetDataReturn);
-        $listener->finally(count($formFiles));
+        $processed = $this->processForms($formFiles, $types, $listener, $removeGetDataReturn);
+        $listener->finally($processed);
     }
 
     /**
@@ -87,10 +88,12 @@ final readonly class FormProcessor implements FormProcessorInterface
         array $types,
         ProgressListenerInterface $listener,
         bool $removeGetDataReturn
-    ): void {
+    ): int {
+        $count = 0;
         foreach ($formFiles as $formFile) {
-            $this->processForm($formFile, $types, $listener, $removeGetDataReturn);
+            $count += $this->processForm($formFile, $types, $listener, $removeGetDataReturn);
         }
+        return $count;
     }
 
     /**
@@ -101,9 +104,13 @@ final readonly class FormProcessor implements FormProcessorInterface
         array $types,
         ProgressListenerInterface $listener,
         bool $removeGetDataReturn
-    ): void {
+    ): int {
         try {
             $union = $this->formVisitor->visit($formFile->form, $types);
+            if ($this->getCustomType($formFile->reflection) !== null) {
+                return 0;
+            }
+
             $this->fileWriter->write($formFile->reflection, $union, $types, $removeGetDataReturn);
             $listener->success($formFile->reflection);
         } catch (ExceptionInterface $e) {
@@ -112,8 +119,10 @@ final readonly class FormProcessor implements FormProcessorInterface
                 $formFile->reflection->getName(),
                 $e->getMessage()
             ));
-            return;
+            return 0;
         }
+
+        return 1;
     }
 
     /**
@@ -126,11 +135,18 @@ final readonly class FormProcessor implements FormProcessorInterface
         ProgressListenerInterface $listener
     ): array {
         $reflection = new ReflectionClass($fieldset);
+        if (! $this->canProcess($reflection)) {
+            return [];
+        }
 
         try {
             $union    = $this->fieldsetVisitor->visit($fieldset, $types);
-            $typeName = $this->fileWriter->write($reflection, $union, $types);
-            $listener->success($reflection);
+            $typeName = $this->getCustomType($reflection);
+
+            if ($typeName === null) {
+                $typeName = $this->fileWriter->write($reflection, $union, $types);
+                $listener->success($reflection);
+            }
         } catch (ExceptionInterface $e) {
             $listener->error(sprintf(
                 "Error processing %s: %s",
@@ -164,5 +180,21 @@ final readonly class FormProcessor implements FormProcessorInterface
         }
 
         return $fieldsets;
+    }
+
+    private function canProcess(ReflectionClass $reflection): bool
+    {
+        return $reflection->getAttributes(PsalmTypeIgnore::class) === [];
+    }
+
+    private function getCustomType(ReflectionClass $reflection): ?string
+    {
+        $attributes = $reflection->getAttributes(PsalmTypeCustomised::class);
+        if ($attributes === []) {
+            return null;
+        }
+
+        $attribute = $attributes[0]->newInstance();
+        return $attribute->psalmType;
     }
 }

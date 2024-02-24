@@ -13,6 +13,7 @@ use KynxTest\Laminas\FormShape\Form\Asset\InputFilterFieldset;
 use Laminas\Form\Element\Collection;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Text;
+use Laminas\Form\ElementInterface;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -262,5 +263,20 @@ final class FormVisitorTest extends TestCase
 
         $actual = array_keys($fooArray->properties);
         self::assertSame($expected, $actual);
+    }
+
+    public function testVisitPopulatesFormWithStrings(): void
+    {
+        $element = self::createMock(ElementInterface::class);
+        $element->method('getName')
+            ->willReturn('foo');
+        $element->method('setValue')
+            ->willReturnCallback(static function (mixed $value) {
+                self::assertSame('', $value);
+            });
+
+        $form = new Form();
+        $form->add($element);
+        $this->visitor->visit($form, []);
     }
 }

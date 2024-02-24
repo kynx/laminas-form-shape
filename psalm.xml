@@ -19,6 +19,7 @@
     <issueHandlers>
         <MissingTemplateParam>
             <errorLevel type="suppress">
+                <directory name="test/Form/Asset"/>
                 <directory name="test/Locator/Asset"/>
             </errorLevel>
         </MissingTemplateParam>

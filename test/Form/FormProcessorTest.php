@@ -15,6 +15,9 @@ use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Kynx\Laminas\FormShape\Locator\FormFile;
 use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
 use KynxTest\Laminas\FormShape\Form\Asset\ChildFieldset;
+use KynxTest\Laminas\FormShape\Form\Asset\CustomFieldset;
+use KynxTest\Laminas\FormShape\Form\Asset\CustomForm;
+use KynxTest\Laminas\FormShape\Form\Asset\IgnoredFieldset;
 use KynxTest\Laminas\FormShape\Form\Asset\TestFieldset;
 use KynxTest\Laminas\FormShape\Writer\MockWriter;
 use Laminas\Form\Element\Collection;
@@ -285,5 +288,55 @@ final class FormProcessorTest extends TestCase
         self::assertCount(1, $this->fileWriter->written);
         $written = $this->fileWriter->written[0];
         self::assertFalse($written['remove-getdata']);
+    }
+
+    public function testProcessDoesNotWriteCustomisedForm(): void
+    {
+        $form = new CustomForm();
+        $form->add(new Text('bar'));
+
+        $reflection = new ReflectionClass($form);
+        $this->formLocator->method('locate')
+            ->willReturn([new FormFile($reflection, $form)]);
+
+        $this->processor->process(['foo'], $this->listener, true, false);
+        self::assertCount(0, $this->fileWriter->written);
+    }
+
+    public function testProcessDoesNotProcessIgnoredFieldset(): void
+    {
+        $form     = new Form();
+        $fieldset = new IgnoredFieldset('foo');
+        $fieldset->add(new Text('bar'));
+        $form->add($fieldset);
+
+        $reflection = new ReflectionClass($form);
+        $this->formLocator->method('locate')
+            ->willReturn([new FormFile($reflection, $form)]);
+
+        $this->processor->process(['foo'], $this->listener);
+        self::assertCount(1, $this->fileWriter->written);
+    }
+
+    public function testProcessUsesCustomType(): void
+    {
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TTypeAlias(CustomFieldset::class, 'TCustomType')]),
+            ]),
+        ]);
+        $form     = new Form();
+        $fieldset = new CustomFieldset('foo');
+        $fieldset->add(new Text('bar'));
+        $form->add($fieldset);
+
+        $reflection = new ReflectionClass($form);
+        $this->formLocator->method('locate')
+            ->willReturn([new FormFile($reflection, $form)]);
+
+        $this->processor->process(['foo'], $this->listener);
+        self::assertCount(1, $this->fileWriter->written);
+        $written = $this->fileWriter->written[0];
+        self::assertEquals($expected, $written['type']);
     }
 }
