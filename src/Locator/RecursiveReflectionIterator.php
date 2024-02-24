@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Locator;
 
+use Kynx\Laminas\FormShape\Attribute\PsalmTypeIgnore;
 use RecursiveIterator;
 use ReflectionClass;
 use SplFileInfo;
@@ -31,15 +32,20 @@ final class RecursiveReflectionIterator implements RecursiveIterator
 
     public function current(): ?ReflectionClass
     {
-        $current = $this->iterator->current();
+        $current    = $this->iterator->current();
+        $reflection = null;
         if ($current instanceof SplFileInfo) {
-            return $this->reflectionProvider->getReflection($current->getPathname());
+            $reflection = $this->reflectionProvider->getReflection($current->getPathname());
         }
         if (is_string($current)) {
-            return $this->reflectionProvider->getReflection($current);
+            $reflection = $this->reflectionProvider->getReflection($current);
         }
 
-        return null;
+        if ($reflection !== null && $reflection->getAttributes(PsalmTypeIgnore::class) !== []) {
+            return null;
+        }
+
+        return $reflection;
     }
 
     public function next(): void
