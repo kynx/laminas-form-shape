@@ -34,6 +34,21 @@ final class DocBlockTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    public function testToStringPreservesLeadingWhitespace(): void
+    {
+        $expected = <<<DOCBLOCK
+        /**
+         * @psalm-type TMultiLineType = array{
+         *     id:   string,
+         *     name: string|null,
+         * }
+         */
+        DOCBLOCK;
+
+        $actual = (string) DocBlock::fromDocComment($expected);
+        self::assertSame($expected, $actual);
+    }
+
     public function testWithTagAddsToEmptyDocBlock(): void
     {
         $expected = <<<DOCBLOCK
