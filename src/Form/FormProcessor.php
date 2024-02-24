@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Form;
 
+use Kynx\Laminas\FormShape\ExceptionInterface;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
-use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Kynx\Laminas\FormShape\Locator\FormFile;
 use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
 use Kynx\Laminas\FormShape\Writer\FileWriterInterface;
@@ -104,17 +104,16 @@ final readonly class FormProcessor implements FormProcessorInterface
     ): void {
         try {
             $union = $this->formVisitor->visit($formFile->form, $types);
-        } catch (InputVisitorException $e) {
+            $this->fileWriter->write($formFile->reflection, $union, $types, $removeGetDataReturn);
+            $listener->success($formFile->reflection);
+        } catch (ExceptionInterface $e) {
             $listener->error(sprintf(
-                "Error processing %s: %s ",
-                $formFile->reflection->getFileName(),
+                "Error processing %s: %s",
+                $formFile->reflection->getName(),
                 $e->getMessage()
             ));
             return;
         }
-
-        $this->fileWriter->write($formFile->reflection, $union, $types, $removeGetDataReturn);
-        $listener->success($formFile->reflection);
     }
 
     /**
@@ -127,9 +126,19 @@ final readonly class FormProcessor implements FormProcessorInterface
         ProgressListenerInterface $listener
     ): array {
         $reflection = new ReflectionClass($fieldset);
-        $union      = $this->fieldsetVisitor->visit($fieldset, $types);
-        $typeName   = $this->fileWriter->write($reflection, $union, $types);
-        $listener->success($reflection);
+
+        try {
+            $union    = $this->fieldsetVisitor->visit($fieldset, $types);
+            $typeName = $this->fileWriter->write($reflection, $union, $types);
+            $listener->success($reflection);
+        } catch (ExceptionInterface $e) {
+            $listener->error(sprintf(
+                "Error processing %s: %s",
+                $reflection->getName(),
+                $e->getMessage()
+            ));
+            return [];
+        }
 
         $types[$fieldset::class] = new ImportType(new TTypeAlias($reflection->getName(), $typeName), $union);
         return $types;

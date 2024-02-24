@@ -10,6 +10,8 @@ use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
+use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Kynx\Laminas\FormShape\Locator\FormFile;
 use Kynx\Laminas\FormShape\Locator\FormLocatorInterface;
 use KynxTest\Laminas\FormShape\Form\Asset\ChildFieldset;
@@ -19,6 +21,7 @@ use Laminas\Form\Element\Collection;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
+use Laminas\InputFilter\Input;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
@@ -61,6 +64,48 @@ final class FormProcessorTest extends TestCase
             ->willReturn([]);
         $this->processor->process(['foo'], $this->listener);
         self::assertSame(0, $this->listener->processed);
+    }
+
+    public function testProcessContinuesAfterError(): void
+    {
+        $errors = [
+            "Error processing " . TestFieldset::class . ": Cannot get type for 'bar'",
+            "Error processing " . Form::class . ": Cannot get type for 'bar'",
+        ];
+
+        $first    = new Form();
+        $fieldset = new TestFieldset('foo');
+        $fieldset->add(new Text('bar'));
+        $first->add($fieldset);
+
+        $second = new Form();
+        $second->add(new Text('foo'));
+
+        $this->formLocator->method('locate')
+            ->willReturn([
+                new FormFile(new ReflectionClass($first), $first),
+                new FormFile(new ReflectionClass($second), $second),
+            ]);
+
+        $inputVisitor = self::createStub(InputVisitorInterface::class);
+        $inputVisitor->method('visit')
+            ->willReturnCallback(static function (Input $input): Union {
+                if ($input->getName() === 'bar') {
+                    throw InputVisitorException::cannotGetInputType($input);
+                }
+                return new Union([new TString()]);
+            });
+
+        $processor = new FormProcessor(
+            $this->formLocator,
+            new FormVisitor(new InputFilterVisitor([$inputVisitor])),
+            $this->fileWriter
+        );
+
+        $processor->process(['foo'], $this->listener);
+
+        self::assertSame($errors, $this->listener->errors);
+        self::assertCount(1, $this->listener->success);
     }
 
     public function testProcessFieldsetWritesAndAddsType(): void
