@@ -9,8 +9,10 @@ use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
+use KynxTest\Laminas\FormShape\Form\Asset\InputFilterFieldset;
 use Laminas\Form\Element\Collection;
 use Laminas\Form\Element\Email;
+use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
@@ -241,5 +243,22 @@ final class FormVisitorTest extends TestCase
 
         $actual = $this->visitor->visit($form, [Fieldset::class => $importType]);
         self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitPreservesInputOrderWhenInputIsRequired(): void
+    {
+        $expected = ['first', 'second'];
+
+        $form = new Form();
+        $form->add(new InputFilterFieldset('foo'));
+
+        $formArray = $this->visitor->visit($form, [])->getSingleAtomic();
+        self::assertInstanceOf(TKeyedArray::class, $formArray);
+        $foo = $formArray->properties['foo'] ?? null;
+        $fooArray = $foo->getSingleAtomic();
+        self::assertInstanceOf(TKeyedArray::class, $fooArray);
+
+        $actual = array_keys($fooArray->properties);
+        self::assertSame($expected, $actual);
     }
 }
