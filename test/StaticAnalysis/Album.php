@@ -9,8 +9,17 @@ use Laminas\Form\Element\Number;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
-final class Album extends Fieldset
+/**
+ * @psalm-type TAlbumData = array{
+ *     id:     null|string,
+ *     title:  non-empty-string,
+ *     genre:  '1'|'2'|'3',
+ *     rating: numeric-string,
+ * }
+ */
+final class Album extends Fieldset implements InputFilterProviderInterface
 {
     /**
      * @param int|null|string $name
@@ -21,7 +30,20 @@ final class Album extends Fieldset
 
         $this->add(new Hidden('id'));
         $this->add(new Text('title'));
-        $this->add(new Select('genre', ['value_options' => [1 => 'Punk', 2 => 'Shlock']]));
-        $this->add(new Number('chart_position', ['min' => 1, 'max' => 100]));
+        $this->add(new Select('genre', ['value_options' => [1 => 'Good', 2 => 'Bad', 3 => "Ugly"]]));
+        $this->add(new Number('rating', ['min' => 1, 'max' => 10]));
+    }
+
+    public function getInputFilterSpecification(): array
+    {
+        return [
+            'id'    => [
+                'required'    => true,
+                'allow_empty' => true,
+            ],
+            'title' => [
+                'required' => true,
+            ],
+        ];
     }
 }

@@ -9,6 +9,15 @@ use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 
+/**
+ * @psalm-import-type TAlbumData from Album
+ * @psalm-type TArtistData = array{
+ *     id:     null|string,
+ *     name:   null|string,
+ *     albums: array<array-key, mixed>,
+ * }
+ * @extends Form<TArtistData>
+ */
 final class Artist extends Form
 {
     /**
