@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\Writer;
 
-use Kynx\Laminas\FormShape\Writer\CodeGeneratorInterface;
-use Kynx\Laminas\FormShape\Writer\FileWriterFactory;
+use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
+use Kynx\Laminas\FormShape\DecoratorInterface;
+use Kynx\Laminas\FormShape\Psalm\TypeNamer;
+use Kynx\Laminas\FormShape\TypeNamerInterface;
+use Kynx\Laminas\FormShape\Writer\NetteCodeGeneratorFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type\Atomic\TInt;
@@ -13,24 +16,20 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
 
-use function file_get_contents;
-
-#[CoversClass(FileWriterFactory::class)]
-final class FileWriterFactoryTest extends TestCase
+#[CoversClass(NetteCodeGeneratorFactory::class)]
+final class NetteCodeGeneratorFactoryTest extends TestCase
 {
     use GetReflectionTrait;
 
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->setUpTempFile();
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
-
         $this->tearDownTempFile();
     }
 
@@ -39,13 +38,14 @@ final class FileWriterFactoryTest extends TestCase
         $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
-                [CodeGeneratorInterface::class, new MockCodeGenerator()],
+                [TypeNamerInterface::class, new TypeNamer('T{shortName}Array')],
+                [DecoratorInterface::class, new PrettyPrinter()],
             ]);
 
-        $factory  = new FileWriterFactory();
+        $factory  = new NetteCodeGeneratorFactory();
         $instance = $factory($container);
 
-        $expected   = 'TFoo';
+        $expected   = '@psalm-type TCodeGeneratorFactoryTestArray';
         $original   = <<<ORIGINAL
         <?php
 
@@ -53,20 +53,18 @@ final class FileWriterFactoryTest extends TestCase
 
         use Laminas\Form\Fieldset;
 
-        final class WriterFactoryTest extends Fieldset
+        final class CodeGeneratorFactoryTest extends Fieldset
         {
         }
         ORIGINAL;
-        $reflection = $this->getReflection('WriterFactoryTest', $original);
+        $reflection = $this->getReflection('CodeGeneratorFactoryTest', $original);
         $type       = new Union([
             new TKeyedArray([
                 'foo' => new Union([new TInt()]),
             ]),
         ]);
 
-        $actual   = $instance->write($reflection, $type, []);
-        $contents = file_get_contents($this->tempFile);
-        self::assertStringContainsString('// EDITED', $contents);
-        self::assertSame($expected, $actual);
+        $generated = $instance->generate($reflection, $type, [], $original);
+        self::assertStringContainsString($expected, $generated->contents);
     }
 }
