@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Command;
 
 use Kynx\Laminas\FormShape\Command\ProgressListener;
+use KynxTest\Laminas\FormShape\CodingStandards\MockFixer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,7 @@ use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\StyleInterface;
 
+use function strlen;
 use function strrpos;
 use function substr;
 
@@ -19,15 +21,17 @@ use function substr;
 final class ProgressListenerTest extends TestCase
 {
     private StyleInterface&MockObject $style;
+    private string $cwd;
     private ProgressListener $listener;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->style    = self::createMock(StyleInterface::class);
-        $cwd            = substr(__DIR__, 0, (int) strrpos(__DIR__, '/test/Command'));
-        $this->listener = new ProgressListener($this->style, $cwd, ['test']);
+        $this->style = self::createMock(StyleInterface::class);
+        $this->cwd   = substr(__DIR__, 0, (int) strrpos(__DIR__, '/test/Command'));
+
+        $this->listener = new ProgressListener($this->style, null, $this->cwd, ['test']);
     }
 
     public function testErrorOutputsError(): void
@@ -48,6 +52,15 @@ final class ProgressListenerTest extends TestCase
             ->with($expected);
         $this->listener->success(new ReflectionClass($this));
         self::assertSame(Command::SUCCESS, $this->listener->getStatus());
+    }
+
+    public function testSuccessAddsFileToFixer(): void
+    {
+        $expected = substr(__FILE__, strlen($this->cwd) + 1);
+        $fixer    = new MockFixer();
+        $listener = new ProgressListener($this->style, $fixer, $this->cwd, ['test']);
+        $listener->success(new ReflectionClass($this));
+        self::assertSame([$expected], $fixer->paths);
     }
 
     public function testFinallyNoneProcessedOutputsError(): void

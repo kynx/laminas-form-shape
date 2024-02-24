@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Command;
 
+use Kynx\Laminas\FormShape\CodingStandards\FixerInterface;
 use Kynx\Laminas\FormShape\Form\ProgressListenerInterface;
 use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
@@ -23,6 +24,7 @@ final class ProgressListener implements ProgressListenerInterface
      */
     public function __construct(
         private readonly StyleInterface $io,
+        private readonly ?FixerInterface $fixer,
         private readonly string $cwd,
         private readonly array $paths
     ) {
@@ -38,6 +40,10 @@ final class ProgressListener implements ProgressListenerInterface
     {
         $path = substr($reflection->getFileName(), strlen($this->cwd) + 1);
         $this->io->text("Processed $path");
+
+        if ($this->fixer !== null) {
+            $this->fixer->addFile($path);
+        }
     }
 
     public function finally(int $processed): void

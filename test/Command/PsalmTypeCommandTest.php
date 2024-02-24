@@ -7,6 +7,7 @@ namespace KynxTest\Laminas\FormShape\Command;
 use Kynx\Laminas\FormShape\Command\ProgressListener;
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
 use Kynx\Laminas\FormShape\Form\FormProcessorInterface;
+use KynxTest\Laminas\FormShape\CodingStandards\MockFixer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 final class PsalmTypeCommandTest extends TestCase
 {
     private FormProcessorInterface&MockObject $formProcessor;
+    private MockFixer $fixer;
     private CommandTester $commandTester;
 
     protected function setUp(): void
@@ -24,8 +26,9 @@ final class PsalmTypeCommandTest extends TestCase
         parent::setUp();
 
         $this->formProcessor = self::createMock(FormProcessorInterface::class);
+        $this->fixer         = new MockFixer();
 
-        $command             = new PsalmTypeCommand($this->formProcessor);
+        $command             = new PsalmTypeCommand($this->formProcessor, $this->fixer);
         $this->commandTester = new CommandTester($command);
     }
 
@@ -67,6 +70,16 @@ final class PsalmTypeCommandTest extends TestCase
         ]);
 
         self::assertSame(Command::SUCCESS, $actual);
+    }
+
+    public function testExecuteRunsCsFixer(): void
+    {
+        $this->commandTester->execute([
+            '--cs-fix' => true,
+            'path'     => 'src',
+        ]);
+
+        self::assertTrue($this->fixer->fixed);
     }
 
     public function testExecuteReturnsListenerStatus(): void
