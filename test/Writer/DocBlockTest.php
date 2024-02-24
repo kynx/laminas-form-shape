@@ -49,6 +49,27 @@ final class DocBlockTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    public function testToStringPerservesBadlyFormattedDockBlock(): void
+    {
+        $original = <<<DOCBLOCK
+        /**
+         *No leading space
+          Missing asterix
+         *
+         */
+        DOCBLOCK;
+        $expected = <<<DOCBLOCK
+        /**
+         * No leading space
+         * Missing asterix
+         * 
+         */
+        DOCBLOCK;
+
+        $actual = (string) DocBlock::fromDocComment($original);
+        self::assertSame($expected, $actual);
+    }
+
     public function testWithTagAddsToEmptyDocBlock(): void
     {
         $expected = <<<DOCBLOCK
