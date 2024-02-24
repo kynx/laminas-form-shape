@@ -26,6 +26,7 @@
         <UnusedClass>
             <errorLevel type="suppress">
                 <directory name="test/Locator/Asset"/>
+                <directory name="test/StaticAnalysis"/>
             </errorLevel>
         </UnusedClass>
     </issueHandlers>
