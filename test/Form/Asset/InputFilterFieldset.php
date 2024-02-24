@@ -10,6 +10,9 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 
 final class InputFilterFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    /**
+     * @param string|null $name
+     */
     public function __construct($name = null, array $options = [])
     {
         parent::__construct($name, $options);

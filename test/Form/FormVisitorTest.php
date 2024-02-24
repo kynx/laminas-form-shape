@@ -12,7 +12,6 @@ use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use KynxTest\Laminas\FormShape\Form\Asset\InputFilterFieldset;
 use Laminas\Form\Element\Collection;
 use Laminas\Form\Element\Email;
-use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
@@ -27,6 +26,8 @@ use Psalm\Type\Atomic\TNull;
 use Psalm\Type\Atomic\TString;
 use Psalm\Type\Atomic\TTypeAlias;
 use Psalm\Type\Union;
+
+use function array_keys;
 
 #[CoversClass(FormVisitor::class)]
 final class FormVisitorTest extends TestCase
@@ -255,6 +256,7 @@ final class FormVisitorTest extends TestCase
         $formArray = $this->visitor->visit($form, [])->getSingleAtomic();
         self::assertInstanceOf(TKeyedArray::class, $formArray);
         $foo = $formArray->properties['foo'] ?? null;
+        self::assertInstanceOf(Union::class, $foo);
         $fooArray = $foo->getSingleAtomic();
         self::assertInstanceOf(TKeyedArray::class, $fooArray);
 
