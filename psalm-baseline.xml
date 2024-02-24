@@ -213,7 +213,7 @@
       <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
-  <file src="test/Writer/FileWriterTest.php">
+  <file src="test/Writer/NetteCodeGeneratorTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[importTypesProvider]]></code>
       <code><![CDATA[writeProvider]]></code>

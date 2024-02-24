@@ -11,9 +11,9 @@ use Throwable;
 
 use function sprintf;
 
-final class WriterException extends RuntimeException implements ExceptionInterface
+final class CodeGeneratorException extends RuntimeException implements ExceptionInterface
 {
-    public static function fileRead(ReflectionClass $reflection, Throwable $throwable): self
+    public static function cannotParse(ReflectionClass $reflection, Throwable $throwable): self
     {
         return new self(
             sprintf("Could not parse %s: %s", $reflection->getFileName(), $throwable->getMessage()),
