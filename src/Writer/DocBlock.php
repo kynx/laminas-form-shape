@@ -15,9 +15,9 @@ use function array_values;
 use function count;
 use function explode;
 use function implode;
+use function preg_replace;
+use function rtrim;
 use function str_starts_with;
-use function strpos;
-use function substr;
 use function trim;
 
 use const PHP_EOL;
@@ -50,7 +50,7 @@ final readonly class DocBlock implements Stringable
         $sections = $section = [];
         $inTag    = false;
         foreach (array_slice($lines, 1, -1) as $line) {
-            $line = trim(substr($line, (int) strpos($line, '*') + 1));
+            $line = rtrim(preg_replace('/^\s*\*? ?/', '', $line));
             if ($inTag && self::isEndOfTag($line)) {
                 $sections[] = new GenericTag(implode("\n", $section));
                 $section    = [];
@@ -146,12 +146,12 @@ final readonly class DocBlock implements Stringable
 
     private static function isStartOfTag(string $line): bool
     {
-        return str_starts_with($line, '@');
+        return str_starts_with(trim($line), '@');
     }
 
     private static function isEndOfTag(string $line): bool
     {
-        return $line === '' || self::isStartOfTag($line);
+        return trim($line) === '' || self::isStartOfTag($line);
     }
 
     private function formatSections(): string
