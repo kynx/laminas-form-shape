@@ -59,7 +59,7 @@ final readonly class FormVisitor
 
         $data = [];
         foreach ($elementOrFieldset->getElements() as $element) {
-            $data[(string) $element->getName()] = null;
+            $data[(string) $element->getName()] = '';
         }
 
         foreach ($elementOrFieldset->getFieldsets() as $childFieldset) {
@@ -69,10 +69,12 @@ final readonly class FormVisitor
                     continue;
                 }
 
-                $count = $childFieldset->getCount() ?: 1;
+                $count     = $childFieldset->getCount() ?: 1;
+                $childData = [];
                 for ($i = 0; $i < $count; $i++) {
-                    $data[(string) $childFieldset->getName()][$i] = $this->createData($targetElement);
+                    $childData[$i] = $this->createData($targetElement);
                 }
+                $data[(string) $childFieldset->getName()] = $childData;
                 continue;
             }
 
