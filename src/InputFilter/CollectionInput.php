@@ -27,23 +27,18 @@ use function is_array;
  */
 final readonly class CollectionInput implements InputInterface, EmptyContextInterface
 {
-    private function __construct(private InputInterface $delegate, private int $count, private bool $possiblyUndefined)
+    private function __construct(private InputInterface $delegate, private int $count)
     {
     }
 
-    public static function fromInput(InputInterface $input, int $count, bool $possiblyUndefined): self
+    public static function fromInput(InputInterface $input, int $count): self
     {
-        return new self($input, $count, $possiblyUndefined);
+        return new self($input, $count);
     }
 
     public function getCount(): int
     {
         return $this->count;
-    }
-
-    public function isPossiblyUndefined(): bool
-    {
-        return $this->possiblyUndefined;
     }
 
     /**

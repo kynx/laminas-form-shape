@@ -18,9 +18,8 @@ final class CollectionInputTest extends TestCase
 {
     public function testFromInputSetsProperties(): void
     {
-        $actual = CollectionInput::fromInput(new Input(), 42, false);
+        $actual = CollectionInput::fromInput(new Input(), 42);
         self::assertSame(42, $actual->getCount());
-        self::assertSame(false, $actual->isPossiblyUndefined());
     }
 
     public function testFromInputDelegatesProperties(): void
@@ -34,7 +33,7 @@ final class CollectionInputTest extends TestCase
             ->setFilterChain((new FilterChain())->attach(new ToInt()))
             ->setValidatorChain((new ValidatorChain())->attach(new NotEmpty()));
 
-        $actual = CollectionInput::fromInput($input, 0, true);
+        $actual = CollectionInput::fromInput($input, 0);
 
         self::assertSame($input->getName(), $actual->getName());
         self::assertSame($input->isRequired(), $actual->isRequired());
@@ -47,7 +46,7 @@ final class CollectionInputTest extends TestCase
 
     public function testIsValidDelegates(): void
     {
-        $input = CollectionInput::fromInput((new Input())->setRequired(true), 0, true);
+        $input = CollectionInput::fromInput((new Input())->setRequired(true), 0);
         $input->setValue([]);
 
         $actual = $input->isValid();

@@ -121,7 +121,9 @@ final readonly class FormVisitor
                 assert($collectionFilter instanceof BaseInputFilter);
 
                 $childFilter = new CollectionInputFilter();
-                $childFilter->setInputFilter($collectionFilter);
+                $childFilter->setIsRequired($inputOrFilter->getIsRequired())
+                    ->setCount($inputOrFilter->getCount())
+                    ->setInputFilter($collectionFilter);
             } else {
                 $childFilter = $this->convertCollectionFilters($elementOrFieldset, $inputOrFilter);
             }
@@ -141,7 +143,7 @@ final readonly class FormVisitor
             $count    = $required ? $elementOrFieldset->getCount() : 0;
 
             if ($target instanceof InputInterface) {
-                $inputOrFilter = CollectionInput::fromInput($target, $count, ! $required);
+                $inputOrFilter = CollectionInput::fromInput($target, $count);
             } else {
                 $inputOrFilter = new CollectionInputFilter();
                 $inputOrFilter->setIsRequired($required);

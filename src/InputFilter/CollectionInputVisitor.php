@@ -28,6 +28,6 @@ final readonly class CollectionInputVisitor implements InputVisitorInterface
             ? new TNonEmptyArray([Type::getArrayKey(), new Union($union->getAtomicTypes())])
             : new TArray([Type::getArrayKey(), new Union($union->getAtomicTypes())]);
 
-        return new Union([$array], ['possibly_undefined' => $input->isPossiblyUndefined()]);
+        return new Union([$array]);
     }
 }

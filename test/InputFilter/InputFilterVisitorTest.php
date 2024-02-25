@@ -92,20 +92,23 @@ final class InputFilterVisitorTest extends TestCase
 
     public function testVisitNestedCollectionReturnsDefinedUnion(): void
     {
-        $expected = new Union([
+        $expected              = new Union([
             new TKeyedArray([
                 'foo' => new Union([
-                    new TArray([Type::getArrayKey(), new Union([
-                        new TKeyedArray([
-                            'bar' => new Union([new TString(), new TNull()]),
+                    new TArray([
+                        Type::getArrayKey(),
+                        new Union([
+                            new TKeyedArray([
+                                'bar' => new Union([new TString(), new TNull()]),
+                            ]),
                         ]),
-                    ])]),
+                    ]),
                 ]),
             ]),
         ]);
-        $inputFilter = new InputFilter();
+        $inputFilter           = new InputFilter();
         $collectionInputFilter = new CollectionInputFilter();
-        $collectionFilter = new InputFilter();
+        $collectionFilter      = new InputFilter();
         $collectionFilter->add(new Input('bar'));
         $collectionInputFilter->setInputFilter($collectionFilter);
         $inputFilter->add($collectionInputFilter, 'foo');

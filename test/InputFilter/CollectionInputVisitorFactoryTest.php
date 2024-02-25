@@ -26,7 +26,7 @@ final class CollectionInputVisitorFactoryTest extends TestCase
 
         $factory  = new CollectionInputVisitorFactory();
         $instance = $factory($container);
-        $input    = CollectionInput::fromInput(new Input(), 0, true);
+        $input    = CollectionInput::fromInput(new Input(), 0);
 
         $union = $instance->visit($input);
         self::assertNotNull($union);

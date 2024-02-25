@@ -20,7 +20,7 @@ final readonly class ArrayInputVisitor implements InputVisitorInterface
 
     public function visit(InputInterface $input): ?Union
     {
-        if (! $input instanceof ArrayInput) {
+        if (! ($input instanceof ArrayInput || $input instanceof CollectionInput)) {
             return null;
         }
 
