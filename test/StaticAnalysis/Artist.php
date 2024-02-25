@@ -12,9 +12,9 @@ use Laminas\Form\Form;
 /**
  * @psalm-import-type TAlbumData from Album
  * @psalm-type TArtistData = array{
- *     id:      null|string,
- *     name:    null|string,
- *     albums:  array<array-key, TAlbumData>,
+ *     id:     null|string,
+ *     name:   null|string,
+ *     albums: array<array-key, TAlbumData>,
  * }
  * @extends Form<TArtistData>
  */
