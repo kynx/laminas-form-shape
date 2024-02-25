@@ -71,7 +71,7 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
             return new Union([new TNonEmptyArray([Type::getArrayKey(), $collection])]);
         }
 
-        return new Union([new TArray([Type::getArrayKey(), $collection])], ['possibly_undefined' => true]);
+        return new Union([new TArray([Type::getArrayKey(), $collection])]);
     }
 
     private function visitInput(InputInterface $input): Union

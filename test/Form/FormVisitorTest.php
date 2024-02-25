@@ -72,7 +72,7 @@ final class FormVisitorTest extends TestCase
                             ]),
                         ]),
                     ]),
-                ], ['possibly_undefined' => true]),
+                ]),
             ]),
         ]);
 
@@ -109,7 +109,7 @@ final class FormVisitorTest extends TestCase
                             ]),
                         ]),
                     ]),
-                ], ['possibly_undefined' => true]),
+                ]),
             ]),
         ]);
 
@@ -162,7 +162,7 @@ final class FormVisitorTest extends TestCase
                         Type::getArrayKey(),
                         new Union([new TString(), new TNull()]),
                     ]),
-                ], ['possibly_undefined' => true]),
+                ]),
             ]),
         ]);
 
@@ -170,6 +170,13 @@ final class FormVisitorTest extends TestCase
         $collection = new Collection('foo');
         $collection->setTargetElement(new Text());
         $form->add($collection);
+
+        $clone = clone $form;
+        $clone->setData([]);
+        $clone->isValid();
+        /** @var array $data */
+        $data = $clone->getData();
+        self::assertArrayHasKey('foo', $data);
 
         $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
@@ -189,11 +196,11 @@ final class FormVisitorTest extends TestCase
                                         Type::getArrayKey(),
                                         new Union([new TString(), new TNull()]),
                                     ]),
-                                ], ['possibly_undefined' => true]),
+                                ]),
                             ]),
                         ]),
                     ]),
-                ], ['possibly_undefined' => true]),
+                ]),
             ]),
         ]);
 
@@ -254,7 +261,7 @@ final class FormVisitorTest extends TestCase
             new TKeyedArray([
                 'foo' => new Union([
                     new TArray([Type::getArrayKey(), new Union([$typeAlias])]),
-                ], ['possibly_undefined' => true]),
+                ]),
             ]),
         ]);
 

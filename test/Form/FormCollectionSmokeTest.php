@@ -136,7 +136,7 @@ final class FormCollectionSmokeTest extends TestCase
     {
         $expected = <<<EOT
         array{
-            foo?: array<array-key, non-empty-string>,
+            foo: array<array-key, non-empty-string>,
         }
         EOT;
         $data     = ['foo' => ['slarty@example.com']];

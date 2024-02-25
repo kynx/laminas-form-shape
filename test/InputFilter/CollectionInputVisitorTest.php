@@ -38,7 +38,7 @@ final class CollectionInputVisitorTest extends TestCase
         $expected = new Union([
             new TNonEmptyArray([Type::getArrayKey(), new Union([new TString(), new TNull()])]),
         ]);
-        $input    = CollectionInput::fromInput(new Input(), 42, false);
+        $input    = CollectionInput::fromInput(new Input(), 42);
 
         $actual = $this->visitor->visit($input);
         self::assertEquals($expected, $actual);
@@ -49,18 +49,9 @@ final class CollectionInputVisitorTest extends TestCase
         $expected = new Union([
             new TArray([Type::getArrayKey(), new Union([new TString(), new TNull()])]),
         ]);
-        $input    = CollectionInput::fromInput(new Input(), 0, false);
+        $input    = CollectionInput::fromInput(new Input(), 0);
 
         $actual = $this->visitor->visit($input);
         self::assertEquals($expected, $actual);
-    }
-
-    public function testVisitReturnsPossiblyUndefinedUnion(): void
-    {
-        $input = CollectionInput::fromInput(new Input(), 0, true);
-
-        $actual = $this->visitor->visit($input);
-        self::assertNotNull($actual);
-        self::assertTrue($actual->possibly_undefined);
     }
 }
