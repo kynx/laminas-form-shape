@@ -12,6 +12,7 @@ use Laminas\Form\Element\Collection;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\FieldsetInterface;
 use Laminas\Form\FormInterface;
+use Laminas\InputFilter\BaseInputFilter;
 use Laminas\InputFilter\CollectionInputFilter;
 use Laminas\InputFilter\InputFilter;
 use Laminas\InputFilter\InputFilterInterface;
@@ -105,7 +106,26 @@ final readonly class FormVisitor
                 continue;
             }
 
-            $childFilter = $this->convertCollectionFilters($elementOrFieldset, $inputOrFilter);
+            // If the collection's target element is an InputFilterProviderInterface, it's input filter will already be
+            // a CollectionInputFilter. If the target element isn't, it won't be. That's just nuts :-[
+            if ($elementOrFieldset instanceof Collection && $inputOrFilter instanceof CollectionInputFilter) {
+                $targetElement = $elementOrFieldset->getTargetElement();
+                // If `$targetElement` isn't a fieldset, something is very wrong
+                assert($targetElement instanceof FieldsetInterface);
+
+                $collectionFilter = $this->convertCollectionFilters(
+                    $targetElement,
+                    $inputOrFilter->getInputFilter()
+                );
+                // CollectionInputFilter::setInputFilter() will throw an exception if it isn't a BaseInputFilter
+                assert($collectionFilter instanceof BaseInputFilter);
+
+                $childFilter = new CollectionInputFilter();
+                $childFilter->setInputFilter($collectionFilter);
+            } else {
+                $childFilter = $this->convertCollectionFilters($elementOrFieldset, $inputOrFilter);
+            }
+
             if (! $elementOrFieldset instanceof Collection || $childFilter instanceof CollectionInputFilter) {
                 $newFilter->add($childFilter, $name);
                 continue;
