@@ -95,6 +95,34 @@ final class FormVisitorTest extends TestCase
         self::assertTrue($inputFilter->isValid());
     }
 
+    public function testVisitCollectionWithInputFilterProviderTargetElement(): void
+    {
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([
+                    new TArray([
+                        Type::getArrayKey(),
+                        new Union([
+                            new TKeyedArray([
+                                'first'  => new Union([new TString(), new TNull()]),
+                                'second' => new Union([new TString(), new TNull()]),
+                            ]),
+                        ]),
+                    ]),
+                ], ['possibly_undefined' => true]),
+            ]),
+        ]);
+
+        $form          = new Form();
+        $collection    = new Collection('foo');
+        $targetElement = new InputFilterFieldset('bar');
+        $collection->setTargetElement($targetElement);
+        $form->add($collection);
+
+        $actual = $this->visitor->visit($form, []);
+        self::assertEquals($expected, $actual);
+    }
+
     public function testVisitNonEmptyCollection(): void
     {
         $expected = new Union([
