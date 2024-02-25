@@ -59,7 +59,7 @@ final class InputFilterVisitorTest extends TestCase
     #[DataProvider('collectionProvider')]
     public function testVisitReturnsCollectionUnion(bool $required, TArray $array): void
     {
-        $expected = new Union([$array], ['possibly_undefined' => ! $required]);
+        $expected = new Union([$array]);
 
         $collectionFilter = new InputFilter();
         $collectionFilter->add(new Input('foo'));
@@ -88,6 +88,34 @@ final class InputFilterVisitorTest extends TestCase
                 new TArray([Type::getArrayKey(), $union]),
             ],
         ];
+    }
+
+    public function testVisitNestedCollectionReturnsDefinedUnion(): void
+    {
+        $expected = new Union([
+            new TKeyedArray([
+                'foo' => new Union([
+                    new TArray([Type::getArrayKey(), new Union([
+                        new TKeyedArray([
+                            'bar' => new Union([new TString(), new TNull()]),
+                        ]),
+                    ])]),
+                ]),
+            ]),
+        ]);
+        $inputFilter = new InputFilter();
+        $collectionInputFilter = new CollectionInputFilter();
+        $collectionFilter = new InputFilter();
+        $collectionFilter->add(new Input('bar'));
+        $collectionInputFilter->setInputFilter($collectionFilter);
+        $inputFilter->add($collectionInputFilter, 'foo');
+
+        $clone = clone $inputFilter;
+        $clone->setData([]);
+        self::assertTrue($clone->isValid());
+
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        self::assertEquals($expected, $actual);
     }
 
     public function testVisitNestedInputFilterReturnsNestedUnion(): void
