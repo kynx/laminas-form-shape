@@ -50,6 +50,15 @@ final class ReflectionProviderTest extends TestCase
         self::assertNull($actual);
     }
 
+    public function testGetReflectionFileThrowsExceptionReturnsNull(): void
+    {
+        $path     = __DIR__ . '/Asset/ThrowsException.php';
+        $provider = new ReflectionProvider($this->loader, FormInterface::class);
+
+        $actual = $provider->getReflection($path);
+        self::assertNull($actual);
+    }
+
     public function testGetReflectionNotClassReturnsNull(): void
     {
         $path     = __DIR__ . '/Asset/NoClass.php';
