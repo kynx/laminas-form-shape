@@ -6,7 +6,7 @@ namespace Kynx\Laminas\FormShape\Locator;
 
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
-use ReflectionException;
+use Throwable;
 
 use function array_keys;
 use function array_reduce;
@@ -77,7 +77,7 @@ final readonly class ReflectionProvider
 
         try {
             $reflection = new ReflectionClass($className);
-        } catch (ReflectionException) {
+        } catch (Throwable) {
             return null;
         }
 
