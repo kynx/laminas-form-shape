@@ -162,32 +162,22 @@ final readonly class FormVisitor
     /**
      * @param array<ImportType> $importTypes
      */
-    private function getImportTypes(FormInterface $form, array $importTypes): ImportTypes
+    private function getImportTypes(FieldsetInterface $fieldset, array $importTypes): ImportTypes
     {
-        return new ImportTypes($this->keyTypes($form, $importTypes));
-    }
-
-    /**
-     * @param array<ImportType> $importTypes
-     * @return array<ImportType|array>
-     */
-    private function keyTypes(FieldsetInterface $fieldset, array $importTypes): array
-    {
-        $keyed = [];
+        $children = [];
         foreach ($fieldset->getFieldsets() as $childFieldset) {
             $name = (string) $childFieldset->getName();
             if ($childFieldset instanceof Collection) {
                 $targetElement = $childFieldset->getTargetElement();
-                if ($targetElement instanceof FieldsetInterface && isset($importTypes[$targetElement::class])) {
-                    $keyed[$name] = $importTypes[$targetElement::class];
+                if ($targetElement instanceof FieldsetInterface) {
+                    $children[$name] = $this->getImportTypes($targetElement, $importTypes);
                 }
                 continue;
             }
 
-            $keyed[$name] = $importTypes[$childFieldset::class]
-                ?? $this->keyTypes($childFieldset, $importTypes);
+            $children[$name] = $this->getImportTypes($childFieldset, $importTypes);
         }
 
-        return $keyed;
+        return new ImportTypes($importTypes[$fieldset::class] ?? null, $children);
     }
 }

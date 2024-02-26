@@ -52,7 +52,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->add(new Input('foo'));
         $inputFilter->add(new Input('bar'));
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -67,7 +67,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->setIsRequired($required);
         $inputFilter->setInputFilter($collectionFilter);
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -117,7 +117,7 @@ final class InputFilterVisitorTest extends TestCase
         $clone->setData([]);
         self::assertTrue($clone->isValid());
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -140,7 +140,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter = new InputFilter();
         $inputFilter->add($childFilter, 'foo');
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -152,7 +152,7 @@ final class InputFilterVisitorTest extends TestCase
 
         $inputFilter = new InputFilter();
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -169,7 +169,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter = new OptionalInputFilter();
         $inputFilter->add($input);
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -186,7 +186,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->add((new Input('foo'))->setRequired(false));
         $inputFilter->add((new Input('bar'))->setRequired(false));
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -203,7 +203,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->add((new Input('foo'))->setRequired(false));
         $inputFilter->add(new Input('bar'));
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes([]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes());
         self::assertEquals($expected, $actual);
     }
 
@@ -220,7 +220,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->add(new Input('foo'));
         $importType = new ImportType(new TTypeAlias('self', 'TImportType'), $importUnion);
 
-        $actual = $this->visitor->visit($inputFilter, $importType);
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes($importType));
         self::assertEquals($expected, $actual);
     }
 
@@ -243,7 +243,7 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->add(new Input('bar'));
         $importType = new ImportType(new TTypeAlias('self', 'TImportType'), $importUnion);
 
-        $actual = $this->visitor->visit($inputFilter, $importType);
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes($importType));
         self::assertEquals($expected, $actual);
     }
 
@@ -266,7 +266,42 @@ final class InputFilterVisitorTest extends TestCase
         $inputFilter->add($childFilter, 'foo');
         $importType = new ImportType(new TTypeAlias('self', 'TImportType'), $importUnion);
 
-        $actual = $this->visitor->visit($inputFilter, new ImportTypes(['foo' => $importType]));
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes(null, ['foo' => new ImportTypes($importType)]));
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitReturnsDeeplyNestedImportType(): void
+    {
+        $expected          = new Union([
+            new TKeyedArray([
+                'foo' => new Union([new TTypeAlias('self', 'TImportType')]),
+            ]),
+        ]);
+        $importUnion       = new Union([
+            new TKeyedArray([
+                'bar' => new Union([new TTypeAlias('self', 'TNestedImportType')]),
+            ]),
+        ]);
+        $nestedImportUnion = new Union([
+            new TKeyedArray([
+                'baz' => new Union([new TString(), new TNull()]),
+            ]),
+        ]);
+
+        $inputFilter  = new InputFilter();
+        $childFilter  = new InputFilter();
+        $nestedFilter = new InputFilter();
+        $nestedFilter->add(new Input('baz'));
+        $childFilter->add($nestedFilter, 'bar');
+        $inputFilter->add($childFilter, 'foo');
+        $nestedType = new ImportType(new TTypeAlias('self', 'TNestedImportType'), $nestedImportUnion);
+        $importType = new ImportType(new TTypeAlias('self', 'TImportType'), $importUnion);
+
+        $actual = $this->visitor->visit($inputFilter, new ImportTypes(null, [
+            'foo' => new ImportTypes($importType, [
+                'bar' => new ImportTypes($nestedType),
+            ]),
+        ]));
         self::assertEquals($expected, $actual);
     }
 
@@ -280,6 +315,6 @@ final class InputFilterVisitorTest extends TestCase
 
         self::expectException(InputVisitorException::class);
         self::expectExceptionMessage($expected);
-        $visitor->visit($inputFilter, new ImportTypes([]));
+        $visitor->visit($inputFilter, new ImportTypes());
     }
 }

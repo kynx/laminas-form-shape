@@ -27,7 +27,7 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
     {
     }
 
-    public function visit(InputFilterInterface $inputFilter, ImportType|ImportTypes $importTypes): Union
+    public function visit(InputFilterInterface $inputFilter, ImportTypes $importTypes): Union
     {
         if ($inputFilter instanceof CollectionInputFilter) {
             return $this->visitCollectionInputFilter($inputFilter, $importTypes);
@@ -41,9 +41,7 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
                 continue;
             }
 
-            $childTypes           = $importTypes instanceof ImportTypes
-                ? $importTypes->get($childName)
-                : new ImportTypes([]);
+            $childTypes           = $importTypes->getChildren($childName);
             $elements[$childName] = $this->visit($child, $childTypes);
         }
 
@@ -54,17 +52,11 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
         }
 
         $union = new Union([new TKeyedArray($elements)], $properties);
-        if ($importTypes instanceof ImportType) {
-            return $this->getTypeAliasUnion($union, $importTypes);
-        }
-
-        return $union;
+        return $this->getTypeAliasUnion($union, $importTypes);
     }
 
-    private function visitCollectionInputFilter(
-        CollectionInputFilter $inputFilter,
-        ImportType|ImportTypes $importTypes
-    ): Union {
+    private function visitCollectionInputFilter(CollectionInputFilter $inputFilter, ImportTypes $importTypes): Union
+    {
         $collection = $this->visit($inputFilter->getInputFilter(), $importTypes);
 
         if ($inputFilter->getIsRequired()) {
@@ -86,8 +78,13 @@ final readonly class InputFilterVisitor implements InputFilterVisitorInterface
         throw InputVisitorException::noVisitorForInput($input);
     }
 
-    private function getTypeAliasUnion(Union $filterUnion, ImportType $importType): Union
+    private function getTypeAliasUnion(Union $filterUnion, ImportTypes $importTypes): Union
     {
+        $importType = $importTypes->get();
+        if ($importType === null) {
+            return $filterUnion;
+        }
+
         if ($filterUnion->equals($importType->union, false, false)) {
             return new Union([$importType->type], ['possibly_undefined' => $filterUnion->possibly_undefined]);
         }
