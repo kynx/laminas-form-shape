@@ -4,9 +4,6 @@
 
 Generate [Psalm] types for [Laminas forms]
 
-**This is a work in progress**. Until we hit a `1.x` release, the examples below are more to illustrate what _can_ be
-done, not how it _will_ work once stable.
-
 ## Installation
 
 Install this package as a development dependency using [Composer]:
@@ -18,18 +15,27 @@ composer require --dev kynx/laminas-form-shape
 ## Usage
 
 ```commandline
-vendor/bin/laminas form:psalm-type src/Forms/MyForm.php
+vendor/bin/laminas form:psalm-type src/Forms/Artist.php
 ```
 
-...outputs an [array shape] something like:
+...will add an [array shape] to your `Artist` form something like:
 
-```text
-array{
-    name:     non-empty-string,
-    age:      numeric-string,
-    gender?:  null|string,
-    can_code: '0'|'1',
-}
+```diff
+ use Laminas\Form\Element\Text;
+ use Laminas\Form\Form;
+ 
++/**
++ * @psalm-import-type TAlbumData from Album
++ * @psalm-type TArtistData = array{
++ *     id:     int|null,
++ *     name:   non-empty-string,
++ *     albums: array<array-key, TAlbumData>,
++ * }
++ * @extends Form<TArtistData>
++ */
+ final class Artist extends Form
+ {
+     /**
 ```
 
 To see a full list of options:
