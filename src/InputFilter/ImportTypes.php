@@ -7,20 +7,19 @@ namespace Kynx\Laminas\FormShape\InputFilter;
 final readonly class ImportTypes
 {
     /**
-     * @param array<ImportType|array> $importTypes
+     * @param array<ImportTypes> $children
      */
-    public function __construct(private array $importTypes)
+    public function __construct(private ?ImportType $type = null, private array $children = [])
     {
     }
 
-    public function get(int|string $key): ImportType|ImportTypes
+    public function get(): ?ImportType
     {
-        /** @var ImportType|array<ImportType|array> $value */
-        $value = $this->importTypes[$key] ?? [];
-        if ($value instanceof ImportType) {
-            return $value;
-        }
+        return $this->type;
+    }
 
-        return new self($value);
+    public function getChildren(int|string $key): self
+    {
+        return $this->children[$key] ?? new self(null, []);
     }
 }

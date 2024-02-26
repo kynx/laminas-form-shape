@@ -70,7 +70,7 @@ final class FormElementSmokeTest extends TestCase
         $container   = include __DIR__ . '/../container.php';
         $visitor     = $container->get(InputFilterVisitorInterface::class);
         $inputFilter = $form->getInputFilter();
-        $union       = $visitor->visit($inputFilter, new ImportTypes([]));
+        $union       = $visitor->visit($inputFilter, new ImportTypes());
 
         $decorator = new PrettyPrinter();
         /** @psalm-suppress PossiblyInvalidArgument */

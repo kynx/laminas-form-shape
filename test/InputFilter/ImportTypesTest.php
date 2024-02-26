@@ -21,32 +21,36 @@ final class ImportTypesTest extends TestCase
             new TTypeAlias(self::class, 'TFoo'),
             new Union([new TInt()])
         );
-        $importTypes = new ImportTypes(['foo' => $expected]);
+        $importTypes = new ImportTypes($expected);
 
-        $actual = $importTypes->get('foo');
+        $actual = $importTypes->get();
         self::assertSame($expected, $actual);
     }
 
-    public function testGetReturnsNestedTypes(): void
+    public function testGetChildrenReturnsNestedTypes(): void
     {
-        $expected    = new ImportType(
+        $expected    = new ImportTypes(new ImportType(
             new TTypeAlias(self::class, 'TFoo'),
             new Union([new TInt()])
-        );
-        $importTypes = new ImportTypes(['foo' => ['bar' => $expected]]);
+        ));
+        $importTypes = new ImportTypes(null, [
+            'foo' => new ImportTypes(null, [
+                'bar' => $expected,
+            ]),
+        ]);
 
-        $nestedTypes = $importTypes->get('foo');
+        $nestedTypes = $importTypes->getChildren('foo');
         self::assertInstanceOf(ImportTypes::class, $nestedTypes);
-        $actual = $nestedTypes->get('bar');
+        $actual = $nestedTypes->getChildren('bar');
         self::assertSame($expected, $actual);
     }
 
     public function testGetReturnsEmptyTypes(): void
     {
-        $expected    = new ImportTypes([]);
-        $importTypes = new ImportTypes([]);
+        $expected    = new ImportTypes();
+        $importTypes = new ImportTypes();
 
-        $actual = $importTypes->get('foo');
+        $actual = $importTypes->getChildren('foo');
         self::assertEquals($expected, $actual);
     }
 }
