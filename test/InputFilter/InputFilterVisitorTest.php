@@ -308,7 +308,7 @@ final class InputFilterVisitorTest extends TestCase
     public function testVisitNoValidInputVisitorThrowsException(): void
     {
         $expected     = "No input visitor configured for '" . Input::class . "'";
-        $arrayVisitor = new ArrayInputVisitor(new InputVisitor([], []));
+        $arrayVisitor = new ArrayInputVisitor([], []);
         $visitor      = new InputFilterVisitor([$arrayVisitor]);
         $inputFilter  = new InputFilter();
         $inputFilter->add(new Input());
