@@ -208,4 +208,17 @@ final class PrettyPrinterTest extends TestCase
         $actual = $decorator->decorate($union);
         self::assertSame($expected, $actual);
     }
+
+    public function testDecorateEscapesLiteralStrings(): void
+    {
+        $expected  = "'20\' Container'|'40\' Container'";
+        $union     = new Union([
+            TypeUtil::getAtomicStringFromLiteral("20' Container"),
+            TypeUtil::getAtomicStringFromLiteral("40' Container"),
+        ]);
+        $decorator = new PrettyPrinter();
+
+        $actual = $decorator->decorate($union);
+        self::assertSame($expected, $actual);
+    }
 }
