@@ -13,7 +13,6 @@ use Laminas\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type\Atomic\TNever;
-use Psalm\Type\Atomic\TNumericString;
 use Psalm\Type\Atomic\TString;
 use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
@@ -33,10 +32,9 @@ final class ExplodeVisitorFactoryTest extends TestCase
         $factory  = new ExplodeVisitorFactory();
         $instance = $factory($container);
 
-        $expected  = new Union([new TNumericString()]);
         $validator = new Explode(['validator' => new Digits(), 'valueDelimiter' => null]);
         $actual    = $instance->visit($validator, new Union([new TString()]));
-        self::assertEquals($expected, $actual);
+        self::assertArrayHasKey('numeric-string', $actual->getAtomicTypes());
     }
 
     public function testInvokeExcludesExplodeVisitor(): void
@@ -55,12 +53,11 @@ final class ExplodeVisitorFactoryTest extends TestCase
         $factory  = new ExplodeVisitorFactory();
         $instance = $factory($container);
 
-        $expected  = new Union([new TNever()]);
         $validator = self::createMock(ValidatorInterface::class);
         $validator->expects(self::never())
             ->method('isValid');
-        $actual = $instance->visit(new Explode(['validator' => $validator]), $expected);
-        self::assertEquals($expected, $actual);
+        $actual = $instance->visit(new Explode(['validator' => $validator]), new Union([new TNever()]));
+        self::assertArrayHasKey('never', $actual->getAtomicTypes());
     }
 
     private function getConfig(array $validatorVisitors): array
