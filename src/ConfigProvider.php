@@ -8,8 +8,6 @@ use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
-use Kynx\Laminas\FormShape\Element\ElementVisitor;
-use Kynx\Laminas\FormShape\Element\MultiCheckboxVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;

@@ -10,11 +10,9 @@ use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
-use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use KynxTest\Laminas\FormShape\Form\Asset\InputFilterFieldset;
 use Laminas\Form\Element\Collection;
 use Laminas\Form\Element\Email;
-use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Text;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\Fieldset;
@@ -284,31 +282,6 @@ final class FormVisitorTest extends TestCase
         ]));
 
         $actual = $this->visitor->visit($form, [Fieldset::class => $importType]);
-        self::assertEquals($expected, $actual);
-    }
-
-    public function testVisitConvertsMultiCheckboxToArray(): void
-    {
-        $expected = new Union([
-            new TKeyedArray([
-                'foo' => new Union([
-                    new TArray([
-                        Type::getArrayKey(),
-                        new Union([
-                            TypeUtil::getAtomicStringFromLiteral('1'),
-                            TypeUtil::getAtomicStringFromLiteral('2'),
-                        ]),
-                    ]),
-                ]),
-            ]),
-        ]);
-
-        $form     = new Form();
-        $checkbox = new MultiCheckbox('foo');
-        $checkbox->setValueOptions([1 => 'a', 2 => 'b']);
-        $form->add($checkbox);
-
-        $actual = $this->visitor->visit($form, []);
         self::assertEquals($expected, $actual);
     }
 

@@ -12,15 +12,12 @@ use Kynx\Laminas\FormShape\InputFilter\InputVisitorException;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\Validator\DigitsVisitor;
-use Kynx\Laminas\FormShape\Validator\ExplodeVisitor;
 use Kynx\Laminas\FormShape\Validator\InArrayVisitor;
-use KynxTest\Laminas\FormShape\Psalm\GetIdVisitor;
 use Laminas\Filter\Boolean;
 use Laminas\Filter\ToInt;
 use Laminas\InputFilter\ArrayInput;
 use Laminas\InputFilter\Input;
 use Laminas\Validator\Digits;
-use Laminas\Validator\Explode;
 use Laminas\Validator\InArray;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -89,60 +86,25 @@ final class ArrayInputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testVisitReturnsExplodeArray(): void
-    {
-        ConfigLoader::load();
-
-        $array = new TNonEmptyArray([
-            Type::getArrayKey(),
-            new Union([
-                TypeUtil::getAtomicStringFromLiteral('1'),
-                TypeUtil::getAtomicStringFromLiteral('2'),
-            ]),
-        ]);
-        (new GetIdVisitor())->traverse($array);
-
-        // This is what a real live MultiCheckbox actually can return!
-        $expected = new Union([
-            $array,
-            TypeUtil::getAtomicStringFromLiteral('1'),
-            TypeUtil::getAtomicStringFromLiteral('2'),
-        ]);
-
-        $input   = new ArrayInput();
-        $inArray = new InArray(['haystack' => ['1', '2'], 'strict' => true]);
-        $explode = new Explode(['valueDelimiter' => null, 'validator' => $inArray]);
-        $input->getValidatorChain()->attach($explode);
-        $visitor = new ArrayInputVisitor([], [new ExplodeVisitor([new InArrayVisitor()])]);
-
-        $actual = $visitor->visit($input);
-        self::assertEquals($expected, $actual);
-    }
-
     public function testVisitAddsFallbackValue(): void
     {
         ConfigLoader::load();
 
-        $array    = new TNonEmptyArray([
-            Type::getArrayKey(),
-            new Union([
-                TypeUtil::getAtomicStringFromLiteral('1'),
-                TypeUtil::getAtomicStringFromLiteral('2'),
-                TypeUtil::getAtomicStringFromLiteral('a'),
+        $expected = new Union([
+            new TNonEmptyArray([
+                Type::getArrayKey(),
+                new Union([
+                    TypeUtil::getAtomicStringFromLiteral('1'),
+                    TypeUtil::getAtomicStringFromLiteral('2'),
+                    TypeUtil::getAtomicStringFromLiteral('a'),
+                ]),
             ]),
         ]);
-        $expected = new Union([
-            $array,
-            TypeUtil::getAtomicStringFromLiteral('1'),
-            TypeUtil::getAtomicStringFromLiteral('2'),
-        ]);
 
-        $input   = new ArrayInput();
-        $inArray = new InArray(['haystack' => ['1', '2'], 'strict' => true]);
-        $explode = new Explode(['valueDelimiter' => null, 'validator' => $inArray]);
-        $input->getValidatorChain()->attach($explode);
+        $input = new ArrayInput();
+        $input->getValidatorChain()->attach(new InArray(['haystack' => [1, 2]]));
         $input->setFallbackValue(['a']);
-        $visitor = new ArrayInputVisitor([], [new ExplodeVisitor([new InArrayVisitor()])]);
+        $visitor = new ArrayInputVisitor([], [new InArrayVisitor()]);
 
         $actual = $visitor->visit($input);
 
@@ -150,6 +112,6 @@ final class ArrayInputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
 
         $decorated = (new PrettyPrinter())->decorate($actual);
-        self::assertSame("'1'|'2'|non-empty-array<array-key, '1'|'2'|'a'>", $decorated);
+        self::assertSame("non-empty-array<array-key, '1'|'2'|'a'>", $decorated);
     }
 }

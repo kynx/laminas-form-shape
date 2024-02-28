@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\Form;
 
-use Kynx\Laminas\FormShape\InputFilter\ArrayInputBuilder;
+use Kynx\Laminas\FormShape\InputFilter\CollectionInput;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\ImportTypes;
 use Kynx\Laminas\FormShape\InputFilterVisitorInterface;
@@ -143,8 +143,12 @@ final readonly class FormVisitor
             $count    = $required ? $elementOrFieldset->getCount() : 0;
 
             if ($target instanceof InputInterface) {
-                $inputOrFilter = ArrayInputBuilder::create($target);
-                $inputOrFilter->setRequired($inputOrFilter->isRequired() || $count > 0);
+                /** @psalm-suppress TooFewArguments It thinks `getRawValue()` takes an argument ?! */
+                $target->setValue([$target->getRawValue()]);
+
+                $inputOrFilter = new CollectionInput($target->getName());
+                $inputOrFilter->merge($target);
+                $inputOrFilter->setCount($count);
             } else {
                 $inputOrFilter = new CollectionInputFilter();
                 $inputOrFilter->setIsRequired($required);

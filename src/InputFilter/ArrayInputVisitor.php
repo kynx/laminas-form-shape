@@ -34,7 +34,7 @@ final readonly class ArrayInputVisitor extends AbstractInputVisitor
 
         $union = new Union([new TArray([Type::getArrayKey(), $union])]);
 
-        if ($input->isRequired()) {
+        if ($this->isNonEmpty($input)) {
             $nonEmpty = array_map(
                 static fn (Atomic $type): Atomic => $type instanceof TArray
                     ? new TNonEmptyArray($type->type_params)
@@ -49,5 +49,13 @@ final readonly class ArrayInputVisitor extends AbstractInputVisitor
         }
 
         return $union;
+    }
+
+    private function isNonEmpty(ArrayInput $input): bool
+    {
+        if ($input instanceof CollectionInput) {
+            return (bool) $input->getCount();
+        }
+        return $input->isRequired();
     }
 }
