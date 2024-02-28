@@ -143,7 +143,12 @@ final readonly class FormVisitor
             $count    = $required ? $elementOrFieldset->getCount() : 0;
 
             if ($target instanceof InputInterface) {
-                $inputOrFilter = CollectionInput::fromInput($target, $count);
+                /** @psalm-suppress TooFewArguments It thinks `getRawValue()` takes an argument ?! */
+                $target->setValue([$target->getRawValue()]);
+
+                $inputOrFilter = new CollectionInput($target->getName());
+                $inputOrFilter->merge($target);
+                $inputOrFilter->setCount($count);
             } else {
                 $inputOrFilter = new CollectionInputFilter();
                 $inputOrFilter->setIsRequired($required);

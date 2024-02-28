@@ -6,10 +6,13 @@ namespace Kynx\Laminas\FormShape\InputFilter;
 
 use Psr\Container\ContainerInterface;
 
-final readonly class ArrayInputVisitorFactory
+final readonly class ArrayInputVisitorFactory extends AbstractInputVisitorFactory
 {
     public function __invoke(ContainerInterface $container): ArrayInputVisitor
     {
-        return new ArrayInputVisitor($container->get(InputVisitor::class));
+        return new ArrayInputVisitor(
+            $this->getFilterVisitors($container),
+            $this->getValidatorVisitors($container)
+        );
     }
 }

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Form\FormVisitor;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
+use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
 use KynxTest\Laminas\FormShape\Form\Asset\InputFilterFieldset;
 use Laminas\Form\Element\Collection;
 use Laminas\Form\Element\Email;
@@ -39,9 +40,11 @@ final class FormVisitorTest extends TestCase
     {
         parent::setUp();
 
+        ConfigLoader::load();
+
         $inputVisitor      = new InputVisitor([], []);
-        $collectionVisitor = new CollectionInputVisitor($inputVisitor);
-        $this->visitor     = new FormVisitor(new InputFilterVisitor([$collectionVisitor, $inputVisitor]));
+        $arrayInputVisitor = new ArrayInputVisitor([], []);
+        $this->visitor     = new FormVisitor(new InputFilterVisitor([$arrayInputVisitor, $inputVisitor]));
     }
 
     public function testVisitSingleElement(): void

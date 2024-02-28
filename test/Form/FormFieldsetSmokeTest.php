@@ -6,7 +6,7 @@ namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
@@ -32,10 +32,10 @@ final class FormFieldsetSmokeTest extends TestCase
     {
         parent::setUp();
 
-        $inputVisitor           = new InputVisitor([], [new NotEmptyVisitor()]);
-        $collectionInputVisitor = new CollectionInputVisitor($inputVisitor);
-        $inputFilterVisitor     = new InputFilterVisitor([
-            $collectionInputVisitor,
+        $inputVisitor       = new InputVisitor([], [new NotEmptyVisitor()]);
+        $arrayInputVisitor  = new ArrayInputVisitor([], [new NotEmptyVisitor()]);
+        $inputFilterVisitor = new InputFilterVisitor([
+            $arrayInputVisitor,
             $inputVisitor,
         ]);
 

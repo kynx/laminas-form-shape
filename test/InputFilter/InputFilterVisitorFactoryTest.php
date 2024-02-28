@@ -50,14 +50,13 @@ final class InputFilterVisitorFactoryTest extends TestCase
 
     public function testInvokeSortsInputVisitors(): void
     {
-        $config       = $this->getConfig([InputVisitor::class, ArrayInputVisitor::class]);
-        $container    = self::createStub(ContainerInterface::class);
-        $inputVisitor = new InputVisitor([], []);
+        $config    = $this->getConfig([InputVisitor::class, ArrayInputVisitor::class]);
+        $container = self::createStub(ContainerInterface::class);
         $container->method('get')
             ->willReturnMap([
                 ['config', $config],
                 [InputVisitor::class, new InputVisitor([], [])],
-                [ArrayInputVisitor::class, new ArrayInputVisitor($inputVisitor)],
+                [ArrayInputVisitor::class, new ArrayInputVisitor([], [])],
             ]);
 
         $factory  = new InputFilterVisitorFactory();

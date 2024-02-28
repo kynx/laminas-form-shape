@@ -4,32 +4,58 @@ declare(strict_types=1);
 
 namespace Kynx\Laminas\FormShape\InputFilter;
 
-use Kynx\Laminas\FormShape\InputVisitorInterface;
+use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Laminas\InputFilter\ArrayInput;
 use Laminas\InputFilter\InputInterface;
 use Psalm\Type;
+use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNull;
+use Psalm\Type\Atomic\TString;
 use Psalm\Type\Union;
 
-final readonly class ArrayInputVisitor implements InputVisitorInterface
-{
-    public function __construct(private InputVisitor $inputVisitor)
-    {
-    }
+use function array_map;
 
+final readonly class ArrayInputVisitor extends AbstractInputVisitor
+{
     public function visit(InputInterface $input): ?Union
     {
-        if (! ($input instanceof ArrayInput || $input instanceof CollectionInput)) {
+        if (! $input instanceof ArrayInput) {
             return null;
         }
 
-        // @fixme Is the logic here exactly the same?
-        $union = $this->inputVisitor->visit($input);
-        $array = $input->isRequired()
-            ? new TNonEmptyArray([Type::getArrayKey(), new Union($union->getAtomicTypes())])
-            : new TArray([Type::getArrayKey(), new Union($union->getAtomicTypes())]);
+        $initial = new Union([new TNull(), new TString()]);
+        $union   = $this->visitInput($input, $initial);
 
-        return new Union([$array], ['possibly_undefined' => $union->possibly_undefined]);
+        if ($union->getAtomicTypes() === []) {
+            throw InputVisitorException::cannotGetInputType($input);
+        }
+
+        $union = new Union([new TArray([Type::getArrayKey(), $union])]);
+
+        if ($this->isNonEmpty($input)) {
+            $nonEmpty = array_map(
+                static fn (Atomic $type): Atomic => $type instanceof TArray
+                    ? new TNonEmptyArray($type->type_params)
+                    : $type,
+                $union->getAtomicTypes()
+            );
+            $union    = new Union($nonEmpty);
+        }
+
+        if ($this->hasFallback($input)) {
+            return Type::combineUnionTypes($union, TypeUtil::toStrictUnion($input->getFallbackValue()));
+        }
+
+        return $union;
+    }
+
+    private function isNonEmpty(ArrayInput $input): bool
+    {
+        if ($input instanceof CollectionInput) {
+            return (bool) $input->getCount();
+        }
+        return $input->isRequired();
     }
 }
