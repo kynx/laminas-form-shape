@@ -175,7 +175,7 @@ final class FormElementSmokeTest extends TestCase
             'multicheckbox' => [
                 MultiCheckbox::class,
                 [[[], false], [null, false], ['', false], [' ', false]],
-                "test: non-empty-string", // no haystack by default
+                "test: array<array-key, string>|non-empty-string", // no haystack by default
             ],
             'number'        => [
                 Number::class,

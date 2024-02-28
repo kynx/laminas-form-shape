@@ -43,6 +43,12 @@ final readonly class ExplodeVisitor implements ValidatorVisitorInterface
         $delimiter = $validator->getValueDelimiter();
         $validator = $validator->getValidator();
 
+        if (! $previous->hasArray()) {
+            $previous = $previous->getBuilder()
+                ->addType(new TArray([Type::getArrayKey(), new Union([new TString()])]))
+                ->freeze();
+        }
+
         $narrow = array_merge(
             $this->visitArrays($validator, $previous),
             $this->visitKeyedArrays($validator, $previous),
