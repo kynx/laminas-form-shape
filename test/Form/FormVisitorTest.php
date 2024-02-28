@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Form\FormVisitor;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -45,8 +45,8 @@ final class FormVisitorTest extends TestCase
         ConfigLoader::load();
 
         $inputVisitor      = new InputVisitor([], []);
-        $collectionVisitor = new CollectionInputVisitor($inputVisitor);
-        $this->visitor     = new FormVisitor(new InputFilterVisitor([$collectionVisitor, $inputVisitor]));
+        $arrayInputVisitor = new ArrayInputVisitor([], []);
+        $this->visitor     = new FormVisitor(new InputFilterVisitor([$arrayInputVisitor, $inputVisitor]));
     }
 
     public function testVisitSingleElement(): void
@@ -291,14 +291,19 @@ final class FormVisitorTest extends TestCase
     {
         $expected = new Union([
             new TKeyedArray([
-                'foo' => new Union([new TArray([Type::getArrayKey(), new Union([
-                    TypeUtil::getAtomicStringFromLiteral('1'),
-                    TypeUtil::getAtomicStringFromLiteral('2'),
-                ])])]),
+                'foo' => new Union([
+                    new TArray([
+                        Type::getArrayKey(),
+                        new Union([
+                            TypeUtil::getAtomicStringFromLiteral('1'),
+                            TypeUtil::getAtomicStringFromLiteral('2'),
+                        ]),
+                    ]),
+                ]),
             ]),
         ]);
 
-        $form = new Form();
+        $form     = new Form();
         $checkbox = new MultiCheckbox('foo');
         $checkbox->setValueOptions([1 => 'a', 2 => 'b']);
         $form->add($checkbox);

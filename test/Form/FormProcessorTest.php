@@ -6,7 +6,7 @@ namespace KynxTest\Laminas\FormShape\Form;
 
 use Kynx\Laminas\FormShape\Form\FormProcessor;
 use Kynx\Laminas\FormShape\Form\FormVisitor;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ImportType;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -52,11 +52,11 @@ final class FormProcessorTest extends TestCase
         $this->listener    = new MockProgressListener();
 
         $inputVisitor      = new InputVisitor([], []);
-        $collectionVisitor = new CollectionInputVisitor($inputVisitor);
+        $arrayInputVisitor = new ArrayInputVisitor([], []);
 
         $this->processor = new FormProcessor(
             $this->formLocator,
-            new FormVisitor(new InputFilterVisitor([$collectionVisitor, $inputVisitor])),
+            new FormVisitor(new InputFilterVisitor([$arrayInputVisitor, $inputVisitor])),
             $this->fileWriter
         );
     }

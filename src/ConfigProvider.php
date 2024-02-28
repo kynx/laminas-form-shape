@@ -8,6 +8,8 @@ use Kynx\Laminas\FormShape\Command\PsalmTypeCommand;
 use Kynx\Laminas\FormShape\Command\PsalmTypeCommandFactory;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinter;
 use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
+use Kynx\Laminas\FormShape\Element\ElementVisitor;
+use Kynx\Laminas\FormShape\Element\MultiCheckboxVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
@@ -23,8 +25,6 @@ use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitorFactory;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitor;
-use Kynx\Laminas\FormShape\InputFilter\CollectionInputVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -158,7 +158,6 @@ final readonly class ConfigProvider
             ],
             'input-visitors'     => [
                 ArrayInputVisitor::class,
-                CollectionInputVisitor::class,
                 InputVisitor::class,
             ],
             'filter'             => [
@@ -222,24 +221,23 @@ final readonly class ConfigProvider
                 TypeNamerInterface::class          => TypeNamer::class,
             ],
             'factories' => [
-                AllowListVisitor::class       => AllowListVisitorFactory::class,
-                ArrayInputVisitor::class      => ArrayInputVisitorFactory::class,
-                CollectionInputVisitor::class => CollectionInputVisitorFactory::class,
-                ExplodeVisitor::class         => ExplodeVisitorFactory::class,
-                FileValidatorVisitor::class   => FileValidatorVisitorFactory::class,
-                FormLocator::class            => FormLocatorFactory::class,
-                FormProcessor::class          => FormProcessorFactory::class,
-                NetteCodeGenerator::class     => NetteCodeGeneratorFactory::class,
-                PrettyPrinter::class          => PrettyPrinterFactory::class,
-                PsalmTypeCommand::class       => PsalmTypeCommandFactory::class,
-                FileWriter::class             => FileWriterFactory::class,
-                FormVisitor::class            => FormVisitorFactory::class,
-                InArrayVisitor::class         => InArrayVisitorFactory::class,
-                InputFilterVisitor::class     => InputFilterVisitorFactory::class,
-                InputVisitor::class           => InputVisitorFactory::class,
-                NonEmptyStringVisitor::class  => NonEmptyStringVisitorFactory::class,
-                RegexVisitor::class           => RegexVisitorFactory::class,
-                TypeNamer::class              => TypeNamerFactory::class,
+                AllowListVisitor::class      => AllowListVisitorFactory::class,
+                ArrayInputVisitor::class     => ArrayInputVisitorFactory::class,
+                ExplodeVisitor::class        => ExplodeVisitorFactory::class,
+                FileValidatorVisitor::class  => FileValidatorVisitorFactory::class,
+                FormLocator::class           => FormLocatorFactory::class,
+                FormProcessor::class         => FormProcessorFactory::class,
+                NetteCodeGenerator::class    => NetteCodeGeneratorFactory::class,
+                PrettyPrinter::class         => PrettyPrinterFactory::class,
+                PsalmTypeCommand::class      => PsalmTypeCommandFactory::class,
+                FileWriter::class            => FileWriterFactory::class,
+                FormVisitor::class           => FormVisitorFactory::class,
+                InArrayVisitor::class        => InArrayVisitorFactory::class,
+                InputFilterVisitor::class    => InputFilterVisitorFactory::class,
+                InputVisitor::class          => InputVisitorFactory::class,
+                NonEmptyStringVisitor::class => NonEmptyStringVisitorFactory::class,
+                RegexVisitor::class          => RegexVisitorFactory::class,
+                TypeNamer::class             => TypeNamerFactory::class,
             ],
         ];
     }

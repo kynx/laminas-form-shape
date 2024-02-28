@@ -239,4 +239,21 @@ final class FormElementSmokeTest extends TestCase
             ],
         ];
     }
+
+    public function testMultiCheckboxValidatesSingleString(): void
+    {
+        $form          = new Form();
+        $multiCheckbox = new MultiCheckbox('foo', ['value_options' => [1 => 'a', 2 => 'b']]);
+        $form->add($multiCheckbox);
+
+        $form->setData(['foo' => '1']);
+        $isValid = $form->isValid();
+        self::assertTrue($isValid);
+        $data = $form->getData();
+        self::assertSame(['foo' => '1'], $data);
+
+        $form->setData(['foo' => ['1', '2']]);
+        $isValid = $form->isValid();
+        self::assertTrue($isValid);
+    }
 }
