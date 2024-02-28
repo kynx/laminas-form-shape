@@ -11,6 +11,7 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TIntRange;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Union;
 
 use function array_filter;
@@ -18,6 +19,8 @@ use function array_map;
 use function array_pop;
 use function implode;
 use function sort;
+use function str_replace;
+use function trim;
 
 use const SORT_STRING;
 
@@ -97,10 +100,17 @@ final readonly class PrettyPrinter implements DecoratorInterface
     private static function getTypeString(Atomic $type): string
     {
         return match ($type::class) {
-            TLiteralFloat::class => $type->getId(false),
-            TIntRange::class     => self::getIntRangeString($type),
-            default              => $type->getId(),
+            TLiteralFloat::class  => $type->getId(false),
+            TLiteralString::class => self::getLiteralString($type),
+            TIntRange::class      => self::getIntRangeString($type),
+            default               => $type->getId(),
         };
+    }
+
+    private static function getLiteralString(TLiteralString $string): string
+    {
+        $value = trim($string->getId(), "'");
+        return "'" . str_replace("'", "\'", $value) . "'";
     }
 
     private static function getIntRangeString(TIntRange $range): string
