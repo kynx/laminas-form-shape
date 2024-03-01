@@ -19,7 +19,7 @@ abstract class AbstractFilterVisitorTestCase extends TestCase
     /**
      * @return non-empty-array<list{FilterInterface, non-empty-array<Atomic>, array<Atomic>}>
      */
-    abstract protected static function visitProvider(): array;
+    abstract public static function visitProvider(): array;
 
     abstract protected function getVisitor(): FilterVisitorInterface;
 
