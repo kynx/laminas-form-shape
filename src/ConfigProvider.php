@@ -11,6 +11,7 @@ use Kynx\Laminas\FormShape\Decorator\PrettyPrinterFactory;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitor;
 use Kynx\Laminas\FormShape\Filter\AllowListVisitorFactory;
 use Kynx\Laminas\FormShape\Filter\BooleanVisitor;
+use Kynx\Laminas\FormShape\Filter\CallbackVisitor;
 use Kynx\Laminas\FormShape\Filter\DigitsVisitor as DigitsFilterVisitor;
 use Kynx\Laminas\FormShape\Filter\InflectorVisitor;
 use Kynx\Laminas\FormShape\Filter\ToFloatVisitor;
@@ -128,6 +129,7 @@ final readonly class ConfigProvider
             'filter-visitors'    => [
                 AllowListVisitor::class,
                 BooleanVisitor::class,
+                CallbackVisitor::class,
                 DigitsFilterVisitor::class,
                 InflectorVisitor::class,
                 ToFloatVisitor::class,

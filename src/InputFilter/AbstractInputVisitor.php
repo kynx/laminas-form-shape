@@ -8,6 +8,7 @@ use Kynx\Laminas\FormShape\FilterVisitorInterface;
 use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Kynx\Laminas\FormShape\Psalm\TypeUtil;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
+use Laminas\Filter\Callback;
 use Laminas\Filter\FilterInterface;
 use Laminas\InputFilter\EmptyContextInterface;
 use Laminas\InputFilter\Input;
@@ -19,6 +20,7 @@ use Psalm\Type\Union;
 use function array_filter;
 use function array_map;
 use function array_unshift;
+use function is_callable;
 
 abstract readonly class AbstractInputVisitor implements InputVisitorInterface
 {
@@ -35,9 +37,10 @@ abstract readonly class AbstractInputVisitor implements InputVisitorInterface
         $union = $initial->getBuilder()->freeze();
 
         foreach ($input->getFilterChain()->getIterator() as $filter) {
-            if (! $filter instanceof FilterInterface) {
-                continue;
+            if (is_callable($filter) && ! $filter instanceof FilterInterface) {
+                $filter = new Callback($filter);
             }
+
             $union = $this->visitFilters($filter, $union);
         }
 

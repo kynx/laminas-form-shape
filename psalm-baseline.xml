@@ -35,6 +35,11 @@
       <code><![CDATA[visitProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/Filter/CallbackVisitorTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[visitProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/Filter/DigitsVisitorTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[visitProvider]]></code>
