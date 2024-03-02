@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KynxTest\Laminas\FormShape\InputFilter;
 
+use Kynx\Laminas\FormShape\Filter\CallbackVisitor;
 use Kynx\Laminas\FormShape\Filter\ToIntVisitor;
 use Kynx\Laminas\FormShape\InputFilter\AbstractInputVisitor;
 use Kynx\Laminas\FormShape\Psalm\ConfigLoader;
@@ -11,6 +12,7 @@ use Kynx\Laminas\FormShape\Validator\DigitsVisitor;
 use Kynx\Laminas\FormShape\Validator\NotEmptyVisitor;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use KynxTest\Laminas\FormShape\InputFilter\MockAbstractInputVisitor;
+use Laminas\Filter\Callback;
 use Laminas\Filter\ToInt;
 use Laminas\InputFilter\Input;
 use Laminas\Validator\Digits;
@@ -41,13 +43,25 @@ final class AbstractInputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testVisitSkipsCallableFilters(): void
+    public function testVisitVisitsCallable(): void
     {
-        $expected = new Union([new TNull(), new TString()]);
-        $filter   = static fn (): never => self::fail("Should not be called");
+        $expected = new Union([new TInt()]);
+        $filter   = static fn (): int => 123;
         $input    = new Input('foo');
         $input->getFilterChain()->attach($filter);
-        $visitor = new MockAbstractInputVisitor([new ToIntVisitor()], []);
+        $visitor = new MockAbstractInputVisitor([new CallbackVisitor()], []);
+
+        $actual = $visitor->visit($input);
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testVisitVisitsCallbackFilter(): void
+    {
+        $expected = new Union([new TInt()]);
+        $filter   = new Callback('intval');
+        $input    = new Input('foo');
+        $input->getFilterChain()->attach($filter);
+        $visitor = new MockAbstractInputVisitor([new CallbackVisitor()], []);
 
         $actual = $visitor->visit($input);
         self::assertEquals($expected, $actual);

@@ -143,10 +143,14 @@ return [
 
 #### Callback
 
-[Callback filters] are hard to handle. In future I will write a visitor to fuzz them and see what they do,
-but even that will have edge cases. I don't use them much: currently they are ignored. To protect the sanity of us tool
-writers - and to keep your code testable and reusable - I suggest converting them to concrete classes and creating
-visitors to describe the types they can produce.
+We introspect the return type of the `callback` option of any callback [Callback filters] you use. Whatever types are
+discovered there are passed on to the next filter.
+
+If you are doing anything more complicated than an `intval()`, I strongly encourage you to refactor these into
+implementations of `FilterInterface` and write a custom visitor to provide the specific types it returns: it will make
+your tests cleaner and your types more sound.
+
+If your callbacks don't even have return types, they will be ignored. Fix them.
 
 ### Validators
 
@@ -160,10 +164,9 @@ tweak the following:
 
 #### Callback
 
-[Callback validators] are hard to handle. In future I will write a visitor to fuzz them and see what they do, but even
-that will have edge cases. I don't use them much: currently they are ignored. To protect the sanity of us tool writers -
-and to keep your code testable and reusable - I suggest converting them to concrete classes and creating
-visitors to describe the types they can produce.
+[Callback validators] are ignored. Unlike callback filters, there is no reliable way to determine what they do. If you
+care about types (and if you are here, you do), convert them to concrete `ValidatorInterface` implementations and write
+a custom visitor to describe them. Your code - and your life - will be better for it.
 
 #### File
 
