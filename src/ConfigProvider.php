@@ -24,6 +24,8 @@ use Kynx\Laminas\FormShape\Form\FormVisitor;
 use Kynx\Laminas\FormShape\Form\FormVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitor;
 use Kynx\Laminas\FormShape\InputFilter\ArrayInputVisitorFactory;
+use Kynx\Laminas\FormShape\InputFilter\FileInputVisitor;
+use Kynx\Laminas\FormShape\InputFilter\FileInputVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitor;
 use Kynx\Laminas\FormShape\InputFilter\InputFilterVisitorFactory;
 use Kynx\Laminas\FormShape\InputFilter\InputVisitor;
@@ -86,6 +88,7 @@ use Psalm\Type\Atomic\TString;
  *      input-visitors: InputVisitorArray,
  *      filter?: array<string, mixed>,
  *      validator: array<string, mixed>,
+ *      input: array<string, mixed>,
  * }
  * @psalm-type FormShapeConfigurationArray = array{
  *     laminas-cli: array,
@@ -158,6 +161,7 @@ final readonly class ConfigProvider
             ],
             'input-visitors'     => [
                 ArrayInputVisitor::class,
+                FileInputVisitor::class,
                 InputVisitor::class,
             ],
             'filter'             => [
@@ -204,6 +208,12 @@ final readonly class ConfigProvider
                     ],
                 ],
             ],
+            'input'              => [
+                'file' => [
+                    'laminas' => true,
+                    'psr-7'   => true,
+                ],
+            ],
         ];
     }
 
@@ -224,18 +234,19 @@ final readonly class ConfigProvider
                 AllowListVisitor::class      => AllowListVisitorFactory::class,
                 ArrayInputVisitor::class     => ArrayInputVisitorFactory::class,
                 ExplodeVisitor::class        => ExplodeVisitorFactory::class,
+                FileInputVisitor::class      => FileInputVisitorFactory::class,
                 FileValidatorVisitor::class  => FileValidatorVisitorFactory::class,
+                FileWriter::class            => FileWriterFactory::class,
                 FormLocator::class           => FormLocatorFactory::class,
                 FormProcessor::class         => FormProcessorFactory::class,
-                NetteCodeGenerator::class    => NetteCodeGeneratorFactory::class,
-                PrettyPrinter::class         => PrettyPrinterFactory::class,
-                PsalmTypeCommand::class      => PsalmTypeCommandFactory::class,
-                FileWriter::class            => FileWriterFactory::class,
                 FormVisitor::class           => FormVisitorFactory::class,
                 InArrayVisitor::class        => InArrayVisitorFactory::class,
                 InputFilterVisitor::class    => InputFilterVisitorFactory::class,
                 InputVisitor::class          => InputVisitorFactory::class,
+                NetteCodeGenerator::class    => NetteCodeGeneratorFactory::class,
                 NonEmptyStringVisitor::class => NonEmptyStringVisitorFactory::class,
+                PrettyPrinter::class         => PrettyPrinterFactory::class,
+                PsalmTypeCommand::class      => PsalmTypeCommandFactory::class,
                 RegexVisitor::class          => RegexVisitorFactory::class,
                 TypeNamer::class             => TypeNamerFactory::class,
             ],

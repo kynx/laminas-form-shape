@@ -6,6 +6,7 @@ namespace Kynx\Laminas\FormShape\InputFilter;
 
 use Kynx\Laminas\FormShape\ConfigProvider;
 use Kynx\Laminas\FormShape\FilterVisitorInterface;
+use Kynx\Laminas\FormShape\InputVisitorInterface;
 use Kynx\Laminas\FormShape\ValidatorVisitorInterface;
 use Psr\Container\ContainerInterface;
 
@@ -14,7 +15,7 @@ use Psr\Container\ContainerInterface;
  */
 abstract readonly class AbstractInputVisitorFactory
 {
-    abstract public function __invoke(ContainerInterface $container): AbstractInputVisitor;
+    abstract public function __invoke(ContainerInterface $container): InputVisitorInterface;
 
     /**
      * @return array<FilterVisitorInterface>

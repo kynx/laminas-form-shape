@@ -62,13 +62,23 @@ final readonly class FileValidatorVisitor implements ValidatorVisitorInterface
             return $previous;
         }
 
-        return TypeUtil::narrow($previous, new Union([
-            new TKeyedArray([
-                'name'     => new Union([new TString()]),
-                'tmp_name' => new Union([new TNonEmptyString()]),
-                'type'     => new Union([new TString()]),
-            ]),
+        return TypeUtil::narrow($previous, self::getUploadUnion());
+    }
+
+    public static function getUploadUnion(): Union
+    {
+        return new Union([
+            self::getUploadArray(),
             new TNamedObject(UploadedFileInterface::class),
-        ]));
+        ]);
+    }
+
+    public static function getUploadArray(): TKeyedArray
+    {
+        return new TKeyedArray([
+            'name'     => new Union([new TString()]),
+            'tmp_name' => new Union([new TNonEmptyString()]),
+            'type'     => new Union([new TString()]),
+        ]);
     }
 }
