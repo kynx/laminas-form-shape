@@ -54,27 +54,6 @@ validators attached to the `InputFilter`?
 
 This command introspects your form's input filter and generates the most specific array shape possible.
 
-## Beware
-
-If your code changes forms at run time - adding and removing elements, changing `required` properties or populating
-`<select>` options - this tool won't know. The array shape it generates can serve as a good starting point, but will
-need manual tweaks.
-
-This tool aims to cover all the filters or validators installed when you `composer require laminas/laminas-form`. If it
-encounters one it doesn't know about, it silently ignores it. See the [Customisation] section for pointers on handling
-these.
-
-### `Cannot get type for 'foo'`
-
-It is possible to build an input filter with a combination of filters and validators that can never produce a result.
-For instance, a `Boolean` filter with the `casting` option set to `true` will ony ever output a `bool` type. If you
-follow that with a `Barcode` validator, the element can never validate. When the command encounters a situation like that
-it will report a "Cannot get type" error.
-
-If you see this error when parsing an existing form that has been functioning fine for years, you've hit a bug. Please
-raise an issue with a _small_ example form that reproduces the error. Or, better yet, create a PR with a failing
-test :smiley:
-
 ## Configuration
 
 All configuration is stored under the `laminas-form-shape` configuration key. The examples below assume you are using
@@ -106,6 +85,30 @@ return [
         'indent'             => "\t", // use tab for indenting
         'max-string-length'  => 50,   // don't output long literal strings
         'literal-limit'      => 20,   // don't output too many literals
+    ],
+];
+```
+
+### File elements
+
+File elements are used for handling [form uploads]. The `FileInput` validates both the array notation used by
+`Laminas\Http\PhpEnvironment\Request` and the PSR-7 `UploadFileInterface` used by applications such as Mezzio. It's
+highly likely your controllers / handlers will only be using one of these. If so, specify which one in the
+configuration:
+
+```php
+return [
+    'laminas-form-shape' => [
+        'input' => [
+            'file' => [
+                // Laminas MVC applications
+                'laminas' => true,
+                'psr-7'   => false,
+                // Mezzio applications
+                // 'laminas' => false,
+                // 'psr-7'   => true, 
+            ],
+        ],
     ],
 ];
 ```
@@ -261,6 +264,27 @@ return [
     ],
 ];
 ```
+
+## Beware
+
+If your code changes forms at run time - adding and removing elements, changing `required` properties or populating
+`<select>` options - this tool won't know. The array shape it generates can serve as a good starting point, but will
+need manual tweaks.
+
+This tool aims to cover all the filters or validators installed when you `composer require laminas/laminas-form`. If it
+encounters one it doesn't know about, it silently ignores it. See the [Customisation] section for pointers on handling
+these.
+
+### `Cannot get type for 'foo'`
+
+It is possible to build an input filter with a combination of filters and validators that can never produce a result.
+For instance, a `Boolean` filter with the `casting` option set to `true` will ony ever output a `bool` type. If you
+follow that with a `Barcode` validator, the element can never validate. When the command encounters a situation like that
+it will report a "Cannot get type" error.
+
+If you see this error when parsing an existing form that has been functioning fine for years, you've hit a bug. Please
+raise an issue with a _small_ example form that reproduces the error. Or, better yet, create a PR with a failing
+test :smiley:
 
 ## Custom filters and validators
 

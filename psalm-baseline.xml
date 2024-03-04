@@ -86,6 +86,17 @@
       <code><![CDATA[addNotEmptyProvider]]></code>
     </PossiblyUnusedMethod>
   </file>
+  <file src="test/InputFilter/FileInputVisitorFactoryTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[configProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="test/InputFilter/FileInputVisitorTest.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[styleProvider]]></code>
+      <code><![CDATA[widenTypeProvider]]></code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="test/InputFilter/InputFilterVisitorTest.php">
     <PossiblyUnusedMethod>
       <code><![CDATA[collectionProvider]]></code>
