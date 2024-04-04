@@ -9,7 +9,13 @@ Generate [Psalm] types for [Laminas forms]
 Install this package as a development dependency using [Composer]:
 
 ```commandline
-composer require --dev kynx/laminas-form-shape
+composer require --dev kynx/laminas-form-shape vimeo/psalm
+```
+
+If you would rather use the [Psalm Phar], require that instead:
+
+```commandline
+composer require --dev kynx/laminas-form-shape psalm/phar
 ```
 
 ## Usage
@@ -297,6 +303,7 @@ To come, once things settle down...
 [Psalm]: https://psalm.dev
 [Laminas forms]: https://docs.laminas.dev/laminas-form/
 [Composer]: https://getcomposer.org
+[Psalm Phar]: https://github.com/vimeo/psalm/blob/5.x/docs/running_psalm/installation.md#using-the-phar
 [array shape]: https://psalm.dev/docs/annotating_code/type_syntax/array_types/#array-shapes
 [3.17.0]: https://github.com/laminas/laminas-form/releases/tag/3.17.0
 [Customisation]: #custom-filters-and-validators
