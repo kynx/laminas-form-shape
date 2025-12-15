@@ -1,2 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.14.0@0d8e1d4b4fff25979cba377c0306c5f156ddabc7"/>
+<files psalm-version="6.14.0@0d8e1d4b4fff25979cba377c0306c5f156ddabc7">
+  <file src="src/Filter/AllowListVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getList]]></code>
+      <code><![CDATA[getStrict]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Filter/BooleanVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getCasting]]></code>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Filter/CallbackVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getCallback]]></code>
+    </DeprecatedMethod>
+    <PossiblyNullArgument>
+      <code><![CDATA[$first->value]]></code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch>
+      <code><![CDATA[$first->value]]></code>
+    </PossiblyNullPropertyFetch>
+  </file>
+  <file src="src/Filter/ToNullVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/InputFilter/CollectionInput.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$this->prepareNotArrayFailureMessage()]]></code>
+      <code><![CDATA[$this->prepareRequiredValidationFailureMessage()]]></code>
+      <code><![CDATA[$this->prepareRequiredValidationFailureMessage()]]></code>
+    </InvalidPropertyAssignmentValue>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[! $required]]></code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/Validator/DateStepVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getOptions]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/ExplodeVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getValidator]]></code>
+      <code><![CDATA[getValueDelimiter]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/FileValidatorVisitor.php">
+    <DeprecatedClass>
+      <code><![CDATA[Crc32::class]]></code>
+      <code><![CDATA[Md5::class]]></code>
+      <code><![CDATA[Sha1::class]]></code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Validator/InArrayVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getHaystack]]></code>
+      <code><![CDATA[getStrict]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/IsInstanceOfVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getClassName]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/IsbnVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getType]]></code>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/NonEmptyStringVisitor.php">
+    <DeprecatedClass>
+      <code><![CDATA[Csrf::class]]></code>
+    </DeprecatedClass>
+  </file>
+  <file src="src/Validator/NotEmptyVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/RegexVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getPattern]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Validator/StringLengthVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getMin]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="test/Validator/BetweenVisitorTest.php">
+    <DeprecatedClass>
+      <code><![CDATA[new Between(['min' => 'a', 'max' => 'm'])]]></code>
+      <code><![CDATA[new Between(['min' => 0, 'max' => 1])]]></code>
+      <code><![CDATA[new Between(['min' => 0, 'max' => 1])]]></code>
+    </DeprecatedClass>
+  </file>
+  <file src="test/Validator/CsrfVisitorTest.php">
+    <DeprecatedClass>
+      <code><![CDATA[new Csrf()]]></code>
+      <code><![CDATA[new Csrf()]]></code>
+    </DeprecatedClass>
+  </file>
+  <file src="test/Validator/FileValidatorVisitorFactoryTest.php">
+    <DeprecatedClass>
+      <code><![CDATA[new Crc32()]]></code>
+      <code><![CDATA[new Crc32()]]></code>
+    </DeprecatedClass>
+  </file>
+  <file src="test/Validator/FileValidatorVisitorTest.php">
+    <DeprecatedClass>
+      <code><![CDATA[new Crc32()]]></code>
+      <code><![CDATA[new Crc32()]]></code>
+    </DeprecatedClass>
+  </file>
+</files>
