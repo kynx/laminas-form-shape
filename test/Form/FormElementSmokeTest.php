@@ -84,7 +84,7 @@ final class FormElementSmokeTest extends TestCase
             $actual = $inputFilter->isValid();
             self::assertSame($valid, $actual, sprintf(
                 "Validation expectation failed: %s is not %s",
-                $data === null ? 'null' : json_encode($data),
+                $data === null ? 'null' : (string) json_encode($data),
                 $valid ? 'valid' : 'invalid'
             ));
         }
@@ -92,6 +92,9 @@ final class FormElementSmokeTest extends TestCase
         self::assertSame($expectedString, $actualString);
     }
 
+    /**
+     * @return array<string, list{class-string<ElementInterface>, list<list{array|scalar|null, bool}>, string}>
+     */
     public static function defaultElementProvider(): array
     {
         ConfigLoader::load();

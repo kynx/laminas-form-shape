@@ -50,7 +50,7 @@ final readonly class DocBlock implements Stringable
         $sections = $section = [];
         $inTag    = false;
         foreach (array_slice($lines, 1, -1) as $line) {
-            $line = rtrim(preg_replace('/^\s*\*? ?/', '', $line));
+            $line = rtrim((string) preg_replace('/^\s*\*? ?/', '', $line));
             if ($inTag && self::isEndOfTag($line)) {
                 $sections[] = new GenericTag(implode("\n", $section));
                 $section    = [];

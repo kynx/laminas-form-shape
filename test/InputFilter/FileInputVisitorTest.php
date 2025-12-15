@@ -56,6 +56,9 @@ final class FileInputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{FileInputStyle, non-empty-array<Atomic>}>
+     */
     public static function styleProvider(): array
     {
         return [
@@ -146,6 +149,9 @@ final class FileInputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{bool, bool, bool, non-empty-array<Atomic>}>
+     */
     public static function widenTypeProvider(): array
     {
         $validated = [new TNamedObject(UploadedFileInterface::class)];

@@ -32,7 +32,7 @@ final readonly class FileWriter implements FileWriterInterface
         array $importTypes,
         bool $replaceGetDataReturn = false
     ): string {
-        $contents  = file_get_contents($reflection->getFileName());
+        $contents  = (string) file_get_contents($reflection->getFileName());
         $generated = $this->codeGenerator->generate($reflection, $type, $importTypes, $contents, $replaceGetDataReturn);
         file_put_contents($reflection->getFileName(), $generated->contents);
 

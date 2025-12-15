@@ -37,6 +37,9 @@ final class ReturnTypeTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{TagInterface, bool}>
+     */
     public static function matchProvider(): array
     {
         return [

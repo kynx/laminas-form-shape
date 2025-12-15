@@ -65,7 +65,7 @@ final class FileWriterFactoryTest extends TestCase
         ]);
 
         $actual   = $instance->write($reflection, $type, []);
-        $contents = file_get_contents($this->tempFile);
+        $contents = (string) file_get_contents($this->tempFile);
         self::assertStringContainsString('// EDITED', $contents);
         self::assertSame($expected, $actual);
     }

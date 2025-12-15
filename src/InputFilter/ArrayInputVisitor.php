@@ -21,7 +21,7 @@ final readonly class ArrayInputVisitor extends AbstractInputVisitor
 {
     public function visit(InputInterface $input): ?Union
     {
-        if (! $input instanceof ArrayInput) {
+        if (! $input instanceof ArrayInput && ! $input instanceof CollectionInput) {
             return null;
         }
 
@@ -51,7 +51,7 @@ final readonly class ArrayInputVisitor extends AbstractInputVisitor
         return $union;
     }
 
-    private function isNonEmpty(ArrayInput $input): bool
+    private function isNonEmpty(ArrayInput|CollectionInput $input): bool
     {
         if ($input instanceof CollectionInput) {
             return (bool) $input->getCount();

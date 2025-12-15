@@ -31,6 +31,9 @@ final class MethodTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{TagInterface, bool}>
+     */
     public static function isBeforeProvider(): array
     {
         return [
@@ -49,6 +52,9 @@ final class MethodTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{TagInterface, bool}>
+     */
     public static function matchProvider(): array
     {
         return [

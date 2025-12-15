@@ -17,7 +17,7 @@ trait GetReflectionTrait
 
     protected function setUpTempFile(): void
     {
-        $this->tempFile = tempnam(sys_get_temp_dir(), 'phpunit_');
+        $this->tempFile = (string) tempnam(sys_get_temp_dir(), 'phpunit_');
     }
 
     protected function tearDownTempFile(): void

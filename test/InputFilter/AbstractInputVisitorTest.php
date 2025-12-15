@@ -100,6 +100,9 @@ final class AbstractInputVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{bool, bool, bool, non-empty-array<Atomic>}>
+     */
     public static function addNotEmptyProvider(): array
     {
         ConfigLoader::load();

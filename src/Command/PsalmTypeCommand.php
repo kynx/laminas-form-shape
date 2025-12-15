@@ -70,7 +70,7 @@ final class PsalmTypeCommand extends Command
         $fix = $this->fixer !== null && $input->getOption('cs-fix');
 
         $io       = new SymfonyStyle($input, $output);
-        $listener = new ProgressListener($io, $fix ? $this->fixer : null, getcwd(), $paths);
+        $listener = new ProgressListener($io, $fix ? $this->fixer : null, (string) getcwd(), $paths);
 
         $this->formProcessor->process($paths, $listener, $processFieldsets, $removeGetDataReturn);
 

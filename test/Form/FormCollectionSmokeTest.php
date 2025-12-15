@@ -70,6 +70,9 @@ final class FormCollectionSmokeTest extends TestCase
         self::assertValinorValidates($isValid, $type, $formData);
     }
 
+    /**
+     * @return array<string, list{ElementInterface, array, bool}>
+     */
     public static function validationMatchesProvider(): array
     {
         ConfigLoader::load();
@@ -121,6 +124,9 @@ final class FormCollectionSmokeTest extends TestCase
         $form->setData($data);
     }
 
+    /**
+     * @return array<string, list{array, int, bool, bool}>
+     */
     public static function countAllowRemoveProvider(): array
     {
         return [

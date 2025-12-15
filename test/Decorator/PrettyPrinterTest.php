@@ -141,6 +141,9 @@ final class PrettyPrinterTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{Atomic, string}>
+     */
     public static function typeProvider(): array
     {
         ConfigLoader::load();
@@ -172,6 +175,9 @@ final class PrettyPrinterTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{non-empty-array<Atomic>, string}>
+     */
     public static function combineTypesProvider(): array
     {
         ConfigLoader::load();

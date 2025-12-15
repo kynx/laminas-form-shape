@@ -23,14 +23,14 @@ trait ValinorAssertionTrait
             $actual = (new MapperBuilder())->mapper()->map($type, $data);
             self::assertTrue($expected, sprintf(
                 "Data '%s' should not match type '%s'",
-                json_encode($data),
+                (string) json_encode($data),
                 $type
             ));
             self::assertSame($data, $actual);
         } catch (MappingError $e) {
             self::assertFalse($expected, sprintf(
                 "Data '%s' should match type '%s': %s",
-                json_encode($data),
+                (string) json_encode($data),
                 $type,
                 $e->getMessage()
             ));

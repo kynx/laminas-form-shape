@@ -29,6 +29,9 @@ final class UseCollectorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{Atomic, list<string>}>
+     */
     public static function enterNodeProvider(): array
     {
         return [

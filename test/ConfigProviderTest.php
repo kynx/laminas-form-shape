@@ -56,6 +56,9 @@ final class ConfigProviderTest extends TestCase
         self::assertContains($filterVisitor, $filterVisitors);
     }
 
+    /**
+     * @return array<string, non-empty-list<string>>
+     */
     public static function filterVisitorsProvider(): array
     {
         return self::getClasses('src/Filter', 'Visitor');
@@ -71,6 +74,9 @@ final class ConfigProviderTest extends TestCase
         self::assertContains($validatorVisitor, $validatorVisitors);
     }
 
+    /**
+     * @return array<string, non-empty-list<string>>
+     */
     public static function validatorVisitorsProvider(): array
     {
         return self::getClasses('src/Validator', 'Visitor');
@@ -82,6 +88,9 @@ final class ConfigProviderTest extends TestCase
         self::assertContainerHasDependency($container, $alias);
     }
 
+    /**
+     * @return Generator<string, list{ContainerInterface, string}>
+     */
     public static function aliasProvider(): Generator
     {
         $container = self::getContainer();
@@ -99,6 +108,9 @@ final class ConfigProviderTest extends TestCase
         self::assertContainerHasDependency($container, $dependency);
     }
 
+    /**
+     * @return Generator<string, list{ContainerInterface, string}>
+     */
     public static function factoryProvider(): Generator
     {
         $container = self::getContainer();
@@ -112,7 +124,7 @@ final class ConfigProviderTest extends TestCase
 
     /**
      * @param non-empty-string $pattern
-     * @param non-empty-list<class-string<TString>> $narrow
+     * @param list<class-string<TString>> $narrow
      */
     #[DataProvider('regexPatternProvider')]
     public function testRegexPatternsValidate(RegexVisitor $visitor, string $pattern, array $narrow): void
@@ -126,13 +138,16 @@ final class ConfigProviderTest extends TestCase
         }
     }
 
+    /**
+     * @return array<string, list{RegexVisitor, non-empty-string, list<class-string<TString>>}>
+     */
     public static function regexPatternProvider(): array
     {
         $container = self::getContainer();
         $visitor   = $container->get(RegexVisitor::class);
         $config    = self::getConfig();
 
-        /** @var array<non-empty-string, list<class-string<Atomic>>> $patterns */
+        /** @var array<non-empty-string, list<class-string<TString>>> $patterns */
         $patterns = $config['laminas-form-shape']['validator']['regex']['patterns'] ?? [];
 
         $tests = [];
@@ -166,6 +181,9 @@ final class ConfigProviderTest extends TestCase
         return include __DIR__ . '/container.php';
     }
 
+    /**
+     * @return array<string, non-empty-list<string>>
+     */
     private static function getClasses(string $dir, string $suffix): array
     {
         $classes = [];
@@ -185,6 +203,7 @@ final class ConfigProviderTest extends TestCase
             $classes[$class] = [$class];
         }
 
+        self::assertNotEmpty($classes);
         return $classes;
     }
 }
