@@ -60,6 +60,7 @@ final class TypeUtilTest extends TestCase
 
     /**
      * @psalm-suppress InvalidArgument Union([]) is invalid, but we need to test it
+     * @return array<string, list{Union, Union, Union}>
      */
     public static function filterProvider(): array
     {
@@ -101,6 +102,9 @@ final class TypeUtilTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{Union, Union, Union}>
+     */
     public static function narrowProvider(): array
     {
         ConfigLoader::load();
@@ -171,6 +175,9 @@ final class TypeUtilTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{Union, Union, Union}>
+     */
     public static function widenProvider(): array
     {
         return [
@@ -204,6 +211,9 @@ final class TypeUtilTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{Union, Atomic, Union, Union}>
+     */
     public static function replaceTypeProvider(): array
     {
         return [
@@ -230,6 +240,9 @@ final class TypeUtilTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{mixed, Atomic[]}>
+     */
     public static function toLooseUnionProvider(): array
     {
         ConfigLoader::load(500);
@@ -349,6 +362,9 @@ final class TypeUtilTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{mixed, Atomic}>
+     */
     public static function toStrictUnionProvider(): array
     {
         ConfigLoader::load(200);

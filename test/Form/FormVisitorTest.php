@@ -305,7 +305,7 @@ final class FormVisitorTest extends TestCase
 
     public function testVisitPopulatesFormWithStrings(): void
     {
-        $element = self::createMock(ElementInterface::class);
+        $element = self::createStub(ElementInterface::class);
         $element->method('getName')
             ->willReturn('foo');
         $element->method('setValue')

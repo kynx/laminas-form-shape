@@ -35,7 +35,7 @@ final class PsalmTypeCommandFactoryTest extends TestCase
 
     public function testInvokeAddsPhpCodeSnifferFixer(): void
     {
-        $formProcessor = self::createMock(FormProcessorInterface::class);
+        $formProcessor = self::createStub(FormProcessorInterface::class);
         $container     = $this->getContainer($formProcessor);
         $factory       = new PsalmTypeCommandFactory();
         $instance      = $factory($container);

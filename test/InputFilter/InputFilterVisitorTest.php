@@ -71,6 +71,9 @@ final class InputFilterVisitorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{bool, TArray}>
+     */
     public static function collectionProvider(): array
     {
         $union = new Union([
@@ -311,7 +314,7 @@ final class InputFilterVisitorTest extends TestCase
         $arrayVisitor = new ArrayInputVisitor([], []);
         $visitor      = new InputFilterVisitor([$arrayVisitor]);
         $inputFilter  = new InputFilter();
-        $inputFilter->add(new Input());
+        $inputFilter->add(new Input('foo'));
 
         self::expectException(InputVisitorException::class);
         self::expectExceptionMessage($expected);

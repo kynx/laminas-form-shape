@@ -1,273 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.22.1@e9dad66e11274315dac27e08349c628c7d6a1a43">
-  <file src="test/ConfigProviderTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[aliasProvider]]></code>
-      <code><![CDATA[factoryProvider]]></code>
-      <code><![CDATA[filterVisitorsProvider]]></code>
-      <code><![CDATA[regexPatternProvider]]></code>
-      <code><![CDATA[validatorVisitorsProvider]]></code>
-    </PossiblyUnusedMethod>
+<files psalm-version="6.14.0@0d8e1d4b4fff25979cba377c0306c5f156ddabc7">
+  <file src="src/Filter/AllowListVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getList]]></code>
+      <code><![CDATA[getStrict]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Decorator/KeyedArrayDecoratorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[typeNameProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Filter/BooleanVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getCasting]]></code>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Decorator/PrettyPrinterTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[combineTypesProvider]]></code>
-      <code><![CDATA[typeProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Filter/CallbackVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getCallback]]></code>
+    </DeprecatedMethod>
+    <PossiblyNullArgument>
+      <code><![CDATA[$first->value]]></code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch>
+      <code><![CDATA[$first->value]]></code>
+    </PossiblyNullPropertyFetch>
   </file>
-  <file src="test/Filter/AbstractFilterVisitorTestCase.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Filter/ToNullVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Filter/AllowListVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/InputFilter/CollectionInput.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$this->prepareNotArrayFailureMessage()]]></code>
+      <code><![CDATA[$this->prepareRequiredValidationFailureMessage()]]></code>
+      <code><![CDATA[$this->prepareRequiredValidationFailureMessage()]]></code>
+    </InvalidPropertyAssignmentValue>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[! $required]]></code>
+    </RedundantConditionGivenDocblockType>
   </file>
-  <file src="test/Filter/BooleanVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/DateStepVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getOptions]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Filter/CallbackVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/ExplodeVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getValidator]]></code>
+      <code><![CDATA[getValueDelimiter]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Filter/DigitsVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/FileValidatorVisitor.php">
+    <DeprecatedClass>
+      <code><![CDATA[Crc32::class]]></code>
+      <code><![CDATA[Md5::class]]></code>
+      <code><![CDATA[Sha1::class]]></code>
+    </DeprecatedClass>
   </file>
-  <file src="test/Filter/InflectorVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/InArrayVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getHaystack]]></code>
+      <code><![CDATA[getStrict]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Filter/ToFloatVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/IsInstanceOfVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getClassName]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Filter/ToIntVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/IsbnVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getType]]></code>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Filter/ToNullVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/NonEmptyStringVisitor.php">
+    <DeprecatedClass>
+      <code><![CDATA[Csrf::class]]></code>
+    </DeprecatedClass>
   </file>
-  <file src="test/Form/FormCollectionSmokeTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[countAllowRemoveProvider]]></code>
-      <code><![CDATA[validationMatchesProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/NotEmptyVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getType]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Form/FormElementSmokeTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[defaultElementProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/RegexVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getPattern]]></code>
+    </DeprecatedMethod>
   </file>
-  <file src="test/Form/FormFieldsetSmokeTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[validationMatchProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/InputFilter/AbstractInputVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[addNotEmptyProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/InputFilter/FileInputVisitorFactoryTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[configProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/InputFilter/FileInputVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[styleProvider]]></code>
-      <code><![CDATA[widenTypeProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/InputFilter/InputFilterVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[collectionProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Psalm/IsFqcnTypeTraitTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isFqcnTypeProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Psalm/ShortNameReplacerTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[enterNodeProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Psalm/TypeComparatorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isContainedByFalseProvider]]></code>
-      <code><![CDATA[isContainedByTrueProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Psalm/TypeUtilTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[filterProvider]]></code>
-      <code><![CDATA[narrowProvider]]></code>
-      <code><![CDATA[replaceTypeProvider]]></code>
-      <code><![CDATA[toLooseUnionProvider]]></code>
-      <code><![CDATA[toStrictUnionProvider]]></code>
-      <code><![CDATA[widenProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Psalm/UseCollectorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[enterNodeProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/AbstractValidatorVisitorTestCase.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="src/Validator/StringLengthVisitor.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getMin]]></code>
+    </DeprecatedMethod>
   </file>
   <file src="test/Validator/BetweenVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+    <DeprecatedClass>
+      <code><![CDATA[new Between(['min' => 'a', 'max' => 'm'])]]></code>
+      <code><![CDATA[new Between(['min' => 0, 'max' => 1])]]></code>
+      <code><![CDATA[new Between(['min' => 0, 'max' => 1])]]></code>
+    </DeprecatedClass>
   </file>
   <file src="test/Validator/CsrfVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+    <DeprecatedClass>
+      <code><![CDATA[new Csrf()]]></code>
+      <code><![CDATA[new Csrf()]]></code>
+    </DeprecatedClass>
   </file>
-  <file src="test/Validator/DateStepVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/DateVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/DigitsVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/ExplodeVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
+  <file src="test/Validator/FileValidatorVisitorFactoryTest.php">
+    <DeprecatedClass>
+      <code><![CDATA[new Crc32()]]></code>
+      <code><![CDATA[new Crc32()]]></code>
+    </DeprecatedClass>
   </file>
   <file src="test/Validator/FileValidatorVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[defaultValidatorProvider]]></code>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/HexVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/InArrayVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/IsCountableVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/IsInstanceOfVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/IsbnVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/NonEmptyStringVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/NotEmptyVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/RegexVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/Sitemap/PriorityVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/StepVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Validator/StringLengthVisitorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[visitProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/NetteCodeGeneratorTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[importTypesProvider]]></code>
-      <code><![CDATA[writeProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/Tag/MethodTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isBeforeProvider]]></code>
-      <code><![CDATA[matchProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/Tag/PsalmExtendsTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isBeforeProvider]]></code>
-      <code><![CDATA[matchProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/Tag/PsalmImplementsTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isBeforeProvider]]></code>
-      <code><![CDATA[matchProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/Tag/PsalmImportTypeTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isBeforeProvider]]></code>
-      <code><![CDATA[matchProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/Tag/PsalmTypeTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[isBeforeProvider]]></code>
-      <code><![CDATA[matchProvider]]></code>
-    </PossiblyUnusedMethod>
-  </file>
-  <file src="test/Writer/Tag/ReturnTypeTest.php">
-    <PossiblyUnusedMethod>
-      <code><![CDATA[matchProvider]]></code>
-    </PossiblyUnusedMethod>
+    <DeprecatedClass>
+      <code><![CDATA[new Crc32()]]></code>
+      <code><![CDATA[new Crc32()]]></code>
+    </DeprecatedClass>
   </file>
 </files>

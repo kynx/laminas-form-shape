@@ -58,7 +58,7 @@ final class FileWriterTest extends TestCase
         ]);
 
         $actual   = $this->writer->write($reflection, $type, []);
-        $contents = file_get_contents($this->tempFile);
+        $contents = (string) file_get_contents($this->tempFile);
         self::assertStringContainsString($expected, $contents);
         self::assertSame($expectedType, $actual);
     }

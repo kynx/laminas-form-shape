@@ -27,7 +27,7 @@ final class ConfigLoader
             self::hackPsalmCli();
             self::setPsalmVersion();
 
-            $config       = Config::getConfigForPath(__DIR__, getcwd());
+            $config       = Config::getConfigForPath(__DIR__, (string) getcwd());
             self::$loaded = true;
         }
 

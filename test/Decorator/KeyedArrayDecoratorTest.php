@@ -40,6 +40,9 @@ final class KeyedArrayDecoratorTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{TKeyedArray, string}>
+     */
     public static function typeNameProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong

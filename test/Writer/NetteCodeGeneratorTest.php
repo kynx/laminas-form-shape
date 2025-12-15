@@ -98,6 +98,9 @@ final class NetteCodeGeneratorTest extends TestCase
         self::assertSame("T{$className}Array", $generated->type);
     }
 
+    /**
+     * @return array<string, list{string, string, string}>
+     */
     public static function writeProvider(): array
     {
         return [
@@ -415,6 +418,9 @@ final class NetteCodeGeneratorTest extends TestCase
         self::assertSame($expected, $generated->contents);
     }
 
+    /**
+     * @return array<string, list{string, string, string}>
+     */
     public static function importTypesProvider(): array
     {
         return [

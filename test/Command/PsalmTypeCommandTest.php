@@ -74,6 +74,8 @@ final class PsalmTypeCommandTest extends TestCase
 
     public function testExecuteRunsCsFixer(): void
     {
+        $this->formProcessor->expects(self::once())
+            ->method('process');
         $this->commandTester->execute([
             '--cs-fix' => true,
             'path'     => 'src',
@@ -84,7 +86,8 @@ final class PsalmTypeCommandTest extends TestCase
 
     public function testExecuteReturnsListenerStatus(): void
     {
-        $this->formProcessor->method('process')
+        $this->formProcessor->expects(self::once())
+            ->method('process')
             ->willReturnCallback(static function (array $paths, ProgressListener $listener): void {
                 $listener->finally(0);
             });

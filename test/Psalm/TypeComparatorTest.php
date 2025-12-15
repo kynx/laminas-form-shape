@@ -47,6 +47,9 @@ final class TypeComparatorTest extends TestCase
         self::assertTrue($actual);
     }
 
+    /**
+     * @return array<string, list{Atomic, Atomic}>
+     */
     public static function isContainedByTrueProvider(): array
     {
         ConfigLoader::load(500);
@@ -228,6 +231,9 @@ final class TypeComparatorTest extends TestCase
         self::assertFalse($actual);
     }
 
+    /**
+     * @return array<string, list{Atomic, Atomic}>
+     */
     public static function isContainedByFalseProvider(): array
     {
         ConfigLoader::load(500);

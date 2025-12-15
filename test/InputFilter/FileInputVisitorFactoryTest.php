@@ -39,6 +39,9 @@ final class FileInputVisitorFactoryTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{array<string, bool>, non-empty-array<Atomic>}>
+     */
     public static function configProvider(): array
     {
         $laminas = FileValidatorVisitor::getUploadArray();

@@ -31,6 +31,9 @@ final class IsFqcnTypeTraitTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{Atomic, bool}>
+     */
     public static function isFqcnTypeProvider(): array
     {
         return [

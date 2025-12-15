@@ -65,6 +65,9 @@ final class FileValidatorVisitorTest extends AbstractValidatorVisitorTestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, list{ValidatorInterface}>
+     */
     public static function defaultValidatorProvider(): array
     {
         $tests = [];

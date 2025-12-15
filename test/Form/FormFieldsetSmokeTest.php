@@ -67,6 +67,9 @@ final class FormFieldsetSmokeTest extends TestCase
         self::assertValinorValidates($isValid, $type, $formData);
     }
 
+    /**
+     * @return array<string, list{array<ElementInterface>, array, bool}>
+     */
     public static function validationMatchProvider(): array
     {
         ConfigLoader::load();

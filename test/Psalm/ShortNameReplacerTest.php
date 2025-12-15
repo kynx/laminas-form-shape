@@ -29,6 +29,9 @@ final class ShortNameReplacerTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array<string, array{Atomic, Atomic}>
+     */
     public static function enterNodeProvider(): array
     {
         return [
