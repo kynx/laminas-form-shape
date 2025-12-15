@@ -11,7 +11,6 @@ use Laminas\Validator\Regex;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TString;
 use Psalm\Type\Union;
 use Psr\Container\ContainerInterface;
