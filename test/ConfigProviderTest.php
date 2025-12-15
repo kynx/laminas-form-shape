@@ -9,7 +9,6 @@ use Kynx\Laminas\FormShape\ConfigProvider;
 use Kynx\Laminas\FormShape\Validator\RegexVisitor;
 use Laminas\Validator\Regex;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psalm\Type\Atomic;
@@ -77,7 +76,6 @@ final class ConfigProviderTest extends TestCase
         return self::getClasses('src/Validator', 'Visitor');
     }
 
-    #[CoversNothing]
     #[DataProvider('aliasProvider')]
     public function testAllAliasesResolve(ContainerInterface $container, string $alias): void
     {
@@ -95,7 +93,6 @@ final class ConfigProviderTest extends TestCase
         }
     }
 
-    #[CoversNothing]
     #[DataProvider('factoryProvider')]
     public function testAllFactoriesResolve(ContainerInterface $container, string $dependency): void
     {
@@ -117,7 +114,6 @@ final class ConfigProviderTest extends TestCase
      * @param non-empty-string $pattern
      * @param non-empty-list<class-string<TString>> $narrow
      */
-    #[CoversNothing]
     #[DataProvider('regexPatternProvider')]
     public function testRegexPatternsValidate(RegexVisitor $visitor, string $pattern, array $narrow): void
     {

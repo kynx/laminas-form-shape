@@ -103,7 +103,7 @@ final class FileInputVisitorTest extends TestCase
     public function testVisitDoesNotPrependDuplicateUploadFileValidator(): void
     {
         $expected    = new Union(self::getInitialTypes());
-        $mockVisitor = self::createMock(ValidatorVisitorInterface::class);
+        $mockVisitor = self::createStub(ValidatorVisitorInterface::class);
         $mockVisitor->method('visit')
             ->willReturnCallback(
                 static function (ValidatorInterface $validator, Union $previous) use ($expected): Union {
@@ -177,7 +177,7 @@ final class FileInputVisitorTest extends TestCase
     public function testVisitValidatesThenFilters(): void
     {
         $expected      = new Union([new TString()]);
-        $filterVisitor = self::createMock(FilterVisitorInterface::class);
+        $filterVisitor = self::createStub(FilterVisitorInterface::class);
         $filterVisitor->method('visit')
             ->willReturnCallback(static function (FilterInterface $filter, Union $previous): Union {
                 $expected = new Union([new TNamedObject(UploadedFileInterface::class)]);

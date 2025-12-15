@@ -311,7 +311,7 @@ final class InputFilterVisitorTest extends TestCase
         $arrayVisitor = new ArrayInputVisitor([], []);
         $visitor      = new InputFilterVisitor([$arrayVisitor]);
         $inputFilter  = new InputFilter();
-        $inputFilter->add(new Input());
+        $inputFilter->add(new Input('foo'));
 
         self::expectException(InputVisitorException::class);
         self::expectExceptionMessage($expected);

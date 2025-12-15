@@ -128,7 +128,7 @@ final class AbstractInputVisitorTest extends TestCase
         $input->setRequired(true);
         $input->getValidatorChain()->attach(new NotEmpty());
 
-        $mockVisitor = self::createMock(ValidatorVisitorInterface::class);
+        $mockVisitor = self::createStub(ValidatorVisitorInterface::class);
         $mockVisitor->method('visit')
             ->willReturnCallback(static function (ValidatorInterface $validator, Union $previous) {
                 self::assertNotEquals(new Union([new TNonEmptyString()]), $previous);

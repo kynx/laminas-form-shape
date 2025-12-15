@@ -21,17 +21,18 @@ use ReflectionClass;
 #[CoversClass(RecursiveFormFileIterator::class)]
 final class RecursiveFormFileIteratorTest extends TestCase
 {
-    private PluginManagerInterface&MockObject $formElementManager;
     private RecursiveArrayIterator $innerIterator;
-    private RecursiveFormFileIterator $iterator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->formElementManager = $this->createMock(PluginManagerInterface::class);
-        $this->innerIterator      = new RecursiveArrayIterator([], RecursiveArrayIterator::CHILD_ARRAYS_ONLY);
-        $this->iterator           = new RecursiveFormFileIterator($this->innerIterator, $this->formElementManager);
+        $this->innerIterator = new RecursiveArrayIterator([], RecursiveArrayIterator::CHILD_ARRAYS_ONLY);
+    }
+
+    private function getIterator(PluginManagerInterface&MockObject $formElementManager): RecursiveFormFileIterator
+    {
+        return new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
     }
 
     public function testCurrentReturnsNullForNonReflectionEntry(): void
@@ -39,7 +40,9 @@ final class RecursiveFormFileIteratorTest extends TestCase
         $this->innerIterator->offsetSet(0, null);
         $this->innerIterator->rewind();
 
-        $actual = $this->iterator->current();
+        $formElementManager = self::createStub(PluginManagerInterface::class);
+        $iterator           = new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
+        $actual             = $iterator->current();
         self::assertNull($actual);
     }
 
@@ -49,7 +52,9 @@ final class RecursiveFormFileIteratorTest extends TestCase
         $this->innerIterator->offsetSet(0, $reflection);
         $this->innerIterator->rewind();
 
-        $actual = $this->iterator->current();
+        $formElementManager = self::createStub(PluginManagerInterface::class);
+        $iterator           = new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
+        $actual             = $iterator->current();
         self::assertNull($actual);
     }
 
@@ -58,11 +63,12 @@ final class RecursiveFormFileIteratorTest extends TestCase
         $reflection = new ReflectionClass(TestForm::class);
         $this->innerIterator->offsetSet(0, $reflection);
         $this->innerIterator->rewind();
-        $this->formElementManager->expects(self::once())
+        $formElementManager = $this->createMock(PluginManagerInterface::class);
+        $formElementManager->expects(self::once())
             ->method('get')
             ->willThrowException(new InvalidElementException());
 
-        $actual = $this->iterator->current();
+        $actual = $this->getIterator($formElementManager)->current();
         self::assertNull($actual);
     }
 
@@ -71,10 +77,13 @@ final class RecursiveFormFileIteratorTest extends TestCase
         $reflection = new ReflectionClass(TestForm::class);
         $this->innerIterator->offsetSet(0, $reflection);
         $this->innerIterator->rewind();
-        $this->formElementManager->method('get')
-            ->willReturn(new Fieldset());
 
-        $actual = $this->iterator->current();
+        $formElementManager = self::createStub(PluginManagerInterface::class);
+        $formElementManager->method('get')
+            ->willReturn(new Fieldset());
+        $iterator = new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
+
+        $actual = $iterator->current();
         self::assertNull($actual);
     }
 
@@ -86,16 +95,21 @@ final class RecursiveFormFileIteratorTest extends TestCase
 
         $this->innerIterator->offsetSet(0, $reflection);
         $this->innerIterator->rewind();
-        $this->formElementManager->method('get')
-            ->willReturn($form);
 
-        $actual = $this->iterator->current();
+        $formElementManager = self::createStub(PluginManagerInterface::class);
+        $formElementManager->method('get')
+            ->willReturn($form);
+        $iterator = new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
+
+        $actual = $iterator->current();
         self::assertEquals($expected, $actual);
     }
 
     public function testGetChildrenReturnsNull(): void
     {
-        $actual = $this->iterator->getChildren();
+        $formElementManager = self::createStub(PluginManagerInterface::class);
+        $iterator           = new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
+        $actual             = $iterator->getChildren();
         /** @psalm-suppress TypeDoesNotContainNull Well, it most certainly does */
         self::assertNull($actual);
     }
@@ -106,10 +120,12 @@ final class RecursiveFormFileIteratorTest extends TestCase
         $this->innerIterator->offsetSet(0, [0 => $reflection]);
         $this->innerIterator->rewind();
 
-        $this->formElementManager->method('get')
+        $formElementManager = self::createStub(PluginManagerInterface::class);
+        $formElementManager->method('get')
             ->willReturn(new Form());
+        $iterator = new RecursiveFormFileIterator($this->innerIterator, $formElementManager);
 
-        $children = $this->iterator->getChildren();
+        $children = $iterator->getChildren();
         self::assertInstanceOf(RecursiveFormFileIterator::class, $children);
         self::assertInstanceOf(FormFile::class, $children->current());
     }
