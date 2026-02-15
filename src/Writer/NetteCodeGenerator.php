@@ -111,7 +111,7 @@ final readonly class NetteCodeGenerator implements CodeGeneratorInterface
     }
 
     /**
-     * @param array<string> $new
+     * @param list<string> $new
      * @return array<string, string>
      */
     private function addUses(PhpNamespace $namespace, array $new): array
@@ -121,7 +121,7 @@ final readonly class NetteCodeGenerator implements CodeGeneratorInterface
         foreach ($new as $fullyQualified) {
             $alias = array_search($fullyQualified, $existing);
             if ($alias !== false) {
-                $uses[$fullyQualified] = (string) $alias;
+                $uses[$fullyQualified] = $alias;
                 continue;
             }
 
