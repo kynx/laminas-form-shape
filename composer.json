@@ -29,16 +29,16 @@
   "require": {
     "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
     "composer-runtime-api": "^2.2",
-    "laminas/laminas-cli": "^1.10",
-    "laminas/laminas-form": "^3.21",
-    "nette/php-generator": "^4.1.6"
+    "laminas/laminas-cli": "^1.15",
+    "laminas/laminas-form": "^3.24",
+    "nette/php-generator": "^4.2"
   },
   "require-dev": {
-    "cuyz/valinor": "^2.3",
-    "laminas/laminas-coding-standard": "^3.0",
-    "laminas/laminas-i18n": "^2.29",
-    "laminas/laminas-servicemanager": "^3.23",
-    "laminas/laminas-uri": "^2.12",
+    "cuyz/valinor": "^2.4",
+    "laminas/laminas-coding-standard": "^3.1",
+    "laminas/laminas-i18n": "^2.32",
+    "laminas/laminas-servicemanager": "^3.24",
+    "laminas/laminas-uri": "^2.14",
     "phpunit/phpunit": "^12.5",
     "psalm/plugin-phpunit": "^0.19.5",
     "psr/http-client": "^1.0",
