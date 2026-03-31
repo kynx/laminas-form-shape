@@ -43,11 +43,11 @@
     "laminas/laminas-servicemanager": "^3.24",
     "laminas/laminas-uri": "^2.14",
     "phpunit/phpunit": "^12.5",
-    "psalm/plugin-phpunit": "^0.19.5",
+    "psalm/plugin-phpunit": "^0.19.6",
     "psr/http-client": "^1.0",
     "psr/http-factory": "^1.0",
     "roave/security-advisories": "dev-master",
-    "vimeo/psalm": "6.16.0"
+    "vimeo/psalm": "^6.16"
   },
   "autoload": {
     "psr-4": {
