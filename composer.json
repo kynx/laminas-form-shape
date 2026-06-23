@@ -40,7 +40,7 @@
     "cuyz/valinor": "^2.4",
     "laminas/laminas-coding-standard": "^3.1",
     "laminas/laminas-i18n": "^2.32",
-    "laminas/laminas-servicemanager": "^3.24",
+    "laminas/laminas-servicemanager": "^4.0",
     "laminas/laminas-uri": "^2.14",
     "phpunit/phpunit": "^12.5",
     "psalm/plugin-phpunit": "^0.19.6",
